@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _JSON_H_
+#define _JSON_H_
 #include <fstream>
 #include <string>
 #include <ctime>
@@ -12,3 +13,4 @@ typedef struct data
 
 void opdata(int);
 void ipdata(data& d);
+#endif
