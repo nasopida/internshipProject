@@ -70,5 +70,5 @@ if __name__ == '__main__':
     send_thread.daemon = True
     send_thread.start()
 
-    send_thread.join()
     receive_thread.join()
+    send_thread.join()
