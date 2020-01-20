@@ -28,13 +28,13 @@ def handle_send(client_socket):
         client_socket.send(data.encode('utf-8'))
         if data == "/quit":
             break
-        if data=="/whoami":
+        if data == "/whoami":
             print(user+"입니다")
-        if data=="/whattime":
+        if data == "/whattime":
             print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
-        if data=="/whatdate":
+        if data == "/whatdate":
             print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
-        if data=="/dice":
+        if data == "/dice":
             dice()
     client_socket.close()
 
@@ -53,12 +53,12 @@ if __name__ == '__main__':
         host = args.i
     except:
         pass
+
     #IPv4 체계, TCP 타입 소켓 객체를 생성
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # 지정한 host와 prot를 통해 서버에 접속합니다.
     client_socket.connect((host, port))
-
 
     client_socket.send(user.encode('utf-8'))
 
