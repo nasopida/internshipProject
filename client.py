@@ -9,7 +9,7 @@ host = "127.0.0.1"
 def dice():
     print(random.randint(1,6))
 
-def handle_receive(lient_socket, user):
+def handle_receive(client_socket, user):
     while 1:
         try:
             data = client_socket.recv(1024)
