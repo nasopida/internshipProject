@@ -87,6 +87,8 @@ def accept_func():
         user = client_socket.recv(1024).decode('utf-8')
         user_list[user] = client_socket
 
+        user_list[user].send("logs".encode()) #로그를 보내줘야 한다.
+
 
         #accept()함수로 입력만 받아주고 이후 알고리즘은 핸들러에게 맡긴다.
         notice_thread = threading.Thread(target=handle_notice, args=(client_socket, addr, user))
