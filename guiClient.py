@@ -73,7 +73,18 @@ class Chatting:
 
         #채팅을 입력하는 Frame인 inputChatFrame
         self.inputChatFrame = Frame(self.mainFrame)
-        
+        self.inputChatFrame.pack(fill=X)
+        self.alertLabel = Label(self.inputChatFrame,text="채팅 입력")
+        self.alertLabel.pack(fill=X)
+        #채팅창 입력
+        self.inputText = Text(self.inputChatFrame)
+        self.inputText.config(width = 45, height=15, state="disabled", yscrollcommand=self.scroll.set)
+        self.inputText.pack(side=LEFT)
+        self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
+        self.inputBtn.pack(side=LEFT)
+
+    def sendMessage(self):
+        print("hi")
 
 
 
