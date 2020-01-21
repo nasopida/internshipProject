@@ -1,1 +1,1 @@
-hangul;이런;ㅣ망너리ㅏ;아앗;;;/벼ㅑㅅ;quit;/quit;
+clientprogramming;clientsocket;/검색e;/quit;clientprogramming;clientsocket;/search;ㅇㅇ;ㅇㅇ;ㅇㅇ;??;시바;시바;시바;시바;시바;ㅇㅇ?;ㅇㅇ;ㅅㅂ;/quit;gd;gd;gd;dd;dd;dd;dd;dd;/quit;dd;dd;/quit;ㅇㅇ;ㅇㅇ;/quit;dd;dd;dd;/quit;dd;ㅎㅇ;ㅎㅇ;ㅎㅇ;ㅎㅇ;/quit;dd;ㅎㅇ;ㅎㅇ;ㅎㅇ;/quit;f;gd;gd;gd;/quit;ㅍㅌ;ㅎㅇ;ㅎㅇ;/quit;ㅎㅇ;ㅎㅇ;ㅎㅇ;ddd;/quit;sd;/quit;dd;dd;/quit;dd;gd;gd;dd;dd;dd;/quit;d;dg;gd;gd;/quit;f;gd;gd;gd;gd;/quit;
