@@ -36,8 +36,10 @@ def handle_send(client_socket):
             if data == "/whoami":
                 print(user+"입니다")
             if data == "/whattime":
+                now=datetime.now()
                 print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
             if data == "/whatdate":
+                now=datetime.now()
                 print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
             if data == "/dice":
                 dice()
