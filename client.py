@@ -3,10 +3,6 @@ import argparse
 import threading
 import random
 from datetime import datetime
-<<<<<<< HEAD
-=======
-from logger import msgLog, msgLogger
->>>>>>> dc848cd57363854f248d915aea258373f48cdd84
 
 port = 57270
 host = "127.0.0.1"
