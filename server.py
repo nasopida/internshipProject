@@ -39,8 +39,9 @@ def handle_receive(client_socket, addr, user):
     msg = "---- %s님이 들어오셨습니다. ----"%user
     serv_logger.addLog(msgLog("server", msg))
     # 접속한 사람에게 보내는 메세지
-    client_socket.send(notice().encode('utf-8'))
+    # client_socket.send(notice().encode('utf-8'))
     msg_func(msg)
+    print("msgDONE")
     # 메세지를 입력받는지 계속 체크해주면서 quit가 입력되면 탈출, 아니면 msg_func로 메세지 출력
     while 1:
         try:
@@ -69,11 +70,9 @@ def handle_receive(client_socket, addr, user):
             msg_func("인원 : %d"%len(user_list))
             msg_func(msg)
             break
-        string = "%s : %s"%(user, string)
-        msg_func(string)
 
     client_socket.close()
-    # serv_logger.record()
+    serv_logger.record()
 
 def handle_notice(client_socket, addr, user):
     pass
@@ -106,7 +105,7 @@ def accept_func():
 
         #로그를 보내준다
         serv_logger.read()
-        user_list[user].send(str(serv_logger).encode()) #로그를 보내줘야 한다.
+        # user_list[user].send(str(serv_logger).encode()) #로그를 보내줘야 한다.
 
 
         #accept()함수로 입력만 받아주고 이후 알고리즘은 핸들러에게 맡긴다.

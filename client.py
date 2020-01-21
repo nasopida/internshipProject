@@ -7,9 +7,6 @@ from logger import msgLog, msgLogger
 
 port = 57270
 host = "127.0.0.1"
-clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
-clnt_logger.read()
 
 def dice():
     return str(random.randint(1,6))
@@ -21,14 +18,14 @@ def handle_receive(client_socket, user):
             data = client_socket.recv(1024)
         except:
             print("연결 끊김")
-            clnt_logger.addLog(msgLog("program", "연결 끊김".encode('utf-8')))
+            clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
         data = data.decode('utf-8')
         if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)
 
-def handle_send(client_socket):
+def handle_send(client_socket, user):
     global clnt_logger
     f = open('chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
@@ -51,8 +48,8 @@ def handle_send(client_socket):
             if data == "/dice":
                 randString = dice()
                 print(randString)
-            clnt_logger.addLog(msgLog("program", data))
-            clnt_logger.record()
+           # clnt_logger.addLog(msgLog("program", data))
+           # clnt_logger.record()
 
             #검색은 미완성
             if data=="/search":
@@ -96,6 +93,10 @@ if __name__ == '__main__':
         host = args.i
     except:
         pass
+
+    clnt_logger = msgLogger()
+    clnt_logger.setFile(user+"LogFile.txt")
+    clnt_logger.read()
 
     #IPv4 체계, TCP 타입 소켓 객체를 생성
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
