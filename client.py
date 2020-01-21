@@ -18,7 +18,7 @@ def handle_receive(client_socket, user):
             data = client_socket.recv(1024)
         except:
             print("연결 끊김")
-            clnt_logger.addLog(msgLog("program", "연결 끊김".encode('utf-8')))
+            clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
         data = data.decode('utf-8')
         if not user in data: # 자신이 아닐때 출력
