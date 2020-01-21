@@ -3,6 +3,7 @@ import argparse
 import threading
 import random
 from datetime import datetime
+
 port = 57270
 host = "127.0.0.1"
 
@@ -97,5 +98,10 @@ if __name__ == '__main__':
     send_thread.daemon = True
     send_thread.start()
 
+    nowPeople_thread = thrading.Thrad(target=nowPeople, args=(client_socket,))
+    nowPeople_thread.daemon = True
+    nowPeople_thorad.start()
+
     receive_thread.join()
     send_thread.join()
+    nowPeople_thread.join()

@@ -29,7 +29,6 @@ def notice():
     msg += "\n매너있는 채팅을 합시다!\n"
     msg += "채팅방 나가기 : /quit\n"
     return msg
-
 # 
 def handle_receive(client_socket, addr, user):
     msg = "---- %s님이 들어오셨습니다. ----"%user
@@ -41,22 +40,24 @@ def handle_receive(client_socket, addr, user):
         try:
             data = client_socket.recv(1024)
             string = data.decode('utf-8')
-
             if "/quit" in string:
                 msg = "---- %s님이 나가셨습니다. ----"%user
                 #유저 목록에서 방금 종료한 유저의 정보를 삭제
                 del user_list[user]
+                msg_func("인원 : %d"%len(user_list))
                 msg_func(msg)
                 break
-            string = "%s : %s"%(user, string)
-            msg_func(string)
         # 강제 종료시 대응하는 예외처리
-        except ConnectionResetError as e:
+        except ConnectionResetError:
             msg = "---- %s님이 나가셨습니다. ----"%user
             #유저 목록에서 방금 종료한 유저의 정보를 삭제
             del user_list[user]
+            msg_func("인원 : %d"%len(user_list))
             msg_func(msg)
             break
+        string = "%s : %s"%(user, string)
+        msg_func(string)
+
     client_socket.close()
 
 def handle_notice(client_socket, addr, user):
