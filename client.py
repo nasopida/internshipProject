@@ -7,9 +7,6 @@ from logger import msgLog, msgLogger
 
 port = 57270
 host = "127.0.0.1"
-clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
-clnt_logger.read()
 
 def dice():
     return str(random.randint(1,6))
@@ -96,6 +93,10 @@ if __name__ == '__main__':
         host = args.i
     except:
         pass
+
+    clnt_logger = msgLogger()
+    clnt_logger.setFile(user+"LogFile.txt")
+    clnt_logger.read()
 
     #IPv4 체계, TCP 타입 소켓 객체를 생성
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
