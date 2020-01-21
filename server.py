@@ -2,12 +2,15 @@ import socket
 import argparse
 import threading
 import time
+from logger import msgLog, msgLogger
 
 host = "127.0.0.1"
 port = 57270
 user_list = {}
 notice_flag = 0
 max_user = 100
+
+serv_logger = msgLogger()
 
 # 메세지 펑션 -> 메세지를 서버에 출력해주고 클라이언트에게 메세지를 보내준다.
 # 메세지가 가지 않을 경우 소켓이 비정상적 종료가 된 것 
@@ -28,10 +31,13 @@ def notice():
     msg += " / %d"%max_user
     msg += "\n매너있는 채팅을 합시다!\n"
     msg += "채팅방 나가기 : /quit\n"
+    msg += "명령어 보기 : /help\n"
     return msg
 # 
 def handle_receive(client_socket, addr, user):
+    global serv_logger
     msg = "---- %s님이 들어오셨습니다. ----"%user
+    serv_logger.addLog(msgLog("server", msg))
     # 접속한 사람에게 보내는 메세지
     client_socket.send(notice().encode('utf-8'))
     msg_func(msg)
@@ -42,6 +48,7 @@ def handle_receive(client_socket, addr, user):
             string = data.decode('utf-8')
             if "/quit" in string:
                 msg = "---- %s님이 나가셨습니다. ----"%user
+                serv_logger.addLog(msgLog("server", msg))
                 #유저 목록에서 방금 종료한 유저의 정보를 삭제
                 del user_list[user]
                 msg_func("인원 : %d"%len(user_list))
@@ -50,6 +57,7 @@ def handle_receive(client_socket, addr, user):
         # 강제 종료시 대응하는 예외처리
         except ConnectionResetError:
             msg = "---- %s님이 나가셨습니다. ----"%user
+            serv_logger.addLog(msgLog("server", msg))
             #유저 목록에서 방금 종료한 유저의 정보를 삭제
             del user_list[user]
             msg_func("인원 : %d"%len(user_list))
@@ -59,6 +67,7 @@ def handle_receive(client_socket, addr, user):
         msg_func(string)
 
     client_socket.close()
+    serv_logger.record()
 
 def handle_notice(client_socket, addr, user):
     pass
