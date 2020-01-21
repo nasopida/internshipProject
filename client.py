@@ -3,6 +3,8 @@ import argparse
 import threading
 import random
 from datetime import datetime
+import logger
+
 port = 57270
 host = "127.0.0.1"
 
@@ -21,12 +23,10 @@ def handle_receive(client_socket, user):
             print(data)
 
 def handle_send(client_socket):
-    now=datetime.now()
     f = open('chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     while 1:
-        print(user+": ",end='')
-        data=input()
+        data=input(user+": ")
         f.write(data)
         f.write(";")
         client_socket.send(data.encode('utf-8'))
@@ -35,8 +35,10 @@ def handle_send(client_socket):
         if data == "/whoami":
             print(user+"입니다")
         if data == "/whattime":
+            now=datetime.now()
             print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
         if data == "/whatdate":
+            now=datetime.now()
             print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
         if data == "/dice":
             dice()
