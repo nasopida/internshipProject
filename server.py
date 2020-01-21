@@ -39,7 +39,7 @@ def handle_receive(client_socket, addr, user):
     msg = "---- %s님이 들어오셨습니다. ----"%user
     serv_logger.addLog(msgLog("server", msg))
     # 접속한 사람에게 보내는 메세지
-    client_socket.send(notice().encode('utf-8'))
+    # client_socket.send(notice().encode('utf-8'))
     msg_func(msg)
     # 메세지를 입력받는지 계속 체크해주면서 quit가 입력되면 탈출, 아니면 msg_func로 메세지 출력
     while 1:
