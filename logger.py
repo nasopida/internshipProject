@@ -18,14 +18,14 @@ class msgLogger:
 
     # 파일에 로그를 전부 저장한다
     def record(self):
-        with open(self.__fp, "w") as file:
+        with open(self.__fp, "w", encoding="utf-8") as file:
             file.write(self.__repr__())
 
     # 파일에 저장된 로그를 전부 읽어온다.
     def read(self):
         if not os.path.isfile(self.__fp):
             return
-        with open(self.__fp, "r") as file:
+        with open(self.__fp, "r", encoding="utf-8") as file:
             self.__logList = file.readlines()
         self.__logList = list(map(msgLog.toLog, map(str.rstrip, self.__logList)))
 
