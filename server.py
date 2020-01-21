@@ -49,15 +49,24 @@ def handle_receive(client_socket, addr, user):
             if "/quit" in string:
                 msg = "---- %s님이 나가셨습니다. ----"%user
                 serv_logger.addLog(msgLog("server", msg))
+                serv_logger.record()
                 #유저 목록에서 방금 종료한 유저의 정보를 삭제
                 del user_list[user]
                 msg_func("인원 : %d"%len(user_list))
                 msg_func(msg)
                 break
+<<<<<<< HEAD
+=======
+            string = "%s : %s"%(user, string)
+            serv_logger.addLog(msgLog(user, string))
+            serv_logger.record()
+            msg_func(string)
+>>>>>>> dc848cd57363854f248d915aea258373f48cdd84
         # 강제 종료시 대응하는 예외처리
         except ConnectionResetError:
             msg = "---- %s님이 나가셨습니다. ----"%user
             serv_logger.addLog(msgLog("server", msg))
+            serv_logger.record()
             #유저 목록에서 방금 종료한 유저의 정보를 삭제
             del user_list[user]
             msg_func("인원 : %d"%len(user_list))
@@ -67,12 +76,13 @@ def handle_receive(client_socket, addr, user):
         msg_func(string)
 
     client_socket.close()
-    serv_logger.record()
+    # serv_logger.record()
 
 def handle_notice(client_socket, addr, user):
     pass
 
 def accept_func():
+    global serv_logger
     #IPv4 체계, TCP 타입 소켓 객체를 생성
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #포트를 사용 중 일때 에러를 해결하기 위한 구문
@@ -97,7 +107,9 @@ def accept_func():
         user = client_socket.recv(1024).decode('utf-8')
         user_list[user] = client_socket
 
-        user_list[user].send("logs".encode()) #로그를 보내줘야 한다.
+        #로그를 보내준다
+        serv_logger.read()
+        user_list[user].send(str(serv_logger).encode()) #로그를 보내줘야 한다.
 
 
         #accept()함수로 입력만 받아주고 이후 알고리즘은 핸들러에게 맡긴다.

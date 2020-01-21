@@ -3,22 +3,31 @@ import argparse
 import threading
 import random
 from datetime import datetime
+<<<<<<< HEAD
+=======
+from logger import msgLog, msgLogger
+>>>>>>> dc848cd57363854f248d915aea258373f48cdd84
 
 port = 57270
 host = "127.0.0.1"
+clnt_logger = msgLogger()
+clnt_logger.setFile("clientLogFile.txt")
 
 def dice():
-    print(random.randint(1,6))
+    return str(random.randint(1,6))
 
 def handle_receive(client_socket, user):
+    global clnt_logger
     while 1:
         try:
             data = client_socket.recv(1024)
         except:
             print("연결 끊김")
+            clnt_logger.addLog(msgLog("program", "연결 끊김".encode('utf-8')))
             break
         data = data.decode('utf-8')
-        if not user in data:
+        if not user in data: # 자신이 아닐때 출력
+            clnt_logger.addLog(msgLog("program", data))
             print(data)
 
 def handle_send(client_socket):
@@ -27,10 +36,10 @@ def handle_send(client_socket):
     while 1:
         try:
             data=input(user+": ")
-            f.write(data)
-            f.write(";")
             client_socket.send(data.encode('utf-8'))
+            
             if data == "/quit":
+                clnt_logger.addLog(msgLog("program", data))
                 break
             if data == "/whoami":
                 print(user+"입니다")
@@ -41,7 +50,10 @@ def handle_send(client_socket):
                 now=datetime.now()
                 print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
             if data == "/dice":
-                dice()
+                randString = dice()
+                print(randString)
+            clnt_logger.addLog(msgLog("program", data))
+
             #검색은 미완성
             if data=="/search":
                 text=f.read()
@@ -53,13 +65,16 @@ def handle_send(client_socket):
                         print(i)
                     else:
                         pass
+
         except EOFError:
             print('EOF Error!')
             client_socket.close()
+            clnt_logger.record()
             f.close()
         except KeyboardInterrupt:
             print('KeyboardInterrupt Error')
             client_socket.close()
+            clnt_logger.record()
             f.close()
                 
 
