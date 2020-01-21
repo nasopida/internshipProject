@@ -35,45 +35,65 @@ class setID:
         self.button.pack()
 
     def enterBtn(self):
-        f = open('name.txt','w', encoding='utf-8')
-        f.write(self.text.get())
-        f.close()
-        self.myParent.destroy()
+        if len(self.text.get())!=0:
+            f = open('name.txt','w', encoding='utf-8')
+            f.write(self.text.get())
+            f.close()
+            self.myParent.destroy()
 
 
 # 채팅을 관리하는 클래스
 class Chatting:
-    def __init__(self):
-        pass
+    def __init__(self, window):
+        # 나중에 창을 파괴하기 위해
+        self.myParent = window
+        
+        #mainFrame은 창 전체를 뜻함
+        self.mainFrame = Frame(window)
+        window.title("채팅방")
+        window.geometry("400x600")
+        self.mainFrame.pack(fill=X)
+
+        #접속한 사람의 이름을 띄워주는 라벨
+        self.nameLabelFrame = Frame(self.mainFrame)
+        self.nameLabelFrame.pack(fill = X)
+        self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user)
+        self.nameLabel.pack(fill=X)
+
+        #채팅 내용을 담는 Frame은 chatLogFrame
+        self.chatLogFrame = Frame(self.mainFrame)
+        self.chatLogFrame.pack(fill=X)
+        #logText는 채팅방 로그 (채팅창)
+        self.logText = Text(self.chatLogFrame)
+        self.scroll = Scrollbar(self.chatLogFrame)
+        self.scroll.pack(side=RIGHT, fill=Y)
+        self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
+        self.logText.pack(side=LEFT, fill=BOTH, expand=YES)
+        self.scroll.config(command=self.logText.yview)
+
+        #채팅을 입력하는 Frame인 inputChatFrame
+        self.inputChatFrame = Frame(self.mainFrame)
+        
+
+
 
 if __name__ == '__main__':
-    """
-    parser = argparse.ArgumentParser(description="\nclient\n-p port\n-i host\n-s string")
-    parser.add_argument('-p', help="port")
-    parser.add_argument('-i', help="host")
-    parser.add_argument('-u', help="user", required=True)
-
-    args = parser.parse_args()
-    
-    user = str(args.u)
-    try:
-        port = int(args.p)
-        host = args.i
-    except:
-        pass
-    """
+    # 아이디 입력 창
     if os.path.isfile("name.txt"):
         pass
     else:
-        root = Tk()
-        myId = setID(root)
-        root.mainloop()
-        
+        idRoot = Tk()
+        myId = setID(idRoot)
+        idRoot.mainloop()  
     
     nameFile = open('name.txt',mode='rt',encoding='utf-8')
     user = nameFile.read()
 
-    #아이디 입력 창
+    # 채팅 창
+    chatRoot = Tk()
+    myChat = Chatting(chatRoot)
+    chatRoot.mainloop()
+
     """
     clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")

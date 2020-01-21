@@ -104,7 +104,7 @@ def accept_func():
         user_list[user] = client_socket
 
         #로그를 보내준다
-        serv_logger.read()
+        #serv_logger.read()
         # user_list[user].send(str(serv_logger).encode()) #로그를 보내줘야 한다.
 
 
