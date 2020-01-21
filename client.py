@@ -9,6 +9,7 @@ port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
 clnt_logger.setFile("clientLogFile.txt")
+clnt_logger.read()
 
 def dice():
     return str(random.randint(1,6))
@@ -28,6 +29,7 @@ def handle_receive(client_socket, user):
             print(data)
 
 def handle_send(client_socket):
+    global clnt_logger
     f = open('chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     while 1:
@@ -50,6 +52,7 @@ def handle_send(client_socket):
                 randString = dice()
                 print(randString)
             clnt_logger.addLog(msgLog("program", data))
+            clnt_logger.record()
 
             #검색은 미완성
             if data=="/search":
