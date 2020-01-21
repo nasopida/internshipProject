@@ -25,32 +25,41 @@ def handle_send(client_socket):
     f = open('chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     while 1:
-        print(user+": ",end='')
-        data=input()
-        f.write(data)
-        f.write(";")
-        client_socket.send(data.encode('utf-8'))
-        if data == "/quit":
-            break
-        if data == "/whoami":
-            print(user+"입니다")
-        if data == "/whattime":
-            print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
-        if data == "/whatdate":
-            print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
-        if data == "/dice":
-            dice()
-        #검색은 미완성
-        if data=="/search":
-            text=f.read()
-            lines=text.split(';')
-            print("찾을 채팅내용을 입력하십쇼: ",end='')
-            find=input()
-            for i in lines:
-                if find in lines:
-                    print(i)
-                else:
-                    pass
+        try:
+            print(user+": ",end='')
+            data=input()
+            f.write(data)
+            f.write(";")
+            client_socket.send(data.encode('utf-8'))
+            if data == "/quit":
+                break
+            if data == "/whoami":
+                print(user+"입니다")
+            if data == "/whattime":
+                print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
+            if data == "/whatdate":
+                print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
+            if data == "/dice":
+                dice()
+            #검색은 미완성
+            if data=="/search":
+                text=f.read()
+                lines=text.split(';')
+                print("찾을 채팅내용을 입력하십쇼: ",end='')
+                find=input()
+                for i in lines:
+                    if find in lines:
+                        print(i)
+                    else:
+                        pass
+        except EOFError:
+            print('EOF Error!')
+            client_socket.close()
+            f.close()
+        except KeyboardInterrupt:
+            print('KeyboardInterrupt Error')
+            client_socket.close()
+            f.close()
                 
 
     client_socket.close()
