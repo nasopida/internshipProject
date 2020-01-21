@@ -55,13 +55,10 @@ def handle_receive(client_socket, addr, user):
                 msg_func("인원 : %d"%len(user_list))
                 msg_func(msg)
                 break
-<<<<<<< HEAD
-=======
             string = "%s : %s"%(user, string)
             serv_logger.addLog(msgLog(user, string))
             serv_logger.record()
             msg_func(string)
->>>>>>> dc848cd57363854f248d915aea258373f48cdd84
         # 강제 종료시 대응하는 예외처리
         except ConnectionResetError:
             msg = "---- %s님이 나가셨습니다. ----"%user
