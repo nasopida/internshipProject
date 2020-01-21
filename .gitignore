@@ -1,2 +1,4 @@
 logFile.txt
 __pycache__
+*.txt
+*.pyc
