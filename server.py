@@ -10,14 +10,15 @@ def window():
     chat_num = Tk()
     def change():
         num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
+        num.after(500, change)
     num = Button(chat_num, text="인원 : %d/ %d"%(len(user_list), max_user), command=change)
     num.grid(row=0, column=0)
     def num_change(event):
         num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
-    num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
     num.bind('<Button-1>', num_change)
+    num.after(500, change)
     num.mainloop()
-
+    
 host = "127.0.0.1"
 port = 57270
 user_list = {}
