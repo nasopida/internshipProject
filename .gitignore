@@ -3,3 +3,4 @@ __pycache__
 *.txt
 *.pyc
 img_GEN
+*.bin
