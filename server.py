@@ -102,9 +102,9 @@ def accept_func():
 
     #서버가 최대 5개의 클라이언트의 접속을 허용한다.
     server_socket.listen(max_user)
-    chatnum_thread = threading.Thread(target=window, args=())
-    chatnum_thread.daemon = True
-    chatnum_thread.start()
+    # chatnum_thread = threading.Thread(target=window, args=())
+    # chatnum_thread.daemon = True
+    # chatnum_thread.start()
     while 1:        
         try:
             #클라이언트 함수가 접속하면 새로운 소켓을 반환한다.
@@ -124,9 +124,9 @@ def accept_func():
 
 
         #accept()함수로 입력만 받아주고 이후 알고리즘은 핸들러에게 맡긴다.
-        notice_thread = threading.Thread(target=handle_notice, args=(client_socket, addr, user))
-        notice_thread.daemon = True
-        notice_thread.start()
+        # notice_thread = threading.Thread(target=handle_notice, args=(client_socket, addr, user))
+        # notice_thread.daemon = True
+        # notice_thread.start()
 
         receive_thread = threading.Thread(target=handle_receive, args=(client_socket, addr,user))
         receive_thread.daemon = True
