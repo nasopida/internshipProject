@@ -27,8 +27,8 @@ class msgLogger:
             return
         with open(self.__fp, "rb") as file:
             self.__logList = file.readlines()
-        self.__logList = self.__logList.decode()
-        self.__logList = list(map(msgLog.toLog, map(str.rstrip, self.__logList)))
+        # self.__logList = self.__logList.decode()
+        self.__logList = list(map(msgLog.toLog, map(str.rstrip, map(bytes.decode, self.__logList))))
 
     # 메세지 로그를 추가한다.
     def addLog(self, msgLog):
