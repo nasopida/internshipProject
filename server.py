@@ -3,13 +3,26 @@ import argparse
 import threading
 import time
 from logger import msgLog, msgLogger
+from tkinter import *
+import time
+
+def window():
+    chat_num = Tk()
+    def change():
+        num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
+    num = Button(chat_num, text="인원 : %d/ %d"%(len(user_list), max_user), command=change)
+    num.grid(row=0, column=0)
+    def num_change(event):
+        num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
+    num.config(text="인원 : %d/ %d"%(len(user_list), max_user))
+    num.bind('<Button-1>', num_change)
+    num.mainloop()
 
 host = "127.0.0.1"
 port = 57270
 user_list = {}
 notice_flag = 0
 max_user = 100
-
 serv_logger = msgLogger()
 
 # 메세지 펑션 -> 메세지를 서버에 출력해주고 클라이언트에게 메세지를 보내준다.
@@ -70,7 +83,6 @@ def handle_receive(client_socket, addr, user):
             msg_func("인원 : %d"%len(user_list))
             msg_func(msg)
             break
-
     client_socket.close()
     serv_logger.record()
 
@@ -89,8 +101,10 @@ def accept_func():
 
     #서버가 최대 5개의 클라이언트의 접속을 허용한다.
     server_socket.listen(max_user)
-
-    while 1:
+    chatnum_thread = threading.Thread(target=window, args=())
+    chatnum_thread.daemon = True
+    chatnum_thread.start()
+    while 1:        
         try:
             #클라이언트 함수가 접속하면 새로운 소켓을 반환한다.
             client_socket, addr = server_socket.accept()    
@@ -116,7 +130,7 @@ def accept_func():
         receive_thread = threading.Thread(target=handle_receive, args=(client_socket, addr,user))
         receive_thread.daemon = True
         receive_thread.start()
-
+        
 
 if __name__ == '__main__':
     #parser와 관련된 메서드 정리된 블로그 : https://docs.python.org/ko/3/library/argparse.html

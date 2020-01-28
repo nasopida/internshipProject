@@ -7,7 +7,7 @@ from datetime import datetime
 # 메세지 로그를 파일에 저장하거나 읽어온다.
 # 
 class msgLogger:
-    def __init__(self, fp = "logFile.txt", logList = []):
+    def __init__(self, fp = "logFile.bin", logList = []):
         super().__init__()
         self.__fp = fp
         self.__logList = logList
@@ -18,15 +18,16 @@ class msgLogger:
 
     # 파일에 로그를 전부 저장한다
     def record(self):
-        with open(self.__fp, "w", encoding="utf-8") as file:
-            file.write(self.__repr__())
+        with open(self.__fp, "wb") as file:
+            file.write(self.__repr__().encode())
 
     # 파일에 저장된 로그를 전부 읽어온다.
     def read(self):
         if not os.path.isfile(self.__fp):
             return
-        with open(self.__fp, "r", encoding="utf-8") as file:
+        with open(self.__fp, "rb") as file:
             self.__logList = file.readlines()
+        self.__logList = self.__logList.decode()
         self.__logList = list(map(msgLog.toLog, map(str.rstrip, self.__logList)))
 
     # 메세지 로그를 추가한다.

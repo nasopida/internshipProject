@@ -5,6 +5,7 @@ import random
 from datetime import datetime
 from logger import msgLog, msgLogger
 
+clnt_logger = msgLogger()
 port = 57270
 host = "127.0.0.1"
 
@@ -94,7 +95,6 @@ if __name__ == '__main__':
     except:
         pass
 
-    clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")
     clnt_logger.read()
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     receive_thread.daemon = True
     receive_thread.start()
 
-    send_thread = threading.Thread(target=handle_send, args=(client_socket,))
+    send_thread = threading.Thread(target=handle_send, args=(client_socket, user))
     send_thread.daemon = True
     send_thread.start()
 
