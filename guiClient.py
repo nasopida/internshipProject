@@ -16,28 +16,143 @@ clnt_logger = msgLogger()
 clnt_logger.setFile("clientLogFile.txt")
 clnt_logger.read()
 
+suc = False
+
 #아이디 설정 클래스
 class setID:
 
     def __init__(self, window):
+        # 창을 파괴하기 위한 myParent
         self.myParent = window
-        self.idFrame = Frame(window)
-        window.title("이름 설정")
-        window.geometry("250x100")
-        self.label = Label(window,text="이름 입력")
-        self.text = Entry(window)
-        self.button = Button(window,text="확인", command=self.enterBtn)
+        # mainFrame은 창 전체를 뜻한다.
+        self.mainFrame = Frame(window)
+        window.title("로그인")
+        window.geometry("250x140")
+        self.mainFrame.pack(fill=X)
+
+        # ID 프레임
+        self.idFrame = Frame(self.mainFrame)
+        self.idFrame.pack(expand=True,pady=5)
+        self.idLabel = Label(self.idFrame,text="ID : ")
+        self.idText = Entry(self.idFrame)
+        self.idLabel.pack(side=LEFT, ipadx = 13)
+        self.idText.pack(side=RIGHT, padx = 30)
+
+        # 비밀번호 프레임
+        self.passwdFrame = Frame(self.mainFrame)
+        self.passwdFrame.pack()
+        self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
+        self.passwdText = Entry(self.passwdFrame)
+        self.passwdLabel.pack(side=LEFT)
+        self.passwdText.pack(side=RIGHT, padx=10)
+        
+        self.loginButton = Button(window,text="로그인", command=self.signInBtn)
         #엔터키랑 연동
         #window.bind('<Return>',self.enterBtn)
-        
-        self.label.pack()
-        self.text.pack()
-        self.button.pack()
+        self.loginButton.pack(pady=10)
 
-    def enterBtn(self):
-        if len(self.text.get())!=0:
-            f = open('name.txt','w', encoding='utf-8')
-            f.write(self.text.get())
+        #회원가입
+        self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
+        self.signUpButton.pack(pady=10)
+    # 회원가입 버튼
+    def signUpBtn(self):
+        signUpRoot = Tk()
+        mySignUp = SignUp(signUpRoot)
+        signUpRoot.mainloop()
+
+    # 로그인 버튼
+    def signInBtn(self):
+        global suc
+        if os.path.isfile("login.config"):
+            loginFile = open('login.config', mode='rt', encoding='utf-8')
+            lines = loginFile.readlines()
+            #print((self.idText.get()+'\n' == lines[0]))
+            #print((self.passwdText.get()+'\n' == lines[1]))
+            # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
+            if (self.idText.get()+'\n' == lines[0]) and (self.passwdText.get()+'\n' == lines[1]):
+                suc = True
+                self.myParent.destroy()
+            else:
+                suc = False
+                failRoot = Tk()
+                failWindow = loginFail(failRoot)
+                failRoot.mainloop()
+                
+        else:
+            suc = False
+            failRoot = Tk()
+            failWindow = loginFail(failRoot)
+            failRoot.mainloop()
+
+# 로그인 실패 창
+class loginFail:
+    def __init__(self, window):
+        #창 파괴를 위한 변수
+        self.myParent = window
+
+        # mainFrame
+        self.mainFrame = Frame(window)
+        window.title("로그인 실패!")
+        window.geometry("200x80")
+        self.mainFrame.pack()
+
+        # 로그인 실패를 출력
+        self.failLabel = Label(self.mainFrame, text="로그인 실패!")
+        self.failLabel.pack(fill=BOTH, padx=30, pady=10)
+
+        # 종료 버튼
+        self.endButton = Button(self.mainFrame, text="확인", command=self.endBtn)
+        self.endButton.pack(pady=5)
+    def endBtn(self):
+        self.myParent.destroy()
+
+# 회원가입을 진행하는 클래스
+class SignUp:
+    def __init__(self, window):
+        #나중에 창을 파괴하기 위해
+        self.myParent = window
+
+        #mainFrame은 창 전체이다.
+        self.mainFrame = Frame(window)
+        window.title("회원 가입")
+        window.geometry("250x140")
+        self.mainFrame.pack()
+
+        # ID를 입력하는 라벨
+        self.idFrame = Frame(self.mainFrame)
+        self.idFrame.pack(expand=True, pady=5)
+        self.idLabel = Label(self.idFrame,text="ID : ")
+        self.idText = Entry(self.idFrame)
+        self.idLabel.pack(side=LEFT, ipadx = 13)
+        self.idText.pack(side=RIGHT, padx = 30)
+
+        # 비밀번호를 입력하는 라벨
+        self.passwdFrame = Frame(self.mainFrame)
+        self.passwdFrame.pack(pady = 5)
+        self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
+        self.passwdText = Entry(self.passwdFrame)
+        self.passwdLabel.pack(side=LEFT)
+        self.passwdText.pack(side=RIGHT, padx=10)
+
+        # 닉네임을 입력하는 라벨
+        self.nicknameFrame = Frame(self.mainFrame)
+        self.nicknameFrame.pack(pady = 5)
+        self.nicknameLabel = Label(self.nicknameFrame, text="Nickname : ")
+        self.nicknameText = Entry(self.nicknameFrame)
+        self.nicknameLabel.pack(side=LEFT)
+        self.nicknameText.pack(side=RIGHT, padx=10)
+
+        # 가입 요청을 하는 버튼
+        self.requestButton = Button(self.mainFrame, text="가입 요청",command=self.requestBtn)
+        self.requestButton.pack(pady = 10)
+    
+    # 가입 요청을 하는 버튼
+    def requestBtn(self):
+        if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
+            f = open('login.config','w+t',encoding='utf-8')
+            f.write(self.idText.get()+'\n')
+            f.write(self.passwdText.get()+'\n')
+            f.write(self.nicknameText.get())
             f.close()
             self.myParent.destroy()
 
@@ -90,15 +205,21 @@ class Chatting:
 
 if __name__ == '__main__':
     # 아이디 입력 창
-    if os.path.isfile("name.txt"):
+    """
+    if os.path.isfile("login.txt"):
         pass
     else:
-        idRoot = Tk()
-        myId = setID(idRoot)
-        idRoot.mainloop()  
-    
-    nameFile = open('name.txt',mode='rt',encoding='utf-8')
-    user = nameFile.read()
+        """
+    idRoot = Tk()
+    myId = setID(idRoot)
+    idRoot.mainloop()  
+    if suc == True:
+        if os.path.isfile("login.config"):
+            loginFile = open('login.config',mode='rt',encoding='utf-8')
+            lines = loginFile.readlines()
+            user = lines[2]
+    else:
+        sys.exit()
 
     # 채팅 창
     chatRoot = Tk()
@@ -129,4 +250,3 @@ if __name__ == '__main__':
 
     receive_thread.join()
     send_thread.join()
-
