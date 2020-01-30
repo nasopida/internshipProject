@@ -54,13 +54,18 @@ class Chatting:
         self.alertLabel.pack(fill=X)
         #채팅창 입력
         self.inputText = Text(self.inputChatFrame)
-        self.inputText.config(width = 45, height=15, state="disabled", yscrollcommand=self.scroll.set)
+        self.inputText.config(width = 45, height=15, yscrollcommand=self.scroll.set)
         self.inputText.pack(side=LEFT)
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
+        self.myParent.bind('<Return>',self.sendMessage)
 
-    def sendMessage(self):
-        print("hi")
+    def sendMessage(self, event = None):
+        print(self.inputText.get('1.0', END))
+        self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
+        self.logText.insert('1.0', self.inputText.get('1.0', END))
+        self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
+        self.inputText.delete('1.0', END)
 
 if __name__ == '__main__':
     # 아이디 입력 창
