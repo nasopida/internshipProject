@@ -15,7 +15,7 @@ from logger import msgLog, msgLogger
 port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
+clnt_logger.setFile("./log/clientLogFile.txt")
 clnt_logger.read()
 
 # 채팅을 관리하는 클래스
@@ -63,7 +63,7 @@ class Chatting:
     def sendMessage(self, event = None):
         print(self.inputText.get('1.0', END))
         self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-        self.logText.insert('1.0', self.inputText.get('1.0', END))
+        self.logText.insert(CURRENT, self.inputText.get('1.0', END))
         self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
         self.inputText.delete('1.0', END)
 

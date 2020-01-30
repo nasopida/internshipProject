@@ -28,7 +28,7 @@ def handle_receive(client_socket, user):
 
 def handle_send(client_socket, user):
     global clnt_logger
-    f = open('chatLog.txt', mode='at', encoding='utf-8')
+    f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     while 1:
         try:
