@@ -15,7 +15,7 @@ from logger import msgLog, msgLogger
 port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
+clnt_logger.setFile("./log/clientLogFile.txt")
 clnt_logger.read()
 
 # 채팅을 관리하는 클래스
