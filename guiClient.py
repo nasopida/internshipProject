@@ -63,7 +63,7 @@ class Chatting:
     def sendMessage(self, event = None):
         print(self.inputText.get('1.0', END))
         self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-        self.logText.insert('1.0', self.inputText.get('1.0', END))
+        self.logText.insert(CURRENT, self.inputText.get('1.0', END))
         self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
         self.inputText.delete('1.0', END)
 
