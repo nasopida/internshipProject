@@ -61,9 +61,44 @@ class Chatting:
         self.myParent.bind('<Return>',self.sendMessage)
 
     def sendMessage(self, event = None):
-        print(self.inputText.get('1.0', END))
+        data = self.inputText.get('1.0', END)
+        print(data)
+        if data=='a':
+            print(1)
+        #간단한 명령어기능
+        if data == "/quit":
+            clnt_logger.addLog(msgLog("program", data))
+        if data == "/whoami":
+            print(user+"입니다")
+        if data == "/whattime":
+            now=datetime.now()
+            print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
+        if data == "/whatdate":
+            now=datetime.now()
+            print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
+        if data == "/dice":
+            randString = dice()
+            print(randString)
+        # clnt_logger.addLog(msgLog("program", data))
+        # clnt_logger.record()
+        
+        #검색기능
+        if data=="/search":
+            f = open('chatLog.txt', mode='r', encoding='utf-8')
+            read = f.read()
+            split = read.split(';')
+            print("찾을 채팅내용을 입력하십쇼: ", end='')
+            find=input()
+            line=1
+            for i in split:
+                if i == find:
+                    print('%d.%s'%(line,i))
+                else:
+                    pass
+                line=line+1
+                
         self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-        self.logText.insert(CURRENT, self.inputText.get('1.0', END))
+        self.logText.insert(END, data)
         self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
         self.inputText.delete('1.0', END)
 
