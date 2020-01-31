@@ -77,7 +77,7 @@ class Chatting:
             now=datetime.now()
             print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
         if data == "/dice":
-            randString = dice()
+            randString = client.dice()
             print(randString)
         # clnt_logger.addLog(msgLog("program", data))
         # clnt_logger.record()
