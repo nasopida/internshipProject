@@ -15,7 +15,7 @@ from logger import msgLog, msgLogger
 port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
+clnt_logger.setFile("./log/clientLogFile.txt")
 clnt_logger.read()
 
 # 채팅을 관리하는 클래스
@@ -54,13 +54,18 @@ class Chatting:
         self.alertLabel.pack(fill=X)
         #채팅창 입력
         self.inputText = Text(self.inputChatFrame)
-        self.inputText.config(width = 45, height=15, state="disabled", yscrollcommand=self.scroll.set)
+        self.inputText.config(width = 45, height=15, yscrollcommand=self.scroll.set)
         self.inputText.pack(side=LEFT)
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
+        self.myParent.bind('<Return>',self.sendMessage)
 
-    def sendMessage(self):
-        print("hi")
+    def sendMessage(self, event = None):
+        print(self.inputText.get('1.0', END))
+        self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
+        self.logText.insert(CURRENT, self.inputText.get('1.0', END))
+        self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
+        self.inputText.delete('1.0', END)
 
 if __name__ == '__main__':
     # 아이디 입력 창

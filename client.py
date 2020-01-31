@@ -28,13 +28,14 @@ def handle_receive(client_socket, user):
 
 def handle_send(client_socket, user):
     global clnt_logger
-    f = open('chatLog.txt', mode='at', encoding='utf-8')
+    f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     while 1:
         try:
             data=input(user+": ")
             client_socket.send(data.encode('utf-8'))
-            
+
+            #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
                 break
@@ -52,17 +53,20 @@ def handle_send(client_socket, user):
            # clnt_logger.addLog(msgLog("program", data))
            # clnt_logger.record()
 
-            #검색은 미완성
+            #검색기능
             if data=="/search":
-                text=f.read()
-                lines=text.split(';')
+                f = open('chatLog.txt', mode='r', encoding='utf-8')
+                read = f.read()
+                split = read.split(';')
                 print("찾을 채팅내용을 입력하십쇼: ",end='')
                 find=input()
-                for i in lines:
-                    if find in lines:
-                        print(i)
+                line=1
+                for i in split:
+                    if i == find:
+                        print('%d.%s'%(line,i))
                     else:
                         pass
+                    line=line+1
 
         except EOFError:
             print('EOF Error!')
