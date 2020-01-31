@@ -5,6 +5,8 @@ import random
 import os
 from tkinter import *
 
+# 로그인 관련
+import setID
 
 import client
 from datetime import datetime
@@ -13,34 +15,8 @@ from logger import msgLog, msgLogger
 port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
-clnt_logger.setFile("clientLogFile.txt")
+clnt_logger.setFile("./log/clientLogFile.txt")
 clnt_logger.read()
-
-#아이디 설정 클래스
-class setID:
-
-    def __init__(self, window):
-        self.myParent = window
-        self.idFrame = Frame(window)
-        window.title("이름 설정")
-        window.geometry("250x100")
-        self.label = Label(window,text="이름 입력")
-        self.text = Entry(window)
-        self.button = Button(window,text="확인", command=self.enterBtn)
-        #엔터키랑 연동
-        #window.bind('<Return>',self.enterBtn)
-        
-        self.label.pack()
-        self.text.pack()
-        self.button.pack()
-
-    def enterBtn(self):
-        if len(self.text.get())!=0:
-            f = open('name.txt','w', encoding='utf-8')
-            f.write(self.text.get())
-            f.close()
-            self.myParent.destroy()
-
 
 # 채팅을 관리하는 클래스
 class Chatting:
@@ -78,27 +54,97 @@ class Chatting:
         self.alertLabel.pack(fill=X)
         #채팅창 입력
         self.inputText = Text(self.inputChatFrame)
-        self.inputText.config(width = 45, height=15, state="disabled", yscrollcommand=self.scroll.set)
+        self.inputText.config(width = 45, height=15, yscrollcommand=self.scroll.set)
         self.inputText.pack(side=LEFT)
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
+        self.myParent.bind('<Return>',self.sendMessage)
 
-    def sendMessage(self):
-        print("hi")
-
-
+    def sendMessage(self, event = None):
+<<<<<<< HEAD
+        data = self.inputText.get('1.0', END)
+        print(data)
+        if data=='a':
+            print(1)
+        #간단한 명령어기능
+        if data == "/quit":
+            clnt_logger.addLog(msgLog("program", data))
+        if data == "/whoami":
+            print(user+"입니다")
+        if data == "/whattime":
+            now=datetime.now()
+            print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
+        if data == "/whatdate":
+            now=datetime.now()
+            print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
+        if data == "/dice":
+            randString = client.dice()
+            print(randString)
+        # clnt_logger.addLog(msgLog("program", data))
+        # clnt_logger.record()
+=======
+        data = self.inputText.get('1.0',INSERT)
+>>>>>>> ca3600422f42842247dbf02b5072eaace0781ab1
+        
+        #print(data)
+        if len(data) > 0:
+            #간단한 명령어기능
+            if data == "/quit":
+                clnt_logger.addLog(msgLog("program", data))
+            if data == "/whoami":
+                print(user+"입니다")
+            if data == "/whattime":
+                now=datetime.now()
+                print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
+            if data == "/whatdate":
+                now=datetime.now()
+                print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
+            if data == "/dice":
+                randString = dice()
+                print(randString)
+            # clnt_logger.addLog(msgLog("program", data))
+            # clnt_logger.record()
+            
+            #검색기능
+            if data=="/search":
+                f = open('chatLog.txt', mode='r', encoding='utf-8')
+                read = f.read()
+                split = read.split(';')
+                print("찾을 채팅내용을 입력하십쇼: ", end='')
+                find=input()
+                line=1
+                for i in split:
+                    if i == find:
+                        print('%d.%s'%(line,i))
+                    else:
+                        pass
+                    line=line+1
+                    
+            self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
+            self.logText.insert(INSERT, data)
+            self.logText.insert(INSERT, '\n')
+            self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
+            self.inputText.delete('1.0', END)
 
 if __name__ == '__main__':
     # 아이디 입력 창
-    if os.path.isfile("name.txt"):
+    """
+    if os.path.isfile("login.txt"):
         pass
     else:
-        idRoot = Tk()
-        myId = setID(idRoot)
-        idRoot.mainloop()  
-    
-    nameFile = open('name.txt',mode='rt',encoding='utf-8')
-    user = nameFile.read()
+        """
+    idRoot = Tk()
+    myId = setID.SetID(idRoot)
+    idRoot.mainloop() 
+    #print(successCheck)
+    #if successCheck == True:
+    if setID.SetID.successCheck(myId) == True:
+        if os.path.isfile("login.config"):
+            loginFile = open('login.config',mode='rt',encoding='utf-8')
+            lines = loginFile.readlines()
+            user = lines[2]
+    else:
+        sys.exit()
 
     # 채팅 창
     chatRoot = Tk()
@@ -129,4 +175,3 @@ if __name__ == '__main__':
 
     receive_thread.join()
     send_thread.join()
-
