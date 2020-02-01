@@ -58,72 +58,57 @@ class Chatting:
         self.inputText.pack(side=LEFT)
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
-        self.myParent.bind('<Return>',self.sendMessage)
+        #self.myParent.bind('<Return>',self.sendMessage)
 
-    def sendMessage(self, event = None):
-<<<<<<< HEAD
-        data = self.inputText.get('1.0', END)
-        print(data)
-        if data=='a':
-            print(1)
-        #간단한 명령어기능
-        if data == "/quit":
-            clnt_logger.addLog(msgLog("program", data))
-        if data == "/whoami":
-            print(user+"입니다")
-        if data == "/whattime":
-            now=datetime.now()
-            print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
-        if data == "/whatdate":
-            now=datetime.now()
-            print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
-        if data == "/dice":
-            randString = client.dice()
-            print(randString)
-        # clnt_logger.addLog(msgLog("program", data))
-        # clnt_logger.record()
-=======
+    def sendMessage(self, event = None):        
         data = self.inputText.get('1.0',INSERT)
->>>>>>> ca3600422f42842247dbf02b5072eaace0781ab1
-        
         #print(data)
-        if len(data) > 0:
+        if len(data) > 0:           
+            self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
+
+            if data!="/quit" and data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice":
+                self.logText.insert(END, '[%s]: '%user)
+            self.logText.insert(END, data)
+            self.logText.insert(END, '\n')
             #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
+                self.myParent.destroy()
+                return
             if data == "/whoami":
-                print(user+"입니다")
+                self.logText.insert(END,user+"입니다\n")
             if data == "/whattime":
                 now=datetime.now()
-                print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
+                self.logText.insert(END,"%s시 %s분 %s초입니다.\n"%(now.hour,now.minute,now.second))
             if data == "/whatdate":
                 now=datetime.now()
-                print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
+                self.logText.insert(END,"%s년 %s월 %s일입니다.\n"%(now.year,now.month,now.day))
             if data == "/dice":
-                randString = dice()
-                print(randString)
+                randString = client.dice()
+                self.logText.insert(END,randString)
+                self.logText.insert(END, '\n')
             # clnt_logger.addLog(msgLog("program", data))
             # clnt_logger.record()
             
-            #검색기능
+            """#검색기능
             if data=="/search":
-                f = open('chatLog.txt', mode='r', encoding='utf-8')
+                f = open('./log/chatLog.txt', mode='r', encoding='utf-8')
                 read = f.read()
                 split = read.split(';')
-                print("찾을 채팅내용을 입력하십쇼: ", end='')
-                find=input()
+                self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ")
+                
+                self.logText.insert(END,'\n')
                 line=1
                 for i in split:
                     if i == find:
-                        print('%d.%s'%(line,i))
+                        self.logText.insert(END,'%d.%s\n'%(line,i))
                     else:
                         pass
                     line=line+1
-                    
-            self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-            self.logText.insert(INSERT, data)
-            self.logText.insert(INSERT, '\n')
+            """
+
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
+            self.logText.see("end")
             self.inputText.delete('1.0', END)
 
 if __name__ == '__main__':
