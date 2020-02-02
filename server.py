@@ -64,7 +64,7 @@ def handle_receive(client_socket, addr, user):
             if "/quit" in string:
                 msg = "---- %s님이 나가셨습니다. ----"%user
                 serv_logger.addLog(msgLog("server", msg))
-                serv_logger.record()
+                #serv_logger.record()
                 #유저 목록에서 방금 종료한 유저의 정보를 삭제
                 del user_list[user]
                 msg_func("인원 : %d"%len(user_list))
@@ -72,13 +72,13 @@ def handle_receive(client_socket, addr, user):
                 break
             string = "%s : %s"%(user, string)
             serv_logger.addLog(msgLog(user, string))
-            serv_logger.record()
+            #serv_logger.record()
             msg_func(string)
         # 강제 종료시 대응하는 예외처리
         except ConnectionResetError:
             msg = "---- %s님이 나가셨습니다. ----"%user
             serv_logger.addLog(msgLog("server", msg))
-            serv_logger.record()
+            #serv_logger.record()
             #유저 목록에서 방금 종료한 유저의 정보를 삭제
             del user_list[user]
             msg_func("인원 : %d"%len(user_list))
