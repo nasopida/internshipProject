@@ -33,7 +33,7 @@ class Chatting:
         #접속한 사람의 이름을 띄워주는 라벨
         self.nameLabelFrame = Frame(self.mainFrame)
         self.nameLabelFrame.pack(fill = X)
-        self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user)
+        self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user.rstrip('\n'))
         self.nameLabel.pack(fill=X)
 
         #채팅 내용을 담는 Frame은 chatLogFrame
@@ -139,9 +139,13 @@ if __name__ == '__main__':
         if os.path.isfile("login.config"):
             loginFile = open('login.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()
-            user = lines[2]
+            #lines[2].splitlines()
+            user = setID.SetID.returnNickname(myId)
+            #user.rstrip('\n')
     else:
         sys.exit()
+
+    print(user)
 
     # 채팅 창
     chatRoot = Tk()
