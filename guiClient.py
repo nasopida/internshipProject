@@ -61,7 +61,6 @@ class Chatting:
         self.myParent.bind('<Return>',self.sendMessage)
 
     def sendMessage(self, event = None):
-<<<<<<< HEAD
         data = self.inputText.get('1.0', END)
         print(data)
         if data=='a':
@@ -82,9 +81,6 @@ class Chatting:
             print(randString)
         # clnt_logger.addLog(msgLog("program", data))
         # clnt_logger.record()
-=======
-        data = self.inputText.get('1.0',INSERT)
->>>>>>> ca3600422f42842247dbf02b5072eaace0781ab1
         
         #print(data)
         if len(data) > 0:
