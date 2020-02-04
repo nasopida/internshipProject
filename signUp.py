@@ -13,6 +13,7 @@ class SignUp:
         window.title("회원 가입")
         #window.geometry("250x140")
         self.centerWindow(window)
+        window.bind("<Return>",self.requestBtn)
         self.mainFrame.pack()
 
         # ID를 입력하는 라벨
@@ -20,6 +21,8 @@ class SignUp:
         self.idFrame.pack(expand=True, pady=5)
         self.idLabel = Label(self.idFrame,text="ID : ")
         self.idText = Entry(self.idFrame)
+        self.idText.icursor(0)
+        self.idText.focus_set()
         self.idLabel.pack(side=LEFT, ipadx = 13)
         self.idText.pack(side=RIGHT, padx = 30)
 
@@ -27,7 +30,7 @@ class SignUp:
         self.passwdFrame = Frame(self.mainFrame)
         self.passwdFrame.pack(pady = 5)
         self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
-        self.passwdText = Entry(self.passwdFrame)
+        self.passwdText = Entry(self.passwdFrame,show="*")
         self.passwdLabel.pack(side=LEFT)
         self.passwdText.pack(side=RIGHT, padx=10)
 
@@ -44,12 +47,12 @@ class SignUp:
         self.requestButton.pack(pady = 10)
     
     # 가입 요청을 하는 버튼
-    def requestBtn(self):
+    def requestBtn(self, event=None):
         if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
-            f = open('login.config','w+t',encoding='utf-8')
+            f = open('login.config','a',encoding='utf-8')
             f.write(self.idText.get()+'\n')
             f.write(self.passwdText.get()+'\n')
-            f.write(self.nicknameText.get())
+            f.write(self.nicknameText.get()+'\n')
             f.close()
             self.myParent.destroy()
     

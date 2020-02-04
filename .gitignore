@@ -1,6 +1,10 @@
-logFile.txt
-__pycache__
+*.bin
+*.config
 *.txt
 *.pyc
 img_GEN
-*.bin
+logFile.txt
+logger.cpython-37.pyc
+__pycache__/*
+__pycache__
+./__pycache__

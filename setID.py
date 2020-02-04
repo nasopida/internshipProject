@@ -6,6 +6,8 @@ import ctypes
 import signUp
 #from guiClient import successCheck
 
+
+
 #아이디 설정 클래스
 class SetID:
     def __init__(self, window):
@@ -18,22 +20,30 @@ class SetID:
         #window.geometry("250x140")
         self.mainFrame.pack(fill=X)
         self.successCheck = False
+        window.bind("<Return>",self.signInBtn)
+
+        # 내 아이디&비밀번호
+        self.myNickname = ""
 
         # ID 프레임
         self.idFrame = Frame(self.mainFrame)
         self.idFrame.pack(expand=True,pady=5)
         self.idLabel = Label(self.idFrame,text="ID : ")
         self.idText = Entry(self.idFrame)
+        self.idText.icursor(0)
+        self.idText.focus_set()
         self.idLabel.pack(side=LEFT, ipadx = 13)
         self.idText.pack(side=RIGHT, padx = 30)
+        
 
         # 비밀번호 프레임
         self.passwdFrame = Frame(self.mainFrame)
         self.passwdFrame.pack()
         self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
-        self.passwdText = Entry(self.passwdFrame)
+        self.passwdText = Entry(self.passwdFrame,show="*")
         self.passwdLabel.pack(side=LEFT)
         self.passwdText.pack(side=RIGHT, padx=10)
+        
         
         self.loginButton = Button(window,text="로그인", command=self.signInBtn)
         #엔터키랑 연동
@@ -49,26 +59,28 @@ class SetID:
         mySignUp = signUp.SignUp(signUpRoot)
         signUpRoot.mainloop()
 
+    # ID,PW반환
+    def returnNickname(self):
+        return self.myNickname
+
     # 로그인 버튼
-    def signInBtn(self):
+    def signInBtn(self, event=None):
         #global suc
         if os.path.isfile("login.config"):
             loginFile = open('login.config', mode='rt', encoding='utf-8')
             lines = loginFile.readlines()
-            #print((self.idText.get()+'\n' == lines[0]))
-            #print((self.passwdText.get()+'\n' == lines[1]))
+            max = len(lines)
+            
             # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
-            if (self.idText.get()+'\n' == lines[0]) and (self.passwdText.get()+'\n' == lines[1]):
-                self.successCheck = True
-                self.myParent.destroy()
-            else:
-                self.successCheck = False
-                failRoot = Tk()
-                failWindow = loginFail.LoginFail(failRoot)
-                failRoot.mainloop()
-                
-        else:
-            self.successCheck = False
+            # 아이디 여러개 저장 가능
+            for i in range(0,max-1,3):
+                if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
+                    self.successCheck = True
+                    self.myNickname = lines[i+2]
+                    self.myParent.destroy()
+                    break
+        # 전부 틀릴경우 로그인실패 출력
+        if self.successCheck == False:
             failRoot = Tk()
             failWindow = loginFail.LoginFail(failRoot)
             failRoot.mainloop()
