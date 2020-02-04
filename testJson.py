@@ -3,24 +3,24 @@ import json
 if __name__ == "__main__":
     Register = {
         "packetType":"register",
-        "id":"",
-        "password":"",
-        "NickName":"",
+        "userID":"",
+        "userPass":"",
+        "nickName":"",
         "timestamp":""
     }
 
     alter = {
         "packetType":"alter",
-        "id":"",
-        "password":"",
-        "NickName":"",
+        "userID":"",
+        "userPass":"",
+        "nickName":"",
         "timestamp":""
     }
 
     Login = {
         "packetType":"login",
-        "id":"",
-        "password":"",
+        "userID":"",
+        "userPass":"",
         "timestamp":""
     }
 
