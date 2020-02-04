@@ -67,12 +67,15 @@ class SetID:
     def signInBtn(self, event=None):
         #global suc
         if os.path.isfile("login.config"):
+            # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
+            # 나중에는 서버에서 json파일을 불러와서 처리
             loginFile = open('login.config', mode='rt', encoding='utf-8')
             lines = loginFile.readlines()
             max = len(lines)
             
             # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
-            # 아이디 여러개 저장 가능
+            # 아이디 여러개 저장 가능 -> 삭제 예정
+            # 이부분은 나중에 서버에서 처리
             for i in range(0,max-1,3):
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
