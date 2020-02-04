@@ -4,6 +4,7 @@ import setID
 import json
 import os
 from collections import OrderedDict
+from packet import *
 
 # 회원가입을 진행하는 클래스
 class SignUp:
@@ -58,6 +59,8 @@ class SignUp:
     
     def createID(self):
         # 파일 데이터 생성
+        alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get())
+        """
         user_data = OrderedDict()
 
         user_data["packetType"] = "alter"
@@ -72,6 +75,7 @@ class SignUp:
         
         # 서버에 보낸 이후에 실행할 문장 -> 한 컴퓨터에서 회원가입을 여러개 하기 위해 json파일을 송신 후 삭제함
         #os.remove('user.json')
+        """
 
         # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
         f = open('login.config','a',encoding='utf-8')
