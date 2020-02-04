@@ -67,7 +67,7 @@ class Chatting:
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
             if data!="/quit" and data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice":
-                self.logText.insert(END, '[%s]: '%user)
+                self.logText.insert(END, '[%s]:'%user)
             self.logText.insert(END, data)
             self.logText.insert(END, '\n')
             #간단한 명령어기능
