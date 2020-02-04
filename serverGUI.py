@@ -38,14 +38,20 @@ def delCheckBox(Frame, index):
 # Compound Funcs
 
 def delSelectedCheckBox(window):
-    global CheckBoxVarList
+    global CheckBoxVarList, USRCNT
+    if USRCNT == 0:
+        return
     if not messagebox.askyesno('Verify', 'Really Delete?'):
         return
-    FrameList = window.pack_slaves()
-    for Var in CheckBoxVarList:
-        if Var.get() == True:
-            num = CheckBoxVarList.index(Var)
+    num = 0
+    while True:
+        if num >= len(CheckBoxVarList):
+            break
+        if CheckBoxVarList[num].get() == True:
+            FrameList = window.pack_slaves()
             delCheckBox(FrameList[num+1], num)
+            num -= 1
+        num += 1
 
 def addUserDialogue():
     DialogueBox = Toplevel()
@@ -102,7 +108,7 @@ if __name__ == "__main__":
     bottom_bottomFrame.pack(fill=X, expand=True, side=BOTTOM)
 
     # Frame Updates
-    topLabel = Label(topFrame,text="유저수 : 0\n")
+    topLabel = Label(topFrame, text="유저수 : 0\n", background="WHITE")
     scroll = Scrollbar(centerFrame)
     KickButton = Button(bottom_topFrame, text="강퇴투표")
     addButton = Button(bottom_bottomFrame, text="추가", command=lambda: addUserDialogue())
@@ -114,6 +120,13 @@ if __name__ == "__main__":
     addButton.pack(expand=True, fill=BOTH, side=LEFT)
     delButton.pack(expand=True, fill=BOTH, side=LEFT)
     modButton.pack(expand=True, fill=BOTH, side=LEFT)
+
+    ####
+    addCheckBox(centerFrame, "user1")
+    addCheckBox(centerFrame, "user2")
+    addCheckBox(centerFrame, "user3")
+    addCheckBox(centerFrame, "user4")
+    addCheckBox(centerFrame, "user5")
 
 
     mainScreen.mainloop()
