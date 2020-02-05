@@ -17,6 +17,7 @@ class SignUp:
         window.title("회원 가입")
         #window.geometry("250x140")
         self.centerWindow(window)
+        
         window.bind("<Return>",self.requestBtn)
         self.mainFrame.pack()
 

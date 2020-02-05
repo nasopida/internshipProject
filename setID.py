@@ -6,8 +6,6 @@ import ctypes
 import signUp
 #from guiClient import successCheck
 
-
-
 #아이디 설정 클래스
 class SetID:
     def __init__(self, window):
@@ -20,6 +18,7 @@ class SetID:
         #window.geometry("250x140")
         self.mainFrame.pack(fill=X)
         self.successCheck = False
+
         window.bind("<Return>",self.signInBtn)
 
         # 내 아이디&비밀번호
@@ -45,7 +44,7 @@ class SetID:
         self.passwdText.pack(side=RIGHT, padx=10)
         
         
-        self.loginButton = Button(window,text="로그인", command=self.signInBtn)
+        self.loginButton = Button(window,text="로그인", command=self.signInBtn, relief=RIDGE)
         #엔터키랑 연동
         #window.bind('<Return>',self.enterBtn)
         self.loginButton.pack(pady=10)
@@ -54,9 +53,13 @@ class SetID:
         self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
         self.signUpButton.pack(pady=10)
     # 회원가입 버튼
+
     def signUpBtn(self):
-        signUpRoot = Tk()
+        
+        signUpRoot = Toplevel(self.myParent)
+        signUpRoot.grab_set()
         mySignUp = signUp.SignUp(signUpRoot)
+        signUpRoot.resizable(0,0)
         signUpRoot.mainloop()
 
     # ID,PW반환
@@ -84,9 +87,13 @@ class SetID:
                     break
         # 전부 틀릴경우 로그인실패 출력
         if self.successCheck == False:
-            failRoot = Tk()
-            failWindow = loginFail.LoginFail(failRoot)
-            failRoot.mainloop()
+            print("loginFail")
+            # 탑레벨로 묶고 grab_set으로 고정
+            self.failRoot = Toplevel(self.myParent)
+            self.failRoot.grab_set()
+            self.failWindow = loginFail.LoginFail(self.failRoot)
+            self.failRoot.resizable(0,0)
+            self.failRoot.mainloop()
             
     def successCheck(self):
         if(self.successCheck == True):

@@ -122,6 +122,7 @@ if __name__ == '__main__':
         """
     idRoot = Tk()
     myId = setID.SetID(idRoot)
+    idRoot.resizable(0,0)
     idRoot.mainloop() 
     #print(successCheck)
     #if successCheck == True:
@@ -140,6 +141,7 @@ if __name__ == '__main__':
     # 채팅 창
     chatRoot = Tk()
     myChat = Chatting(chatRoot)
+    chatRoot.resizable(0,0)
     chatRoot.mainloop()
 
     """
