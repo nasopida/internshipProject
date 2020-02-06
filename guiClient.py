@@ -4,6 +4,8 @@ import threading
 import random
 import os
 from tkinter import *
+import ctypes
+import tkinter
 
 # 로그인 관련
 import setID
@@ -23,17 +25,19 @@ class Chatting:
     def __init__(self, window):
         # 나중에 창을 파괴하기 위해
         self.myParent = window
-        
+
+        self.centerWindow(window)
+
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
         window.title("채팅방")
-        window.geometry("400x600")
+        #window.geometry("400x600")
         self.mainFrame.pack(fill=X)
 
         #접속한 사람의 이름을 띄워주는 라벨
         self.nameLabelFrame = Frame(self.mainFrame)
         self.nameLabelFrame.pack(fill = X)
-        self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user.rstrip('\n'))
+        self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user)
         self.nameLabel.pack(fill=X)
 
         #채팅 내용을 담는 Frame은 chatLogFrame
@@ -53,12 +57,20 @@ class Chatting:
         self.alertLabel = Label(self.inputChatFrame,text="채팅 입력")
         self.alertLabel.pack(fill=X)
         #채팅창 입력
+        #self.inputText = Entry(self.inputChatFrame)
         self.inputText = Text(self.inputChatFrame)
         self.inputText.config(width = 45, height=15, yscrollcommand=self.scroll.set)
+        self.inputText.mark_set(INSERT,'1.0')
+        self.inputText.focus_set()
         self.inputText.pack(side=LEFT)
+       
+
+        #self.inputText.icursor(0)
+        
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
-        #self.myParent.bind('<Return>',self.sendMessage)
+
+        window.bind('<Return>',self.sendMessage)
 
     def sendMessage(self, event = None):
         data = self.inputText.get('1.0',INSERT)
@@ -112,6 +124,16 @@ class Chatting:
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
             self.logText.see("end")
             self.inputText.delete('1.0', END)
+    
+    def centerWindow(self, window):
+        width = 400
+        height = 600
+        userScreen = ctypes.windll.user32
+        screen_width = userScreen.GetSystemMetrics(0)
+        screen_height = userScreen.GetSystemMetrics(1)
+        x = screen_width/2 - width/2
+        y = screen_height/2 - height/2
+        window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
 if __name__ == '__main__':
     # 아이디 입력 창
@@ -131,12 +153,13 @@ if __name__ == '__main__':
             loginFile = open('login.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()
             #lines[2].splitlines()
-            user = setID.SetID.returnNickname(myId)
+            myUser = setID.SetID.returnNickname(myId)
             #user.rstrip('\n')
     else:
         sys.exit()
 
-    print(user)
+    print(myUser)
+    user = myUser.rstrip('\n')
 
     # 채팅 창
     chatRoot = Tk()
@@ -144,12 +167,12 @@ if __name__ == '__main__':
     chatRoot.resizable(0,0)
     chatRoot.mainloop()
 
-    """
+    
     clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")
     clnt_logger.read()
     """
-
+    """
     #IPv4 체계, TCP 타입 소켓 객체를 생성
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -168,3 +191,4 @@ if __name__ == '__main__':
 
     receive_thread.join()
     send_thread.join()
+    
