@@ -6,6 +6,7 @@ import os
 from tkinter import *
 import ctypes
 import tkinter
+import userList
 
 # 로그인 관련
 import setID
@@ -63,14 +64,19 @@ class Chatting:
         self.inputText.mark_set(INSERT,'1.0')
         self.inputText.focus_set()
         self.inputText.pack(side=LEFT)
-       
-
         #self.inputText.icursor(0)
         
         self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
 
         window.bind('<Return>',self.sendMessage)
+
+        #유저 리스트를 새로 띄워주는 창
+        userListRoot = Toplevel(self.myParent)
+        users = userList.UserList(userListRoot)
+        userListRoot.resizable(0,0)
+        userListRoot.mainloop()
+
 
     def sendMessage(self, event = None):
         data = self.inputText.get('1.0',INSERT)

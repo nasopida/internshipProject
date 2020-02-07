@@ -33,7 +33,6 @@ class SetID:
         self.idText.focus_set()
         self.idLabel.pack(side=LEFT, ipadx = 13)
         self.idText.pack(side=RIGHT, padx = 30)
-        
 
         # 비밀번호 프레임
         self.passwdFrame = Frame(self.mainFrame)
