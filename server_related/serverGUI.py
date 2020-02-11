@@ -23,7 +23,8 @@ def addCheckBox(window, userName):
     temp = Checkbutton(tempFrame, variable=tempVar, text=userName, background="WHITE", activebackground="WHITE")
     CheckBoxVarList.append(tempVar)
     tempFrame.pack(side=TOP, fill=X)
-    temp.pack(side=LEFT)
+    temp.pack(side=LEFT).
+    
     USRCNT += 1
     topLabel["text"] ="유저수 : "+ str(USRCNT) +"\n"
     
@@ -122,12 +123,7 @@ if __name__ == "__main__":
     modButton.pack(expand=True, fill=BOTH, side=LEFT)
 
     ####
-    addCheckBox(centerFrame, "user1")
-    addCheckBox(centerFrame, "user2")
-    addCheckBox(centerFrame, "user3")
-    addCheckBox(centerFrame, "user4")
-    addCheckBox(centerFrame, "user5")
-
 
     mainScreen.mainloop()
 
+    
