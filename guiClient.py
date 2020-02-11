@@ -70,13 +70,45 @@ class Chatting:
         self.inputBtn.pack(side=LEFT)
 
         window.bind('<Return>',self.sendMessage)
-
+            
         #유저 리스트를 새로 띄워주는 창
         userListRoot = Toplevel(self.myParent)
         users = userList.UserList(userListRoot)
+        def all_user():
+            for name in client.user_list:
+                users.addUser(name)
+            #userListRoot.after(500,all_user)
         userListRoot.resizable(0,0)
+        userListRoot.after(500,all_user)
         userListRoot.mainloop()
 
+        
+    def search(self):
+        search = Tk()
+        frame = Frame(search)
+        search.title("검색")
+        search.geometry("200x50")
+        word = Text(search)
+        word.config(width = 20, height = 1)
+        word.pack()
+        def file_search(event):
+            f = open('./log/logFile.bin', mode='rb')
+            findtxt = []
+            #read = f.read()
+            
+            data = word.get('1.0',INSERT)
+            findtxt.append(data.strip())
+            i = (len(findtxt)-1)
+            print("@"*50)
+            print("검색 키워드:"+findtxt[i])
+            print("@"*50)
+            for content in f.readlines():
+                if content.find(findtxt[i].encode('utf-8')) != -1:
+                    print(data)
+        button = Button(search, text="검색")
+        button.bind('<Button-1>', file_search)
+        button.pack()
+        search.resizable(0,0)
 
     def sendMessage(self, event = None):
         data = self.inputText.get('1.0',INSERT)
@@ -91,7 +123,8 @@ class Chatting:
             #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
-                self.logText.insert(END, '\n')
+                self.myParent.destroy()
+                return
             if data == "/whoami":
                 self.logText.insert(END,user+"입니다")
                 self.logText.insert(END, '\n')
@@ -109,22 +142,26 @@ class Chatting:
                 self.logText.insert(END, '\n')
             # clnt_logger.addLog(msgLog("program", data))
             # clnt_logger.record()
+            if data == "/user":
+                #print('a')
+                for name in client.user_list:
+                    print(name)
             
-            """#검색기능
+            #검색기능
             if data=="/search":
-                f = open('chatLog.txt', mode='r', encoding='utf-8')
-                read = f.read()
-                split = read.split(';')
-                self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ", end='')
-                find=input()
-                line=1
+                #split = read.split()
+                #self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ", end='')
+                #find=input()
+                self.search()
+                
+                """line=1
                 for i in split:
                     if i == find:
                         self.logText.insert(END,'%d.%s'%(line,i))
                     else:
                         pass
                     line=line+1
-                    """
+                """    
 
       
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
@@ -166,13 +203,17 @@ if __name__ == '__main__':
 
     print(myUser)
     user = myUser.rstrip('\n')
-
+    
     # 채팅 창
-    chatRoot = Tk()
-    myChat = Chatting(chatRoot)
-    chatRoot.resizable(0,0)
-    chatRoot.mainloop()
+    def chat():
+        chatRoot = Tk()
+        myChat = Chatting(chatRoot)
+        chatRoot.resizable(0,0)
+        chatRoot.mainloop()
 
+    chat_thread = threading.Thread(target=chat, args=())
+    chat_thread.daemon = True
+    chat_thread.start()
     
     clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")
@@ -195,6 +236,7 @@ if __name__ == '__main__':
     send_thread.daemon = True
     send_thread.start()
 
+    chat_thread.join()
     receive_thread.join()
     send_thread.join()
     
