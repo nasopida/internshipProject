@@ -6,8 +6,6 @@ import ctypes
 import signUp
 #from guiClient import successCheck
 
-
-
 #아이디 설정 클래스
 class SetID:
     def __init__(self, window):
@@ -20,6 +18,7 @@ class SetID:
         #window.geometry("250x140")
         self.mainFrame.pack(fill=X)
         self.successCheck = False
+
         window.bind("<Return>",self.signInBtn)
 
         # 내 아이디&비밀번호
@@ -34,7 +33,6 @@ class SetID:
         self.idText.focus_set()
         self.idLabel.pack(side=LEFT, ipadx = 13)
         self.idText.pack(side=RIGHT, padx = 30)
-        
 
         # 비밀번호 프레임
         self.passwdFrame = Frame(self.mainFrame)
@@ -45,7 +43,7 @@ class SetID:
         self.passwdText.pack(side=RIGHT, padx=10)
         
         
-        self.loginButton = Button(window,text="로그인", command=self.signInBtn)
+        self.loginButton = Button(window,text="로그인", command=self.signInBtn, relief=RIDGE)
         #엔터키랑 연동
         #window.bind('<Return>',self.enterBtn)
         self.loginButton.pack(pady=10)
@@ -54,9 +52,13 @@ class SetID:
         self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
         self.signUpButton.pack(pady=10)
     # 회원가입 버튼
+
     def signUpBtn(self):
-        signUpRoot = Tk()
+        
+        signUpRoot = Toplevel(self.myParent)
+        signUpRoot.grab_set()
         mySignUp = signUp.SignUp(signUpRoot)
+        signUpRoot.resizable(0,0)
         signUpRoot.mainloop()
 
     # ID,PW반환
@@ -67,12 +69,15 @@ class SetID:
     def signInBtn(self, event=None):
         #global suc
         if os.path.isfile("login.config"):
+            # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
+            # 나중에는 서버에서 json파일을 불러와서 처리
             loginFile = open('login.config', mode='rt', encoding='utf-8')
             lines = loginFile.readlines()
             max = len(lines)
             
             # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
-            # 아이디 여러개 저장 가능
+            # 아이디 여러개 저장 가능 -> 삭제 예정
+            # 이부분은 나중에 서버에서 처리
             for i in range(0,max-1,3):
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
@@ -81,9 +86,13 @@ class SetID:
                     break
         # 전부 틀릴경우 로그인실패 출력
         if self.successCheck == False:
-            failRoot = Tk()
-            failWindow = loginFail.LoginFail(failRoot)
-            failRoot.mainloop()
+            print("loginFail")
+            # 탑레벨로 묶고 grab_set으로 고정
+            self.failRoot = Toplevel(self.myParent)
+            self.failRoot.grab_set()
+            self.failWindow = loginFail.LoginFail(self.failRoot)
+            self.failRoot.resizable(0,0)
+            self.failRoot.mainloop()
             
     def successCheck(self):
         if(self.successCheck == True):

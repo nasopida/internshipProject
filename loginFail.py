@@ -7,7 +7,7 @@ class LoginFail:
     def __init__(self, window):
         #창 파괴를 위한 변수
         self.myParent = window
-
+        
         # mainFrame
         self.mainFrame = Frame(window)
         window.title("로그인 실패!")
@@ -15,14 +15,19 @@ class LoginFail:
         self.centerWindow(window)
         self.mainFrame.pack()
 
+        window.bind("<Return>",self.endBtn)
+
         # 로그인 실패를 출력
         self.failLabel = Label(self.mainFrame, text="로그인 실패!")
         self.failLabel.pack(fill=BOTH, padx=30, pady=10)
 
+        self.failLabel.focus_set()
+
         # 종료 버튼
         self.endButton = Button(self.mainFrame, text="확인", command=self.endBtn)
         self.endButton.pack(pady=5)
-    def endBtn(self):
+
+    def endBtn(self, event=None):
         self.myParent.destroy()
 
     # 윈도우 창

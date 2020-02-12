@@ -1,6 +1,10 @@
 from tkinter import *
 import ctypes
 import setID
+import json
+import os
+from collections import OrderedDict
+from packet import *
 
 # 회원가입을 진행하는 클래스
 class SignUp:
@@ -13,6 +17,7 @@ class SignUp:
         window.title("회원 가입")
         #window.geometry("250x140")
         self.centerWindow(window)
+        
         window.bind("<Return>",self.requestBtn)
         self.mainFrame.pack()
 
@@ -49,12 +54,37 @@ class SignUp:
     # 가입 요청을 하는 버튼
     def requestBtn(self, event=None):
         if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
-            f = open('login.config','a',encoding='utf-8')
-            f.write(self.idText.get()+'\n')
-            f.write(self.passwdText.get()+'\n')
-            f.write(self.nicknameText.get()+'\n')
-            f.close()
+            # 아이디를 Json파일로 생성
+            self.createID()
             self.myParent.destroy()
+    
+    def createID(self):
+        # 파일 데이터 생성
+        alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get())
+        """
+        user_data = OrderedDict()
+
+        user_data["packetType"] = "alter"
+        user_data["userID"] = self.idText.get()
+        user_data["userPass"] = self.passwdText.get()
+        user_data["user"] = self.nicknameText.get()
+        user_data["timestamp"] = ""
+        # Json파일로 생성
+        # 생성한 json파일을 서버에 송신해주어야 함
+        with open('user.json','w',encoding="utf-8") as make_file:
+            json.dump(user_data,make_file,ensure_ascii=False,indent="\t")
+        
+        # 서버에 보낸 이후에 실행할 문장 -> 한 컴퓨터에서 회원가입을 여러개 하기 위해 json파일을 송신 후 삭제함
+        #os.remove('user.json')
+        """
+
+        # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
+        f = open('login.config','a',encoding='utf-8')
+        f.write(self.idText.get()+'\n')
+        f.write(self.passwdText.get()+'\n')
+        f.write(self.nicknameText.get()+'\n')
+        f.close()
+
     
     # 화면을 중앙으로 오게 해주는 함수
     def centerWindow(self, window):
