@@ -16,14 +16,14 @@ class ServerGUI:
         temp.pack(side=LEFT)
         
         self.__USRCNT += 1
-        self.__UpdateUserCnt()
+        self.UpdateUserCnt()
 
         
     def delCheckBox(self, Frame, index):
         self.__ChkBoxVarList.pop(index)
         Frame.destroy()
         self.__USRCNT -= 1
-        self.__UpdateUserCnt()
+        self.UpdateUserCnt()
 
 
     def delSelectedCheckBox(self, window):
@@ -76,8 +76,11 @@ class ServerGUI:
         mainScreen.geometry(pGeometry)
         return mainScreen
 
-    def __UpdateUserCnt(self):
+    def UpdateUserCnt(self):
         self.__topLabel["text"] = "유저수 : "+ str(self.__USRCNT) +"\n"
+
+    def setUserCnt(self, cnt):
+        self.__USRCNT = cnt
 
     def initialize(self):
         # MainFrame initialization
