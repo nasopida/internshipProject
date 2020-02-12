@@ -8,12 +8,17 @@ from logger import msgLog, msgLogger
 clnt_logger = msgLogger()
 port = 57270
 host = "127.0.0.1"
-
+user_list = {}
 def dice():
     return str(random.randint(1,6))
 
 def handle_receive(client_socket, user):
     global clnt_logger
+    global user_list
+    user_name=client_socket.recv(1024).decode('utf-8')
+    while user_name != "---- %s님이 들어오셨습니다. ----"%user:
+        user_list[user_name] = client_socket
+        user_name = client_socket.recv(1024).decode('utf-8')
     while 1:
         try:
             data = client_socket.recv(1024)
@@ -22,6 +27,14 @@ def handle_receive(client_socket, user):
             clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
         data = data.decode('utf-8')
+        if data == "/userin":
+            data = client_socket.recv(1024).decode('utf-8')
+            user_list[data] = client_socket
+            continue
+        if data == "/userout":
+            data = client_socket.recv(1024).decode('utf-8')
+            del user_list[data]
+            continue
         if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)
@@ -38,6 +51,8 @@ def handle_send(client_socket, user):
             #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
+                for name in user_list:
+                    print(name)
                 break
             if data == "/whoami":
                 print(user+"입니다")

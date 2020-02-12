@@ -1,6 +1,9 @@
 from tkinter import *
 import guiClient
 import ctypes
+import tkinter as tk
+
+rowLevel = 0
 
 class UserList:
     def __init__(self, window):
@@ -24,11 +27,13 @@ class UserList:
         self.printUserLabel.pack(expand = True)
 
         #유저를 담는 라벨
-        self.userFrame = Frame(self.mainFrame)
-        self.userFrame.pack(fill=X, side=LEFT)
+        self.userFrame = Frame(self.mainFrame, background="yellow")
+        self.userFrame.pack(fill=X, side=TOP)
 
-        self.addUser('안녕')
-
+        #self.addUser('안녕')
+        # 삭제 버튼
+        self.deleteBtn =  Button(self.mainFrame, command=self.deleteUser, text="삭제")
+        self.deleteBtn.pack(side=BOTTOM)
 
     def centerWindow(self, window):
         width = 300
@@ -40,18 +45,18 @@ class UserList:
         x = screen_width / 2 + 200 + 3
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
+
     
     # 아래 2개 함수는 유저가 들어올때 / 나갈때 자동 호출되도록 구현
     # 유저를 추가시키는 함수
     def addUser(self, userName):
-        tempVar = BooleanVar(value=False)
-        tempFrame = Frame(self.userFrame, background="WHITE")
-        temp = Checkbutton(tempFrame, variable=tempVar, text=userName, background="WHITE", activebackground="WHITE")
-        self.checkBoxList.append(tempVar)
-        temp.pack(fill=X,side=LEFT)
-        tempFrame.pack(fill=X,side=LEFT)
+        global rowLevel
         self.userCnt += 1
         self.printUserLabel["text"] = "user : " + str(self.userCnt)
+        tempVar = tk.IntVar()
+        tempCheck = tk.Checkbutton(self.userFrame,text=userName,variable=tempVar)
+        tempCheck.grid(column=0, row=rowLevel)
+        rowLevel += 1
 
     # 유저를 제거하는 함수
     def deleteUser(self, userName):
