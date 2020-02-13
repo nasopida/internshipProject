@@ -6,6 +6,9 @@ import os
 from collections import OrderedDict
 from packet import *
 
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
 # 회원가입을 진행하는 클래스
 class SignUp:
     def __init__(self, window):

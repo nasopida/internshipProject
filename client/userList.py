@@ -3,6 +3,10 @@ import guiClient
 import ctypes
 import tkinter as tk
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
 rowLevel = 0
 
 class UserList:

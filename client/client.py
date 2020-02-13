@@ -4,6 +4,9 @@ import threading
 import random
 from datetime import datetime
 from logger import msgLog, msgLogger
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 clnt_logger = msgLogger()
 port = 57270

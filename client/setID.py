@@ -6,6 +6,9 @@ import ctypes
 import signUp
 #from guiClient import successCheck
 
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
 #아이디 설정 클래스
 class SetID:
     def __init__(self, window):

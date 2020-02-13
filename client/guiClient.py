@@ -7,6 +7,8 @@ from tkinter import *
 import ctypes
 import tkinter
 import userList
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 로그인 관련
 import setID
@@ -82,7 +84,6 @@ class Chatting:
         userListRoot.resizable(0,0)
         userListRoot.after(500,all_user)
         userListRoot.mainloop()
-
         
     def search(self):
         search = Tk()
