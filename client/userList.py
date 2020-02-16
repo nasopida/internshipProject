@@ -24,6 +24,8 @@ class UserList:
         self.checkBoxList = []
         # 유저 수 
         self.userCnt = 0
+        # 유저 리스트
+        self.user_list = {}
 
         #유저수 출력 라벨
         self.printUserFrame = Frame(self.mainFrame)
@@ -62,6 +64,7 @@ class UserList:
         self.checkBoxList.append(tempVar)
         tempFrame.pack(side=TOP, fill=X)
         temp.pack(side=LEFT)
+        self.user_list[userName] = self.userCnt
         self.userCnt += 1
         self.printUserLabel["text"] = "user : " + str(self.userCnt)
         
