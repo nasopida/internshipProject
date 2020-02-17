@@ -74,12 +74,7 @@ class UserList:
         
     # 유저가 나갔을 때 실행되는 함수
     def deleteUser(self, userName):
-        i = 0
-        print(user_list.index(userName))
-        self.checkboxList.pop(user_list.index(userName))
-        self.frameList.pop(frameList[i])
-        self.userCnt -= 1
-        self.printUserLabel["text"] = "user : " + str(self.userCnt)
+        pass
 
     # 강퇴투표 함수
     def banUser(self):

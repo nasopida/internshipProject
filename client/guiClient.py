@@ -92,20 +92,9 @@ class Chatting:
                     self.users.addUser(name)
             userListRoot.after(500,all_user)
 
-        def del_user():
-            for name in self.users.user_list:
-                if name not in client.user_list:
-                    print(name)
-                    self.users.delUser(name)
-            userListRoot.after(500,del_user)
-
         userListRoot.resizable(0,0)
         userListRoot.after(500,all_user)
-
-        userListRoot.resizable(0,0)
-        userListRoot.after(500,del_user)
-
-        """
+        
         def server_receive():
             for data in client.server_chat:
                 self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
@@ -118,7 +107,7 @@ class Chatting:
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
         receive_thread.join()
-        """
+        
 
     def search(self):
         search = Tk()
