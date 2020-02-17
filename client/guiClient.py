@@ -8,6 +8,7 @@ import ctypes
 import tkinter
 import userList
 import sys
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 로그인 관련
@@ -207,7 +208,8 @@ class Chatting:
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
-    def return_self():
+    # 의미를 모르겠음
+    def return_self(self):
         return self
 
 if __name__ == '__main__':

@@ -1,8 +1,14 @@
 from tkinter import *
+#import client.client as client
+#import client.guiClient as guiClient
+import client
 import guiClient
+
 import ctypes
 import tkinter as tk
 import tkinter.ttk
+from userListManage import cutOffUser
+from userListManage import deleteUser
 
 import os
 import sys
@@ -49,10 +55,8 @@ class UserList:
         self.deleteBtn =  Button(self.btnFrame,width=20, command=self.deleteUser, text="강퇴 요청")
         self.deleteBtn.pack(side=LEFT)
         # 차단 버튼
-        self.blackUserBtn = Button(self.btnFrame, width=20, command=self.blackUser, text="차단")
-        self.blackUserBtn.pack(side=RIGHT)
-
-        
+        self.blackListUserBtn = Button(self.btnFrame, width=20, command=self.cutOffUser, text="차단")
+        self.blackListUserBtn.pack(side=RIGHT)     
     
     # 아래 2개 함수는 유저가 들어올때 / 나갈때 자동 호출되도록 구현
     # 유저를 추가시키는 함수
@@ -70,12 +74,20 @@ class UserList:
         
 
     # 유저를 제거하는 함수
-    def deleteUser(self, userName):
-        pass
+    def deleteUser(self):
+        self.deleteRoot = Toplevel(self.myParent)
+        self.deleteRoot.grab_set()
+        deleteWindow = deleteUser.DeleteUser(self.deleteRoot, self.user_list)
+        self.deleteRoot.resizable(0,0)
+        self.deleteRoot.mainloop()
 
     # 유저를 차단하는 함수, 구현순위 맨 뒤
-    def blackUser(self, userName):
-        pass
+    def cutOffUser(self):
+        self.cutOffRoot = Toplevel(self.myParent)
+        self.cutOffRoot.grab_set()
+        cutOfftWindow = cutOffUser.CutOffUser(self.cutOffRoot, self.user_list)
+        self.cutOffRoot.resizable(0,0)
+        self.cutOffRoot.mainloop()
 
     #가운데로 오게 하는 함수
     def centerWindow(self, window):
