@@ -8,13 +8,11 @@ import ctypes
 import tkinter as tk
 import tkinter.ttk
 from userListManage import cutOffUser
-from userListManage import deleteUser
+from userListManage import banUser
 
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
-rowLevel = 0
 
 class UserList:
     def __init__(self, window):
@@ -26,6 +24,8 @@ class UserList:
         window.title('유저 리스트')
         self.centerWindow(window)
 
+        # 프레임 리스트
+        self.frameList = []
         # 체크박스 리스트
         self.checkBoxList = []
         # 유저 수 
@@ -52,8 +52,8 @@ class UserList:
         self.btnFrame = tk.Frame(self.mainFrame)
         self.btnFrame.pack(fill=X, side=BOTTOM)
         # 강퇴 요청 버튼
-        self.deleteBtn =  Button(self.btnFrame,width=20, command=self.deleteUser, text="강퇴 요청")
-        self.deleteBtn.pack(side=LEFT)
+        self.banBtn =  Button(self.btnFrame,width=20, command=self.banUser, text="강퇴 요청")
+        self.banBtn.pack(side=LEFT)
         # 차단 버튼
         self.blackListUserBtn = Button(self.btnFrame, width=20, command=self.cutOffUser, text="차단")
         self.blackListUserBtn.pack(side=RIGHT)     
@@ -61,9 +61,9 @@ class UserList:
     # 아래 2개 함수는 유저가 들어올때 / 나갈때 자동 호출되도록 구현
     # 유저를 추가시키는 함수
     def addUser(self, userName):
-        global rowLevel
         tempVar = BooleanVar(value=False)
         tempFrame = Frame(self.userFrame)
+        self.frameList.append(tempFrame)
         temp = Checkbutton(tempFrame, variable=tempVar, text = userName)
         self.checkBoxList.append(tempVar)
         tempFrame.pack(side=TOP, fill=X)
@@ -72,14 +72,22 @@ class UserList:
         self.userCnt += 1
         self.printUserLabel["text"] = "user : " + str(self.userCnt)
         
+    # 유저가 나갔을 때 실행되는 함수
+    def deleteUser(self, userName):
+        i = 0
+        print(user_list.index(userName))
+        self.checkboxList.pop(user_list.index(userName))
+        self.frameList.pop(frameList[i])
+        self.userCnt -= 1
+        self.printUserLabel["text"] = "user : " + str(self.userCnt)
 
-    # 유저를 제거하는 함수
-    def deleteUser(self):
-        self.deleteRoot = Toplevel(self.myParent)
-        self.deleteRoot.grab_set()
-        deleteWindow = deleteUser.DeleteUser(self.deleteRoot, self.user_list)
-        self.deleteRoot.resizable(0,0)
-        self.deleteRoot.mainloop()
+    # 강퇴투표 함수
+    def banUser(self):
+        self.banRoot = Toplevel(self.myParent)
+        self.banRoot.grab_set()
+        banWindow = banUser.BanUser(self.banRoot, self.user_list)
+        self.banRoot.resizable(0,0)
+        self.banRoot.mainloop()
 
     # 유저를 차단하는 함수, 구현순위 맨 뒤
     def cutOffUser(self):

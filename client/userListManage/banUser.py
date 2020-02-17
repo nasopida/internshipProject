@@ -5,7 +5,7 @@ import client
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
 
-class DeleteUser:
+class BanUser:
     def __init__(self, window, user_list):
         # 자신의 창을 가리킴
         self.myParent = window
@@ -38,11 +38,11 @@ class DeleteUser:
 
         #하단 버튼 프레임
         self.btnFrame = Frame(self.myParent)
-        enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.deleteUser)
+        enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.BanUser)
         enterBtn.pack(side=LEFT)
         self.btnFrame.pack(fill=BOTH, side=BOTTOM)
 
-    def deleteUser(self):
+    def BanUser(self):
         pass
 
     def inputUser(self):
@@ -54,8 +54,6 @@ class DeleteUser:
             self.CheckBoxVarList.append(tempVar)
             tempFrame.pack(side=TOP, fill=X)
             temp.pack(side=LEFT)
-
-
 
      #가운데로 오게 하는 함수
     def centerWindow(self, window):

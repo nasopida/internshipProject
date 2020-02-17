@@ -84,15 +84,28 @@ class Chatting:
         #유저 리스트를 새로 띄워주는 창
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
         userListRoot = Toplevel(self.myParent)
-        users = userList.UserList(userListRoot)
+        self.users = userList.UserList(userListRoot)
         def all_user():
             for name in client.user_list:
                 #print(name)
-                if name not in users.user_list:
-                    users.addUser(name)
+                if name not in self.users.user_list:
+                    self.users.addUser(name)
             userListRoot.after(500,all_user)
+
+        def del_user():
+            for name in self.users.user_list:
+                if name not in client.user_list:
+                    print(name)
+                    self.users.delUser(name)
+            userListRoot.after(500,del_user)
+
         userListRoot.resizable(0,0)
         userListRoot.after(500,all_user)
+
+        userListRoot.resizable(0,0)
+        userListRoot.after(500,del_user)
+
+        """
         def server_receive():
             for data in client.server_chat:
                 self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
@@ -104,10 +117,9 @@ class Chatting:
             userListRoot.after(500, server_receive)
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
-
-        
         receive_thread.join()
-        
+        """
+
     def search(self):
         search = Tk()
         frame = Frame(search)
