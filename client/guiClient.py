@@ -97,6 +97,7 @@ class Chatting:
             for data in client.server_chat:
                 self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
                 self.logText.insert(END, data)
+                self.logText.insert(END, '\n')
                 self.logText.see('end')
                 self.logText.config(width=60,height=35,state="disable",yscrollcommand=self.scroll.set)
                 del client.server_chat[data]
