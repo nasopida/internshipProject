@@ -106,7 +106,7 @@ if __name__ == "__main__":
     bottomFrame.pack(fill=X, side=BOTTOM)
     bottom_topFrame.pack(fill=X, expand=True, side=TOP)
     bottom_bottomFrame.pack(fill=X, expand=True, side=BOTTOM)
-
+    
     # Frame Updates
     topLabel = Label(topFrame, text="유저수 : 0\n", background="WHITE")
     scroll = Scrollbar(centerFrame)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     addButton.pack(expand=True, fill=BOTH, side=LEFT)
     delButton.pack(expand=True, fill=BOTH, side=LEFT)
     modButton.pack(expand=True, fill=BOTH, side=LEFT)
-
+    
     ####
     addCheckBox(centerFrame, "user1")
     addCheckBox(centerFrame, "user2")
