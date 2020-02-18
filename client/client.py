@@ -51,11 +51,7 @@ def handle_receive(client_socket, user, Chat = None):
 
 def handle_send(client_socket, user, data = None):
     global clnt_logger
-<<<<<<< HEAD:client.py
     #f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
-=======
-    f = open('../log/chatLog.txt', mode='at', encoding='utf-8')
->>>>>>> a507a196ff5b752d0d6e193b3adca1db9eb9edbf:client/client.py
     lines=[]
     try:
         if data == None:

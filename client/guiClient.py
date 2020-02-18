@@ -174,13 +174,7 @@ class Chatting:
             if data == "/user":
                 print('[')
                 for name in client.user_list:
-<<<<<<< HEAD:guiClient.py
                     self.logText.insert(END, "%s\n"%name)
-=======
-                    print(name)
-                print(']')
-                #print(user)
->>>>>>> a507a196ff5b752d0d6e193b3adca1db9eb9edbf:client/guiClient.py
             
             #검색기능
             if data=="/search":
