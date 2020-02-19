@@ -24,6 +24,7 @@ def handle_receive(client_socket, user, Chat = None):
     user_name=client_socket.recv(1024).decode('utf-8')
     while user_name != "---- %s님이 들어오셨습니다. ----"%user:
         user_list[user_name] = client_socket
+        client_socket.send('y'.encode('utf-8'))
         user_name = client_socket.recv(1024).decode('utf-8')
     while 1:
         try:
@@ -45,8 +46,6 @@ def handle_receive(client_socket, user, Chat = None):
         if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)
-
-
         server_chat[data] = client_socket
 
 def handle_send(client_socket, user, data = None):
@@ -57,13 +56,16 @@ def handle_send(client_socket, user, data = None):
         if data == None:
             data=input(user+": ")
             print(name)
-        client_socket.send(data.encode('utf-8'))
+            client_socket.send(data.encode('utf-8'))
 
         #간단한 명령어기능
         if data == "/quit":
             clnt_logger.addLog(msgLog("program", data))
-            #client_socket.close()
+            client_socket.send(data.encode('utf-8'))
+            client_socket.close()
             #break
+        if data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice" and data!="/search":
+            client_socket.send(data.encode('utf-8'))
         if data == "/whoami":
             print(user+"입니다")
         if data == "/whattime":
@@ -78,9 +80,9 @@ def handle_send(client_socket, user, data = None):
        # clnt_logger.addLog(msgLog("program", data))
        # clnt_logger.record()
 
-        #검색기능
+        """#검색기능
         if data=="/search":
-            f = open('chatLog.txt', mode='r', encoding='utf-8')
+            #f = open('chatLog.txt', mode='r', encoding='utf-8')
             read = f.read()
             split = read.split(';')
             print("찾을 채팅내용을 입력하십쇼: ",end='')
@@ -91,7 +93,7 @@ def handle_send(client_socket, user, data = None):
                     print('%d.%s'%(line,i))
                 else:
                     pass
-                line=line+1
+                line=line+1"""
         if data=="/user":
             for name in user_list:
                 print(name)

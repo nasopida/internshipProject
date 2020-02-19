@@ -4,10 +4,12 @@ import threading
 import random
 import os
 from tkinter import *
+from tkinter import ttk
 import ctypes
 import tkinter
 import userList
 import sys
+import translate
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -32,6 +34,12 @@ class Chatting:
         self.client_socket = client_socket
         self.centerWindow(window)
 
+        #창 x버튼으로 끌때를 위해
+        def close():
+            self.myParent.destroy()
+            self.client_socket.close()
+        self.myParent.protocol('WM_DELETE_WINDOW', close)
+
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
         window.title("채팅방")
@@ -55,6 +63,35 @@ class Chatting:
         self.logText.pack(side=LEFT, fill=BOTH, expand=YES)
         self.scroll.config(command=self.logText.yview)
 
+        # 번역 기능 프레임인 translateFrame
+        self.translateFrame = Frame(self.mainFrame)
+        self.translateFrame.pack(fill=X)
+        #self.translateLabel = Label(self.translateFrame,text="번역 : ", foreground="orange")
+        #self.translateLabel.pack(side=LEFT)
+
+        # 체크박스
+        self.translate_check = BooleanVar()
+        lang_change = Checkbutton(self.translateFrame, text="번역하기  ", variable=self.translate_check)
+        lang_change.deselect()
+        lang_change.pack(side=LEFT)
+
+        # 원래 언어
+        self.lang_original = ttk.Combobox(self.translateFrame,width=12)
+        self.lang_original['values'] = ('영어','한국어','일본어')
+        self.lang_original.current(0)
+        self.lang_original.configure(state='readonly')
+        self.lang_original.pack(side=LEFT)
+
+        self.translateLabel = Label(self.translateFrame,text="  ->  ")
+        self.translateLabel.pack(side=LEFT)
+
+        # 번역할 언어
+        self.lang_translate = ttk.Combobox(self.translateFrame,width=12)
+        self.lang_translate['values'] = ('영어','한국어','일본어')
+        self.lang_translate.current(1)
+        self.lang_translate.configure(state='readonly')
+        self.lang_translate.pack(side=LEFT)       
+
         #채팅을 입력하는 Frame인 inputChatFrame
         self.inputChatFrame = Frame(self.mainFrame)
         self.inputChatFrame.pack(fill=X)
@@ -74,12 +111,9 @@ class Chatting:
 
         window.bind('<Return>',self.sendMessage)
 
-
         receive_thread = threading.Thread(target=client.handle_receive, args=(self.client_socket, user, self))
         receive_thread.daemon = True
         receive_thread.start()
-
-       
         
         #유저 리스트를 새로 띄워주는 창
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
@@ -102,7 +136,7 @@ class Chatting:
                 self.logText.insert(END, '\n')
                 self.logText.see('end')
                 self.logText.config(width=60,height=35,state="disable",yscrollcommand=self.scroll.set)
-                del client.server_chat[data]
+            client.server_chat = {}
             userListRoot.after(500, server_receive)
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
@@ -137,16 +171,15 @@ class Chatting:
         search.resizable(0,0)
 
     def sendMessage(self, event = None):
-        data = self.inputText.get('1.0',INSERT)
-        
+        if self.translate_check.get() == 1:
+            mydata = self.inputText.get('1.0',INSERT)
+            data = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
+        else:
+            data = self.inputText.get('1.0',INSERT)
         #print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-            if data!="/quit" and data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice":
-                self.logText.insert(END, '%s:'%user)
-                #data = '[%s]:'%user + data
-            self.logText.insert(END, data)
-            self.logText.insert(END, '\n')
+
             #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
@@ -155,18 +188,26 @@ class Chatting:
                 self.client_socket.close()
                 return
             if data == "/whoami":
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,user+"입니다")
                 self.logText.insert(END, '\n')
             if data == "/whattime":
                 now=datetime.now()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,"%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
                 self.logText.insert(END, '\n')
             if data == "/whatdate":
                 now=datetime.now()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,"%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
                 self.logText.insert(END, '\n')
             if data == "/dice":
                 randString = client.dice()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,randString)
                 self.logText.insert(END, '\n')
             # clnt_logger.addLog(msgLog("program", data))
@@ -208,9 +249,6 @@ class Chatting:
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
-    # 의미를 모르겠음
-    def return_self(self):
-        return self
 
 if __name__ == '__main__':
     # 아이디 입력 창
@@ -249,8 +287,8 @@ if __name__ == '__main__':
     # 채팅 창
     chatRoot = Tk()
     myChat = Chatting(chatRoot, client_socket)
-    chatRoot.resizable(0,0)
-    chatRoot.mainloop()
+    #chatRoot.resizable(0,0)
+    #chatRoot.mainloop()
     
     clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")
