@@ -15,14 +15,14 @@ class CutOffUser:
         self.CheckBoxVarList = []
         #상단 프레임
         self.topFrame = Frame(window)
-        titleLabel = Label(self.topFrame, text="유저 차단")
+        titleLabel = Label(self.topFrame, text="유저 강퇴 투표")
         titleLabel.pack(fill=X, side=TOP)
         self.topFrame.pack(fill=X, side=TOP)
 
         #메인 프레임
         self.mainFrame = Frame(window)
         self.mainFrame.pack(fill=BOTH, expand=TRUE, side=LEFT) 
-        window.title('유저 차단')
+        window.title('유저 강퇴 투표')
         self.centerWindow(window)
         
         self.centerFrame = Frame(window)
@@ -31,7 +31,7 @@ class CutOffUser:
 
         #하단 버튼 프레임
         self.btnFrame = Frame(self.myParent)
-        enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.cutOff)
+        enterBtn = Button(self.btnFrame, width=20, text="강퇴 요청하기", command=self.cutOff)
         enterBtn.pack(side=LEFT)
         self.btnFrame.pack(fill=BOTH, side=BOTTOM)
 
@@ -40,7 +40,7 @@ class CutOffUser:
 
     def inputUser(self):
         for userName in self.user_list:
-            print("hi")
+            #print("hi")
             tempVar = BooleanVar(value=False)
             tempFrame = Frame(self.mainFrame)
             temp = Checkbutton(tempFrame, variable=tempVar, text=userName)

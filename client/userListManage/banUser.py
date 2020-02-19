@@ -47,7 +47,7 @@ class BanUser:
 
     def inputUser(self):
         for userName in self.user_list:
-            print("hi")
+            #print("hi")
             tempVar = BooleanVar(value=False)
             tempFrame = Frame(self.mainFrame)
             temp = Checkbutton(tempFrame, variable=tempVar, text=userName)
