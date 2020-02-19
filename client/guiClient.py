@@ -4,10 +4,12 @@ import threading
 import random
 import os
 from tkinter import *
+from tkinter import ttk
 import ctypes
 import tkinter
 import userList
 import sys
+import translate
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -55,6 +57,34 @@ class Chatting:
         self.logText.pack(side=LEFT, fill=BOTH, expand=YES)
         self.scroll.config(command=self.logText.yview)
 
+        # 번역 기능 프레임인 translateFrame
+        self.translateFrame = Frame(self.mainFrame)
+        self.translateFrame.pack(fill=X)
+        #self.translateLabel = Label(self.translateFrame,text="번역 : ", foreground="orange")
+        #self.translateLabel.pack(side=LEFT)
+
+        # 체크박스
+        lang_change = Checkbutton(self.translateFrame, text="번역하기  ")
+        lang_change.deselect()
+        lang_change.pack(side=LEFT)
+
+        # 원래 언어
+        self.lang_original = ttk.Combobox(self.translateFrame,width=12)
+        self.lang_original['values'] = ('영어','한국어','일본어')
+        self.lang_original.current(0)
+        self.lang_original.configure(state='readonly')
+        self.lang_original.pack(side=LEFT)
+
+        self.translateLabel = Label(self.translateFrame,text="  ->  ")
+        self.translateLabel.pack(side=LEFT)
+
+        # 번역할 언어
+        self.lang_translate = ttk.Combobox(self.translateFrame,width=12)
+        self.lang_translate['values'] = ('영어','한국어','일본어')
+        self.lang_translate.current(0)
+        self.lang_translate.configure(state='readonly')
+        self.lang_translate.pack(side=LEFT)       
+
         #채팅을 입력하는 Frame인 inputChatFrame
         self.inputChatFrame = Frame(self.mainFrame)
         self.inputChatFrame.pack(fill=X)
@@ -74,12 +104,9 @@ class Chatting:
 
         window.bind('<Return>',self.sendMessage)
 
-
         receive_thread = threading.Thread(target=client.handle_receive, args=(self.client_socket, user, self))
         receive_thread.daemon = True
         receive_thread.start()
-
-       
         
         #유저 리스트를 새로 띄워주는 창
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
@@ -138,7 +165,7 @@ class Chatting:
 
     def sendMessage(self, event = None):
         data = self.inputText.get('1.0',INSERT)
-        
+        translate.Translate(data)
         #print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
