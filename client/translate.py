@@ -17,11 +17,14 @@ def translate(text, source_lang, target_lang):
     else:
         target = "ja"
 
-    # 자신이 받은 API의 ID와 Secret을 입력
-    headers = {"X-Naver-Client-Id":" ID ","X-Naver-Client-Secret":" PW "}
-    params = {"source" : source,"target" : target,"text" : text}
-    response = requests.post(request_url,headers = headers,data = params)
+    try:
+        # 자신이 받은 API의 ID와 Secret을 입력
+        headers = {"X-Naver-Client-Id":" ID ","X-Naver-Client-Secret":" SC "}
+        params = {"source" : source,"target" : target,"text" : text}
+        response = requests.post(request_url,headers = headers,data = params)
 
-    result = response.json()
-    #print(result['message']['result']['translatedText'])
-    return result['message']['result']['translatedText']
+        result = response.json()
+        #print(result['message']['result']['translatedText'])
+        return result['message']['result']['translatedText']
+    except:
+        return "번역 실패"
