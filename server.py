@@ -52,7 +52,9 @@ def handle_receive(client_socket, addr, user):
     global serv_logger
     for s in user_list:
         client_socket.send(s.encode('utf-8'))
-        time.sleep(0.2)
+        react = client_socket.recv(1024).decode('utf-8')
+        if react == 'y':
+            continue
     # 접속한 사람에게 보내는 메세지
     # client_socket.send(notice().encode('utf-8'))
     msg = "---- %s님이 들어오셨습니다. ----"%user
@@ -100,7 +102,7 @@ def handle_receive(client_socket, addr, user):
                 msg_func("인원 : %d"%len(user_list))
                 msg_func(msg)
                 break
-            string = "%s : %s"%(user, string)
+            string = "%s:%s"%(user, string)
             serv_logger.addLog(msgLog(user, string))
             #serv_logger.record()
             msg_func(string)
