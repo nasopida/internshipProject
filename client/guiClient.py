@@ -34,6 +34,12 @@ class Chatting:
         self.client_socket = client_socket
         self.centerWindow(window)
 
+        #창 x버튼으로 끌때를 위해
+        def close():
+            self.myParent.destroy()
+            self.client_socket.close()
+        self.myParent.protocol('WM_DELETE_WINDOW', close)
+
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
         window.title("채팅방")
@@ -245,9 +251,6 @@ class Chatting:
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
-    # 의미를 모르겠음
-    def return_self(self):
-        return self
 
 if __name__ == '__main__':
     # 아이디 입력 창
@@ -286,8 +289,8 @@ if __name__ == '__main__':
     # 채팅 창
     chatRoot = Tk()
     myChat = Chatting(chatRoot, client_socket)
-    chatRoot.resizable(0,0)
-    chatRoot.mainloop()
+    #chatRoot.resizable(0,0)
+    #chatRoot.mainloop()
     
     clnt_logger = msgLogger()
     clnt_logger.setFile(user+"LogFile.txt")

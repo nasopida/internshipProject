@@ -80,9 +80,9 @@ def handle_send(client_socket, user, data = None):
        # clnt_logger.addLog(msgLog("program", data))
        # clnt_logger.record()
 
-        #검색기능
+        """#검색기능
         if data=="/search":
-            f = open('chatLog.txt', mode='r', encoding='utf-8')
+            #f = open('chatLog.txt', mode='r', encoding='utf-8')
             read = f.read()
             split = read.split(';')
             print("찾을 채팅내용을 입력하십쇼: ",end='')
@@ -93,7 +93,7 @@ def handle_send(client_socket, user, data = None):
                     print('%d.%s'%(line,i))
                 else:
                     pass
-                line=line+1
+                line=line+1"""
         if data=="/user":
             for name in user_list:
                 print(name)
