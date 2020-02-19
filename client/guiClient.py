@@ -130,7 +130,7 @@ class Chatting:
                 self.logText.insert(END, '\n')
                 self.logText.see('end')
                 self.logText.config(width=60,height=35,state="disable",yscrollcommand=self.scroll.set)
-                del client.server_chat[data]
+            client.server_chat = {}
             userListRoot.after(500, server_receive)
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
@@ -173,11 +173,7 @@ class Chatting:
         #print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
-            if data!="/quit" and data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice":
-                self.logText.insert(END, '%s:'%user)
-                #data = '[%s]:'%user + data
-            self.logText.insert(END, data)
-            self.logText.insert(END, '\n')
+
             #간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
@@ -186,18 +182,26 @@ class Chatting:
                 self.client_socket.close()
                 return
             if data == "/whoami":
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,user+"입니다")
                 self.logText.insert(END, '\n')
             if data == "/whattime":
                 now=datetime.now()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,"%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
                 self.logText.insert(END, '\n')
             if data == "/whatdate":
                 now=datetime.now()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,"%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
                 self.logText.insert(END, '\n')
             if data == "/dice":
                 randString = client.dice()
+                self.logText.insert(END,data)
+                self.logText.insert(END,'\n')
                 self.logText.insert(END,randString)
                 self.logText.insert(END, '\n')
             # clnt_logger.addLog(msgLog("program", data))
