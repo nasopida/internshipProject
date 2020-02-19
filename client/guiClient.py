@@ -64,7 +64,8 @@ class Chatting:
         #self.translateLabel.pack(side=LEFT)
 
         # 체크박스
-        lang_change = Checkbutton(self.translateFrame, text="번역하기  ")
+        self.translate_check = BooleanVar()
+        lang_change = Checkbutton(self.translateFrame, text="번역하기  ", variable=self.translate_check)
         lang_change.deselect()
         lang_change.pack(side=LEFT)
 
@@ -81,7 +82,7 @@ class Chatting:
         # 번역할 언어
         self.lang_translate = ttk.Combobox(self.translateFrame,width=12)
         self.lang_translate['values'] = ('영어','한국어','일본어')
-        self.lang_translate.current(0)
+        self.lang_translate.current(1)
         self.lang_translate.configure(state='readonly')
         self.lang_translate.pack(side=LEFT)       
 
@@ -164,8 +165,11 @@ class Chatting:
         search.resizable(0,0)
 
     def sendMessage(self, event = None):
-        data = self.inputText.get('1.0',INSERT)
-        translate.Translate(data)
+        if self.translate_check.get() == 1:
+            mydata = self.inputText.get('1.0',INSERT)
+            data = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
+        else:
+            data = self.inputText.get('1.0',INSERT)
         #print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
