@@ -172,11 +172,13 @@ class Chatting:
 
     def sendMessage(self, event = None):
         if self.translate_check.get() == 1:
-            mydata = self.inputText.get('1.0',INSERT)
-            data = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
+            mydata = translate.translate(self.inputText.get('1.0',INSERT),self.lang_original.get(),self.lang_translate.get())
+            #mydata = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
         else:
-            data = self.inputText.get('1.0',INSERT)
+            mydata = self.inputText.get('1.0',INSERT)
         #print(data)
+        data = mydata.replace('\n','')
+        print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
 
