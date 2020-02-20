@@ -4,6 +4,10 @@ import tkinter
 import ctypes
 import tkinter.font
 
+def failButton(window, event=None):
+    print("hi")
+    window.destroy()
+
 def translate(text, source_lang, target_lang):
     request_url = "https://openapi.naver.com/v1/papago/n2mt"
 
@@ -45,8 +49,4 @@ def translate(text, source_lang, target_lang):
         window.bind('<Return>',lambda x :failButton(window))
         failbtn.pack()
         
-        return "번역 실패"
-
-    def failButton(window, event=None):
-        print("hi")
-        window.destroy()
+        #return "번역 실패"
