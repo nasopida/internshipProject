@@ -4,6 +4,8 @@ import guiClient
 import loginFail
 import ctypes
 import signUp
+import json
+from packet import *
 #from guiClient import successCheck
 
 import sys
@@ -85,6 +87,7 @@ class SetID:
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
                     self.myNickname = lines[i+2]
+                    loginPacket(self.idText.get(),self.passwdText.get())
                     self.myParent.destroy()
                     break
         # 전부 틀릴경우 로그인실패 출력
