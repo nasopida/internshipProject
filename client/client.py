@@ -8,12 +8,14 @@ from tkinter import *
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import packet
 
 clnt_logger = msgLogger()
 port = 57270
 host = "127.0.0.1"
 user_list = {}
 server_chat = {}
+command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search"}
 
 def dice():
     return str(random.randint(1,6))
@@ -21,11 +23,6 @@ def dice():
 def handle_receive(client_socket, user, Chat = None):
     global clnt_logger
     global user_list
-    user_name=client_socket.recv(1024).decode('utf-8')
-    while user_name != "---- %s님이 들어오셨습니다. ----"%user:
-        user_list[user_name] = client_socket
-        client_socket.send('y'.encode('utf-8'))
-        user_name = client_socket.recv(1024).decode('utf-8')
     while 1:
         try:
             data = client_socket.recv(1024)
@@ -34,15 +31,6 @@ def handle_receive(client_socket, user, Chat = None):
             clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
         data = data.decode('utf-8')
-        if data == "/userin":
-            data = client_socket.recv(1024).decode('utf-8')
-            if data != user:
-                user_list[data] = client_socket
-            continue
-        if data == "/userout":
-            data = client_socket.recv(1024).decode('utf-8')
-            del user_list[data]
-            continue
         if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)
@@ -50,7 +38,7 @@ def handle_receive(client_socket, user, Chat = None):
 
 def handle_send(client_socket, user, data = None):
     global clnt_logger
-    #f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
+    f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     try:
         if data == None:
@@ -59,60 +47,28 @@ def handle_send(client_socket, user, data = None):
             client_socket.send(data.encode('utf-8'))
 
         #간단한 명령어기능
-        if data == "/quit":
-            clnt_logger.addLog(msgLog("program", data))
-            client_socket.send(data.encode('utf-8'))
-            client_socket.close()
-            #break
-        if data!="/whoami" and data!="/whattime" and data!="/whatdate" and data!="/dice" and data!="/search":
-            client_socket.send(data.encode('utf-8'))
-        if data == "/whoami":
-            print(user+"입니다")
-        if data == "/whattime":
-            now=datetime.now()
-            print("%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
-        if data == "/whatdate":
-            now=datetime.now()
-            print("%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
-        if data == "/dice":
-            randString = dice()
-            print(randString)
+        if data not in command_list:
+            client_socket.send(packet.msgPacket(data).encode())
+        else:
+            client_socket.send(packet.cmdPacket(data).encode())
        # clnt_logger.addLog(msgLog("program", data))
        # clnt_logger.record()
-
-        """#검색기능
-        if data=="/search":
-            #f = open('chatLog.txt', mode='r', encoding='utf-8')
-            read = f.read()
-            split = read.split(';')
-            print("찾을 채팅내용을 입력하십쇼: ",end='')
-            find=input()
-            line=1
-            for i in split:
-                if i == find:
-                    print('%d.%s'%(line,i))
-                else:
-                    pass
-                line=line+1"""
-        if data=="/user":
-            for name in user_list:
-                print(name)
 
     except EOFError:
         print('EOF Error!')
         client_socket.close()
         clnt_logger.record()
-        #f.close()
+        f.close()
     except KeyboardInterrupt:
         print('KeyboardInterrupt Error')
         client_socket.close()
         clnt_logger.record()
-        #f.close()
+        f.close()
     data = None
                 
 
     #client_socket.close()
-    #f.close()
+    f.close()
 
 
 if __name__ == '__main__':
