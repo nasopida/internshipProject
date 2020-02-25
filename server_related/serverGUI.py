@@ -123,6 +123,7 @@ def host(address, timeout=60):
             else:
                 try:
                     data = s.recv(1024)
+                
                 except ConnectionResetError:
                     DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
                     
