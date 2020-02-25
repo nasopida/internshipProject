@@ -145,9 +145,38 @@ def host(address, timeout=60):
                     DEBUG("{} : {}".format(str(s.getpeername()), data.decode('utf-8')))
 
                     ###
-                    # parsed = packet.toPacket(data.decode('utf-8'))
-                    # print(parsed['packetType'])
-                    # print(parsed['timestamp'])
+                    try:
+                        parsed = packet.toPacket(data.decode('utf-8'))
+                    except:
+                        print("NOT PACKET!!! -- client err")
+                        continue
+                                            
+                    DEBUG(parsed)
+
+                    if parsed['packetType'] == "message":
+                        pass
+
+                    elif parsed['packetType'] == "command":
+                        pass
+
+                    elif parsed['packetType'] == "login":
+                        # 함수로 만들어야함
+                        pass
+
+                    elif parsed['packetType'] == "alter":
+                        # 함수로 만들어야함
+                        pass
+                
+                    elif parsed['packetType'] == "register":
+                        # 함수로 만들어야함
+                        pass
+                    
+                    else:
+                        print("NOT REGISTERED PACKET!!! -- client err")
+                        pass
+
+
+
 
                 else:
                     # Interpret empty result as closed connection
