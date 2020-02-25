@@ -1,248 +1,221 @@
+
+import select
+import socket
+import os
+import sys
+import queue
 from tkinter import *
 from tkinter import messagebox
+import tkinter.font as font
+from multiprocessing import Process
+import subprocess
 
-class ServerGUI:
+##################################
+# Debug opt
+DEBUG = True
 
-    def __init__(self):
-        self.__USRCNT = 0
-        self.__ChkBoxVarList = []
+# Client Dict
+# Clients = {}
 
-    def addCheckBox(self, window, userName):
-        tempVar = BooleanVar(value=False)
-        tempFrame = Frame(window, background="WHITE")
-        temp = Checkbutton(tempFrame, variable=tempVar, text=userName, background="WHITE", activebackground="WHITE")
-        self.__ChkBoxVarList.append(tempVar)
-        tempFrame.pack(side=TOP, fill=X)
-        temp.pack(side=LEFT)
-        
-        self.__USRCNT += 1
-        self.UpdateUserCnt()
+# Users Count
+USRCNT = 0
+SELECTED = ""
+SERVER = None
 
-        
-    def delCheckBox(self, Frame, index):
-        self.__ChkBoxVarList.pop(index)
-        Frame.destroy()
-        self.__USRCNT -= 1
-        self.UpdateUserCnt()
+##################################
 
+def clean(frame):
+    global SELECTED
+    SELECTED = ""
+    for slave in frame.pack_slaves():
+        slave.destroy()
 
-    def delSelectedCheckBox(self, window):
-        if self.__USRCNT == 0:
-            return
-        if not messagebox.askyesno('Verify', 'Really Delete?'):
-            return
-        num = 0
-        while True:
-            if num >= len(self.__ChkBoxVarList):
-                break
-            if self.__ChkBoxVarList[num].get() == True:
-                FrameList = window.pack_slaves()
-                self.delCheckBox(FrameList[num+1], num)
-                num -= 1
-            num += 1
+def Stats(frame):
+    global SELECTED
+    if SELECTED != "Stats":
+        clean(frame)
+        SELECTED = "Stats"
 
-    def addUserDialogue(self, frame):
-        DialogueBox = Toplevel()
-        DialogueBox.title("유저 추가")
-        DialogueBox.geometry("200x150")
+def Users(frame):
+    global SELECTED
+    if SELECTED != "Users":
+        clean(frame)
+        SELECTED = "Users"
 
-        DialogueBoxcenterFrame = Frame(DialogueBox, background="WHITE")
-        DialogueBoxbottomFrame = Frame(DialogueBox, background="WHITE")
+def Logs(frame):
+    global SELECTED
+    if SELECTED != "Logs":
+        clean(frame)
+        SELECTED = "Logs"
 
-        DialogueBoxcenterFrame.pack(fill=BOTH, expand=True)
-        DialogueBoxbottomFrame.pack(fill=X, side=BOTTOM)
+def Settings(frame):
+    global SELECTED
+    if SELECTED != "Settings":
+        clean(frame)
+        SELECTED = "Settings"
+        server_start = Button(frame, text="start server", command=start_server)
+        server_stop = Button(frame, text="stop server", command=stop_server)
+        server_start.pack()
+        server_stop.pack()
 
-        userLabel = Label(DialogueBoxcenterFrame, text="유저이름: ", background="WHITE")
-        userEntry = Entry(DialogueBoxcenterFrame)
-        tempButtonList = [
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE"),
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE"),
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE")
-        ]
-        okButton = Button(DialogueBoxbottomFrame, text="OK", command=lambda: self.addCheckBox(frame, userEntry.get().strip()))
-        cancelButton = Button(DialogueBoxbottomFrame, text="Cancel", command=lambda: DialogueBox.destroy())
+def start_server():
+    global SERVER
+    if SERVER is None:
+        SERVER = Process(target=host, args=(("127.0.0.1", 57270),))
+        # SERVER = subprocess.Popen(host, stdout=subprocess.PIPE, shell=True)
+        print("Server Created...")
+        SERVER.start()
+        print("Server Started")
 
-        userLabel.pack(expand=True, fill=X, side=LEFT)
-        userEntry.pack(expand=True, fill=X, side=LEFT)
-        tempButtonList[0].pack(expand=True, fill=BOTH, side=LEFT)
-        okButton.pack(expand=True, fill=BOTH, side=LEFT)
-        tempButtonList[1].pack(expand=True, fill=BOTH, side=LEFT)
-        cancelButton.pack(expand=True, fill=BOTH, side=LEFT)
-        tempButtonList[2].pack(expand=True, fill=BOTH, side=LEFT)
+def stop_server():
+    global SERVER
+    if SERVER is not None:
+        print("Stopping Server...")
+        SERVER = SERVER.kill()
+        print("Server Stopped")
 
-    def __MainFrameInit(self, pTitle, pGeometry):
-        mainScreen = Tk()
-        mainScreen.title(pTitle)
-        mainScreen.geometry(pGeometry)
-        return mainScreen
+def NewConnection():
+    pass
 
-    def UpdateUserCnt(self):
-        self.__topLabel["text"] = "유저수 : "+ str(self.__USRCNT) +"\n"
+def CloseConnection():
+    pass
 
-    def setUserCnt(self, cnt):
-        self.__USRCNT = cnt
+def DEBUG(message):
+    global DEBUG
+    if DEBUG:
+        print(message, file=sys.stderr)
 
-    def initialize(self):
-        # MainFrame initialization
-        mainScreen = self.__MainFrameInit("유저 관리", "400x600")
-        mainFrame = Frame(mainScreen)
+def host(address, timeout=60):
+    global USRCNT
+    
+    listSock = []
+    DEBUG("pid: {}".format(os.getpid()))
+    DEBUG("address[0]: {}, address[1]: {}, timeout: {}".format(address[0], address[1], timeout))
+    
+    # Create TCP/IP Socket
+    socket_listen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_listen.setblocking(0)
 
-        # MainFrame Multiplexing
-        topFrame = Frame(mainFrame, background="WHITE")
-        centerFrame = Frame(mainFrame, background="WHITE")
-        bottomFrame = Frame(mainFrame, background="WHITE")
-        bottom_topFrame = Frame(bottomFrame)
-        bottom_bottomFrame = Frame(bottomFrame)
-        topFrame.pack(fill=X, side=TOP)
-        mainFrame.pack(fill=BOTH, expand=True)
-        centerFrame.pack(fill=BOTH, expand=True)
-        bottomFrame.pack(fill=X, side=BOTTOM)
-        bottom_topFrame.pack(fill=X, expand=True, side=TOP)
-        bottom_bottomFrame.pack(fill=X, expand=True, side=BOTTOM)
+    # Bind the socket to the port
+    DEBUG("starting up on {} port {}".format(address[0], address[1]))
+    socket_listen.bind(address)
+    socket_listen.listen(10)
+    
+    listSock.append(socket_listen)
 
-        # Frame Updates
-        self.__topLabel = Label(topFrame, text="유저수 : 0\n", background="WHITE")
-        scroll = Scrollbar(centerFrame)
-        KickButton = Button(bottom_topFrame, text="강퇴투표")
-        addButton = Button(bottom_bottomFrame, text="추가", command=lambda: self.addUserDialogue(centerFrame))
-        delButton = Button(bottom_bottomFrame, text="삭제", command=lambda: self.delSelectedCheckBox(centerFrame))
-        modButton = Button(bottom_bottomFrame, text="변경")
-        self.__topLabel.pack(expand=True)
-        scroll.pack(side=RIGHT, fill=Y)
-        KickButton.pack(fill=BOTH, expand=True)
-        addButton.pack(expand=True, fill=BOTH, side=LEFT)
-        delButton.pack(expand=True, fill=BOTH, side=LEFT)
-        modButton.pack(expand=True, fill=BOTH, side=LEFT)
+    while listSock:
+        # Wait for at least one of the sockets to be ready for processing
+        DEBUG("\nwaiting for the next event")
+        readable, writable, exceptional = select.select(listSock, [], [], timeout)
 
-        ####
+        # Handle inputs
+        for s in readable:
+            if s is socket_listen:
+                # A "readable" server socket is ready to accept a connection
+                connection, client_address = s.accept()
+                connection.setblocking(0)
+                DEBUG("new connection from " + str(client_address))
 
-        mainScreen.mainloop()
+                USRCNT += 1
 
+                listSock.append(connection)
 
+            else:
+                try:
+                    data = s.recv(1024)
+                except ConnectionResetError:
+                    DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
+                    
+                    # Stop listening for input on the connection
+                    listSock.remove(s)
+                    s.close()
+                    
+                    break
 
+                if data:
+                    # A readable client socket has data
+                    DEBUG("{} : {}".format(str(s.getpeername()), data.decode('utf-8')))
+                else:
+                    # Interpret empty result as closed connection
+                    DEBUG("closing "+ str(client_address) +"after reading no data")
+                    
+                    # Stop listening for input on the connection
+                    listSock.remove(s)
+                    s.close()
+
+# if __name__ == "__main__":
+#     address = ("127.0.0.1", 57270)
+#     timeout = 60
+
+#     host(address, timeout)
 
 if __name__ == "__main__":
-
-    USRCNT = 0
-    CheckBoxVarList = []
-
-    def printDebug(window):
-        global CheckBoxVarList
-        print(CheckBoxVarList)
-        FrameList = window.pack_slaves()
-        num = 0
-        for Frame in FrameList: 
-            for chkButton in Frame.pack_slaves():
-                print(str(num) + " : " +chkButton.cget("text")+ " : "+ str(chkButton.cget("variable")) +" :" + str(CheckBoxVarList[num].get()))
-                num += 1
-
-    # Fundamental Funcs
-
-    def addCheckBox(window, userName):
-        global CheckBoxVarList, USRCNT
-        tempVar = BooleanVar(value=False)
-        tempFrame = Frame(window, background="WHITE")
-        temp = Checkbutton(tempFrame, variable=tempVar, text=userName, background="WHITE", activebackground="WHITE")
-        CheckBoxVarList.append(tempVar)
-        tempFrame.pack(side=TOP, fill=X)
-        temp.pack(side=LEFT)
-        
-        USRCNT += 1
-        topLabel["text"] ="유저수 : "+ str(USRCNT) +"\n"
-        
-    def delCheckBox(Frame, index):
-        global CheckBoxVarList, USRCNT
-        CheckBoxVarList.pop(index)
-        Frame.destroy()
-        USRCNT -= 1
-        topLabel["text"] ="유저수 : "+ str(USRCNT) +"\n"
-
-
-    # Compound Funcs
-
-    def delSelectedCheckBox(window):
-        global CheckBoxVarList, USRCNT
-        if USRCNT == 0:
-            return
-        if not messagebox.askyesno('Verify', 'Really Delete?'):
-            return
-        num = 0
-        while True:
-            if num >= len(CheckBoxVarList):
-                break
-            if CheckBoxVarList[num].get() == True:
-                FrameList = window.pack_slaves()
-                delCheckBox(FrameList[num+1], num)
-                num -= 1
-            num += 1
-
-    def addUserDialogue():
-        DialogueBox = Toplevel()
-        DialogueBox.title("유저 추가")
-        DialogueBox.geometry("200x150")
-
-        DialogueBoxcenterFrame = Frame(DialogueBox, background="WHITE")
-        DialogueBoxbottomFrame = Frame(DialogueBox, background="WHITE")
-
-        DialogueBoxcenterFrame.pack(fill=BOTH, expand=True)
-        DialogueBoxbottomFrame.pack(fill=X, side=BOTTOM)
-
-        userLabel = Label(DialogueBoxcenterFrame, text="유저이름: ", background="WHITE")
-        userEntry = Entry(DialogueBoxcenterFrame)
-        tempButtonList = [
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE"),
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE"),
-            Button(DialogueBoxbottomFrame, state=DISABLED, highlightthickness=0, bd=0, background="WHITE")
-        ]
-        okButton = Button(DialogueBoxbottomFrame, text="OK", command=lambda: addCheckBox(centerFrame, userEntry.get().strip()))
-        cancelButton = Button(DialogueBoxbottomFrame, text="Cancel", command=lambda: DialogueBox.destroy())
-
-        userLabel.pack(expand=True, fill=X, side=LEFT)
-        userEntry.pack(expand=True, fill=X, side=LEFT)
-        tempButtonList[0].pack(expand=True, fill=BOTH, side=LEFT)
-        okButton.pack(expand=True, fill=BOTH, side=LEFT)
-        tempButtonList[1].pack(expand=True, fill=BOTH, side=LEFT)
-        cancelButton.pack(expand=True, fill=BOTH, side=LEFT)
-        tempButtonList[2].pack(expand=True, fill=BOTH, side=LEFT)
-
-
     # MAIN
     # MainFrame initialization
+    MAIN_PID = os.getpid()
     mainScreen = Tk()
     mainScreen.title("유저 관리")
-    mainScreen.geometry("400x600")
 
-    mainFrame = Frame(mainScreen)
+    w = 1280 # width for the Tk mainScreen
+    h = 720 # height for the Tk mainScreen
+
+    # get screen width and height
+    ws = mainScreen.winfo_screenwidth() # width of the screen
+    hs = mainScreen.winfo_screenheight() # height of the screen
+
+    # calculate x and y coordinates for the Tk mainScreen window
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+
+    mainScreen.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
 
     # MainFrame Multiplexing
-    topFrame = Frame(mainFrame, background="WHITE")
+    mainFrame = Frame(mainScreen)
+    NaviFrame = Frame(mainFrame, background="BLACK")
     centerFrame = Frame(mainFrame, background="WHITE")
-    bottomFrame = Frame(mainFrame, background="WHITE")
-    bottom_topFrame = Frame(bottomFrame)
-    bottom_bottomFrame = Frame(bottomFrame)
-    topFrame.pack(fill=X, side=TOP)
+    
     mainFrame.pack(fill=BOTH, expand=True)
+    NaviFrame.pack(fill=X, side=TOP)
     centerFrame.pack(fill=BOTH, expand=True)
-    bottomFrame.pack(fill=X, side=BOTTOM)
-    bottom_topFrame.pack(fill=X, expand=True, side=TOP)
-    bottom_bottomFrame.pack(fill=X, expand=True, side=BOTTOM)
+
 
     # Frame Updates
-    topLabel = Label(topFrame, text="유저수 : 0\n", background="WHITE")
-    scroll = Scrollbar(centerFrame)
-    KickButton = Button(bottom_topFrame, text="강퇴투표")
-    addButton = Button(bottom_bottomFrame, text="추가", command=lambda: addUserDialogue())
-    delButton = Button(bottom_bottomFrame, text="삭제", command=lambda: delSelectedCheckBox(centerFrame))
-    modButton = Button(bottom_bottomFrame, text="변경")
-    topLabel.pack(expand=True)
-    scroll.pack(side=RIGHT, fill=Y)
-    KickButton.pack(fill=BOTH, expand=True)
-    addButton.pack(expand=True, fill=BOTH, side=LEFT)
-    delButton.pack(expand=True, fill=BOTH, side=LEFT)
-    modButton.pack(expand=True, fill=BOTH, side=LEFT)
+    nav_buttons = {}
+    nav_buttons['cnt'] = 4
+    nav_buttons['frame'] = NaviFrame
+    nav_buttons['list'] = []
+    nav_buttons['height'] = 3
+    nav_buttons['width'] = 10
+    nav_buttons['font'] = font.Font(size=20)
+    nav_buttons['foreground']="white"
+    nav_buttons['background']="black"
+    nav_buttons['activeforeground']="white"
+    nav_buttons['activebackground']="gray15"
 
+    for i in range(nav_buttons['cnt']):
+        nav_buttons['list'].append(Button(nav_buttons['frame']))
+        nav_buttons['list'][i]['activebackground'] = "gray15"
+        nav_buttons['list'][i]['activeforeground'] = "white"
+        nav_buttons['list'][i]['background'] = "black"
+        nav_buttons['list'][i]['foreground'] = "white"
+        nav_buttons['list'][i]['width'] = nav_buttons['width']
+        nav_buttons['list'][i]['height'] = nav_buttons['height']
+
+        
+    nav_buttons['list'][0]['text'] = "Stats"
+    nav_buttons['list'][1]['text'] = "Users"
+    nav_buttons['list'][2]['text'] = "Logs"
+    nav_buttons['list'][3]['text'] = "Settings"
+
+    for i in range(nav_buttons['cnt']-1):
+        nav_buttons['list'][i].pack(side=LEFT)
+    nav_buttons['list'][nav_buttons['cnt']-1].pack(side=RIGHT)
+
+    nav_buttons['list'][0]['command'] = lambda:Stats(centerFrame)
+    nav_buttons['list'][1]['command'] = lambda:Users(centerFrame)
+    nav_buttons['list'][2]['command'] = lambda:Logs(centerFrame)
+    nav_buttons['list'][3]['command'] = lambda:Settings(centerFrame)
+        
     ####
-
     mainScreen.mainloop()
-
-    
