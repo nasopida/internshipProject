@@ -68,7 +68,7 @@ class SignUp:
     
     def createID(self):
         # 파일 데이터 생성
-        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()))
+        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
 
         """
         user_data = OrderedDict()

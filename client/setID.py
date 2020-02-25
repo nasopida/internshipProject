@@ -90,11 +90,7 @@ class SetID:
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
                     self.myNickname = lines[i+2]
-<<<<<<< HEAD
-                    self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
-=======
                     self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
->>>>>>> 1921663e0cd185891091a9d1db5a9cda33ea1a4a
                     
                     self.myParent.destroy()
                     break
