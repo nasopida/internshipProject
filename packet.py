@@ -3,7 +3,7 @@ import json
 
 def toPacket(jsonString):
     temp = Packet()
-    temp.packet(jsonString)
+    temp.packetify(jsonString)
     return temp
 
 class Packet:
@@ -12,9 +12,12 @@ class Packet:
         self.packet = {}
         self.packet.update({'packetType':packetType, 'timestamp':timestamp})
  
-    def packet(self, jsonString):
+    def packetify(self, jsonString):
         self.packet.clear()
         self.packet.update(json.loads(jsonString))
+
+    def encode(self):
+        return json.dumps(self.packet).encode('utf-8')
 
     def __repr__(self):
         return json.dumps(self.packet)
