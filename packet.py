@@ -16,6 +16,9 @@ class Packet:
         self.packet.clear()
         self.packet.update(json.loads(jsonString))
 
+    def encode(self):
+        return json.dumps(self.packet).encode('utf-8')
+
     def __repr__(self):
         return json.dumps(self.packet)
 
