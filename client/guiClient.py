@@ -284,8 +284,6 @@ if __name__ == '__main__':
 
     print(myUser)
     user = myUser.rstrip('\n')
-
-    client_socket.send(user.encode('utf-8'))
     
     # 채팅 창
     chatRoot = Tk()
