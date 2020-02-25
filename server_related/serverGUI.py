@@ -144,24 +144,30 @@ def host(address, timeout=60):
                     # A readable client socket has data
                     DEBUG("{} : {}".format(str(s.getpeername()), data.decode('utf-8')))
 
-                    ###
                     try:
                         parsed = packet.toPacket(data.decode('utf-8'))
                     except Exception as err:
                         DEBUG("Exception: {}".format(err))
                         print("NOT PACKET!!! -- client err")
                         continue
-                                            
+
                     DEBUG(parsed)
 
                     if parsed.packet['packetType'] == "message":
+                        # 현재 소켓을 제외한 소켓으로 메세지 보내야함
                         pass
 
                     elif parsed.packet['packetType'] == "command":
+                        # 현재 소켓에 command를 실행한 결과를 보냄
                         pass
 
                     elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
+                        # login.config에 등록된 유저 확인.
+                        # 등록된 유저라면 
+                        # user_cnt ++ 
+                        # 유저 아이디와 아이피 매칭해주는 딕셔너리에 추가
+                        # 
                         pass
 
                     elif parsed.packet['packetType'] == "alter":
@@ -170,14 +176,12 @@ def host(address, timeout=60):
                 
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
+                        # login.config에 유저 추가
                         pass
                     
                     else:
                         print("NOT REGISTERED PACKET!!! -- client err")
                         pass
-
-
-
 
                 else:
                     # Interpret empty result as closed connection
