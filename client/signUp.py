@@ -5,15 +5,20 @@ import json
 import os
 from collections import OrderedDict
 from packet import *
+import socket
+import client
 
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 회원가입을 진행하는 클래스
 class SignUp:
-    def __init__(self, window):
+    def __init__(self, window, client_socket):
         #나중에 창을 파괴하기 위해
         self.myParent = window
+
+        #클라이언트 소켓
+        self.client_socket = client_socket
 
         #mainFrame은 창 전체이다.
         self.mainFrame = Frame(window)
@@ -63,7 +68,8 @@ class SignUp:
     
     def createID(self):
         # 파일 데이터 생성
-        alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get())
+        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()))
+
         """
         user_data = OrderedDict()
 

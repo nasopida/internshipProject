@@ -259,8 +259,14 @@ if __name__ == '__main__':
         pass
     else:
         """
+    #IPv4 체계, TCP 타입 소켓 객체를 생성
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # 지정한 host와 prot를 통해 서버에 접속합니다.
+    client_socket.connect((host, port))
+
     idRoot = Tk()
-    myId = setID.SetID(idRoot)
+    myId = setID.SetID(idRoot, client_socket)
     idRoot.resizable(0,0)
     idRoot.mainloop()
     #print(successCheck)
@@ -277,12 +283,6 @@ if __name__ == '__main__':
 
     print(myUser)
     user = myUser.rstrip('\n')
-
-    #IPv4 체계, TCP 타입 소켓 객체를 생성
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # 지정한 host와 prot를 통해 서버에 접속합니다.
-    client_socket.connect((host, port))
 
     client_socket.send(user.encode('utf-8'))
     

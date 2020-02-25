@@ -13,11 +13,14 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 #아이디 설정 클래스
 class SetID:
-    def __init__(self, window):
+    def __init__(self, window, client_socket):
         # 창을 파괴하기 위한 myParent
         self.myParent = window
         # mainFrame은 창 전체를 뜻한다.
         self.mainFrame = Frame(window)
+        #클라이언트 소켓
+        self.client_socket = client_socket
+
         window.title("로그인")
         self.centerWindow(window)
         #window.geometry("250x140")
@@ -62,7 +65,7 @@ class SetID:
         
         signUpRoot = Toplevel(self.myParent)
         signUpRoot.grab_set()
-        mySignUp = signUp.SignUp(signUpRoot)
+        mySignUp = signUp.SignUp(signUpRoot, self.client_socket)
         signUpRoot.resizable(0,0)
         signUpRoot.mainloop()
 
@@ -87,7 +90,8 @@ class SetID:
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
                     self.myNickname = lines[i+2]
-                    loginPacket(self.idText.get(),self.passwdText.get())
+                    self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get())
+                    
                     self.myParent.destroy()
                     break
         # 전부 틀릴경우 로그인실패 출력
