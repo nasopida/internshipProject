@@ -116,6 +116,7 @@ def host(address, timeout=60):
 
         # Handle inputs
         for s in readable:
+            # 이곳에 유저가 들어온 것을 처리
             if s is socket_listen:
                 # A "readable" server socket is ready to accept a connection
                 connection, client_address = s.accept()
@@ -129,6 +130,7 @@ def host(address, timeout=60):
             else:
                 try:
                     data = s.recv(1024)
+                # 이곳에 유저가 나간 것을 처리
                 except ConnectionResetError:
                     DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
                     
