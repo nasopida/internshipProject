@@ -147,27 +147,28 @@ def host(address, timeout=60):
                     ###
                     try:
                         parsed = packet.toPacket(data.decode('utf-8'))
-                    except:
+                    except Exception as err:
+                        DEBUG("Exception: {}".format(err))
                         print("NOT PACKET!!! -- client err")
                         continue
                                             
                     DEBUG(parsed)
 
-                    if parsed['packetType'] == "message":
+                    if parsed.packet['packetType'] == "message":
                         pass
 
-                    elif parsed['packetType'] == "command":
+                    elif parsed.packet['packetType'] == "command":
                         pass
 
-                    elif parsed['packetType'] == "login":
+                    elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
                         pass
 
-                    elif parsed['packetType'] == "alter":
+                    elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
                         pass
                 
-                    elif parsed['packetType'] == "register":
+                    elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         pass
                     
