@@ -50,7 +50,7 @@ def handle_receive(client_socket, user, Chat = None):
 
 def handle_send(client_socket, user, data = None):
     global clnt_logger
-    f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
+    #f = open('./log/chatLog.txt', mode='at', encoding='utf-8')
     lines=[]
     try:
         if data == None:
