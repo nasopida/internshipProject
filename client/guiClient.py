@@ -141,6 +141,8 @@ class Chatting:
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
         receive_thread.join()
+
+        self.inputText.focus_set()
         
 
     def search(self):
