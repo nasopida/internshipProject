@@ -278,7 +278,8 @@ if __name__ == '__main__':
             #lines[2].splitlines()
             myUser = setID.SetID.returnNickname(myId)
             #user.rstrip('\n')
-            self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get())
+            self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
+
     else:
         sys.exit()
 
