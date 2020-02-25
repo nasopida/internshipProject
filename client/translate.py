@@ -27,7 +27,7 @@ def translate(text, source_lang, target_lang):
 
     try:
         # 자신이 받은 API의 ID와 Secret을 입력
-        headers = {"X-Naver-Client-Id":"TRgF7onHPgDW8CVQNkIg","X-Naver-Client-Secret":"C4VZJo9hvS"}
+        headers = {"X-Naver-Client-Id":"A","X-Naver-Client-Secret":"B"}
         params = {"source" : source,"target" : target,"text" : text}
         response = requests.post(request_url,headers = headers,data = params)
 
