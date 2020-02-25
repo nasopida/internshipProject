@@ -8,7 +8,9 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter.font as font
 from multiprocessing import Process
-import subprocess
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import packet
 
 ##################################
 # Debug opt
@@ -74,6 +76,10 @@ def stop_server():
         SERVER = SERVER.kill()
         print("Server Stopped")
 
+def on_close(root):
+    stop_server()
+    root.destroy()
+
 def NewConnection():
     pass
 
@@ -135,6 +141,12 @@ def host(address, timeout=60):
                 if data:
                     # A readable client socket has data
                     DEBUG("{} : {}".format(str(s.getpeername()), data.decode('utf-8')))
+
+                    ###
+                    # parsed = packet.toPacket(data.decode('utf-8'))
+                    # print(parsed['packetType'])
+                    # print(parsed['timestamp'])
+
                 else:
                     # Interpret empty result as closed connection
                     DEBUG("closing "+ str(client_address) +"after reading no data")
@@ -155,6 +167,7 @@ if __name__ == "__main__":
     MAIN_PID = os.getpid()
     mainScreen = Tk()
     mainScreen.title("유저 관리")
+    mainScreen.protocol("WM_DELETE_WINDOW", lambda:on_close(mainScreen))
 
     w = 1280 # width for the Tk mainScreen
     h = 720 # height for the Tk mainScreen
