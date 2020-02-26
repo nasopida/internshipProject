@@ -83,7 +83,7 @@ class Login:
             self.nav_buttons['list'][i]['height'] = self.nav_buttons['height']
 
         # add navigation Buttons
-        self.nav_buttons['list'][0]['text'] = "Login"
+        self.nav_buttons['list'][0]['text'] = "Sign In"
         self.nav_buttons['list'][1]['text'] = "Sign Up"
 
         for i in range(self.nav_buttons['cnt']):
@@ -138,7 +138,7 @@ class Login:
     def langChange(self, event):
         lang = self.langCombobox.get()
         if lang == "English":
-            self.nav_buttons['list'][0]['text'] = "Login"
+            self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
         elif lang == "한국어":
             self.nav_buttons['list'][0]['text'] = "로그인"
