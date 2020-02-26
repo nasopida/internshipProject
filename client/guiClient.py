@@ -275,7 +275,7 @@ if __name__ == '__main__':
     idRoot.mainloop()
     #print(successCheck)
     #if successCheck == True:
-    if login.Login.successCheck(myId) == True:
+    if login.Login.loginSuccess(myId) == True:
         if os.path.isfile("login.config"):
             loginFile = open('login.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()

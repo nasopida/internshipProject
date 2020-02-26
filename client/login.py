@@ -90,11 +90,11 @@ class Login:
             print(i)
             self.nav_buttons['list'][i].pack(side=LEFT)
         
-        self.nav_buttons['list'][0]['command'] = lambda:self.sign_up(self.centerFrame)
-        self.nav_buttons['list'][1]['command'] = lambda:self.sign_in(self.centerFrame)
+        self.nav_buttons['list'][0]['command'] = lambda:self.sign_in(self.centerFrame)
+        self.nav_buttons['list'][1]['command'] = lambda:self.sign_up(self.centerFrame)
 
-        # default = sign_up
-        self.sign_up(self.centerFrame)
+        # default = sign_in
+        self.sign_in(self.centerFrame)
 
         # select Languate
         self.langCombobox = ttk.Combobox(self.bottomFrame,width=15, state="readonly")
@@ -107,29 +107,7 @@ class Login:
 
         self.langCombobox.pack(side=BOTTOM)
     """
-        # ID 프레임
-        self.idFrame = Frame(self.mainFrame)
-        self.idFrame.pack(expand=True,pady=5)
-        self.idLabel = Label(self.idFrame,text="ID : ")
-        self.idText = Entry(self.idFrame)
-        self.idText.icursor(0)
-        self.idText.focus_set()
-        self.idLabel.pack(side=LEFT, ipadx = 13)
-        self.idText.pack(side=RIGHT, padx = 30)
-
         # 비밀번호 프레임
-        self.passwdFrame = Frame(self.mainFrame)
-        self.passwdFrame.pack()
-        self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
-        self.passwdText = Entry(self.passwdFrame,show="*")
-        self.passwdLabel.pack(side=LEFT)
-        self.passwdText.pack(side=RIGHT, padx=10)
-        
-        self.loginButton = Button(window,text="로그인", command=self.signInBtn, relief=RIDGE)
-        #엔터키랑 연동
-        #window.bind('<Return>',self.enterBtn)
-        self.loginButton.pack(pady=10)
-
         #회원가입
         self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
         self.signUpButton.pack(pady=10)
@@ -140,12 +118,15 @@ class Login:
         if lang == "English":
             self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
+            self.loginButton.configure(text="Sign in")
         elif lang == "한국어":
             self.nav_buttons['list'][0]['text'] = "로그인"
             self.nav_buttons['list'][1]['text'] = "회원가입"
+            self.loginButton.configure(text="로그인")
         else:
             self.nav_buttons['list'][0]['text'] = "サインイン"
             self.nav_buttons['list'][1]['text'] = "サインアップ"
+            self.loginButton.configure(text="サインイン")
 
 
     # 프레임을 전부 삭제
@@ -161,8 +142,29 @@ class Login:
         if self.selected != "sign_in":
             self.cleanFrame(frame)
             self.selected = "sign_in"
-            testLabel = Label(frame, text="dd")
-            testLabel.pack()
+
+            # ID를 담는 라벨
+            self.idFrame = Frame(frame)
+            self.idFrame.pack(expand=True,pady=5)
+            self.idLabel = Label(self.idFrame,text="ID : ")
+            self.idText = Entry(self.idFrame)
+            self.idText.icursor(0)
+            self.idText.focus_set()
+            self.idLabel.pack(side=LEFT, ipadx = 13)
+            self.idText.pack(side=RIGHT, padx = 30)
+
+            # pw를 담는 라벨
+            self.passwdFrame = Frame(frame)
+            self.passwdFrame.pack()
+            self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
+            self.passwdText = Entry(self.passwdFrame,show="*")
+            self.passwdLabel.pack(side=LEFT)
+            self.passwdText.pack(side=RIGHT, padx=10)
+
+            self.loginButton = Button(frame,text="Sign in", command=self.signInBtn, relief=RIDGE)
+            #엔터키랑 연동
+            #window.bind('<Return>',self.enterBtn)
+            self.loginButton.pack(pady=10)
 
     # 회원가입 프레임
     def sign_up(self, frame):
@@ -187,9 +189,8 @@ class Login:
     def returnNickname(self):
         return self.myNickname
 
-    # 로그인 버튼
-    def signInBtn(self, event=None):
-        #global suc
+    # 로그인 실행
+    def signInCheck(self):
         if os.path.isfile("login.config"):
             # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
             # 나중에는 서버에서 json파일을 불러와서 처리
@@ -208,6 +209,7 @@ class Login:
                     
                     self.myParent.destroy()
                     break
+
         # 전부 틀릴경우 로그인실패 출력
         if self.successCheck == False:
             print("loginFail")
@@ -217,8 +219,13 @@ class Login:
             self.failWindow = loginFail.LoginFail(self.failRoot)
             self.failRoot.resizable(0,0)
             self.failRoot.mainloop()
+
+    # 로그인 버튼 -> 로그인 체크만 수행한다.
+    def signInBtn(self, event=None):
+        self.signInCheck()
+        
             
-    def successCheck(self):
+    def loginSuccess(self):
         if(self.successCheck == True):
             return True
         else:

@@ -8,6 +8,7 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter.font as font
 from multiprocessing import Process
+import queue
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
@@ -17,10 +18,12 @@ import packet
 DEBUG = True
 
 # Client Dict
-# Clients = {}
+Clients = {}
+Clients['AllOnlineClients'] = []
+Clients['msg_queues'] = {}
+Clients['USERCNT'] = 0
 
-# Users Count
-USRCNT = 0
+
 SELECTED = ""
 SERVER = None
 
@@ -80,21 +83,16 @@ def on_close(root):
     stop_server()
     root.destroy()
 
-def NewConnection():
-    pass
-
-def CloseConnection():
-    pass
-
 def DEBUG(message):
     global DEBUG
     if DEBUG:
         print(message, file=sys.stderr)
 
 def host(address, timeout=60):
-    global USRCNT
+    global Clients
     
-    listSock = []
+    LoginList = []
+    readSockList = []
     DEBUG("pid: {}".format(os.getpid()))
     DEBUG("address[0]: {}, address[1]: {}, timeout: {}".format(address[0], address[1], timeout))
     
@@ -107,14 +105,22 @@ def host(address, timeout=60):
     socket_listen.bind(address)
     socket_listen.listen(10)
     
-    listSock.append(socket_listen)
+    readSockList.append(socket_listen)
 
-    while listSock:
+    while readSockList:
         # Wait for at least one of the sockets to be ready for processing
         DEBUG("\nwaiting for the next event")
-        readable, writable, exceptional = select.select(listSock, [], [], timeout)
+        readable, writable, exceptional = select.select(readSockList, [], readSockList, timeout)
+
+        # Handle "exceptional conditions"
+        for s in exceptional:
+            DEBUG("handling exceptional condition for" + s.getpeername())
+            # Stop listening for input on the connection
+            readSockList.remove(s)
+            s.close()
 
         # Handle inputs
+        DEBUG("\nHandle inputs------")
         for s in readable:
             # 이곳에 유저가 들어온 것을 처리
             if s is socket_listen:
@@ -122,10 +128,7 @@ def host(address, timeout=60):
                 connection, client_address = s.accept()
                 connection.setblocking(0)
                 DEBUG("new connection from " + str(client_address))
-
-                USRCNT += 1
-
-                listSock.append(connection)
+                readSockList.append(connection)
 
             else:
                 try:
@@ -135,7 +138,14 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
                     
                     # Stop listening for input on the connection
-                    listSock.remove(s)
+                    if s in Clients:
+                        Clients['AllOnlineClients'].remove(s)
+                        del Clients['msg_queues'][s]
+                        del Clients[s]
+                        Clients['USERCNT'] -= 1
+                    readSockList.remove(s)
+                    if s in writable:
+                        writable.remove(s)
                     s.close()
                     
                     break
@@ -151,24 +161,31 @@ def host(address, timeout=60):
                         print("NOT PACKET!!! -- client err")
                         continue
 
-                    DEBUG(parsed)
+                    # DEBUG(parsed)
 
                     if parsed.packet['packetType'] == "message":
                         # 현재 소켓을 제외한 소켓으로 메세지 보내야함
-                        pass
+                        DEBUG("message")
+                        for client in Clients['AllOnlineClients']:
+                            if client != s:
+                                parsed.add({'userID':Clients[s]})
+                                Clients['msg_queues'][client].put(parsed)
+                                writable.append(client)
 
                     elif parsed.packet['packetType'] == "command":
                         # 현재 소켓에 command를 실행한 결과를 보냄
+                        # Clients['msg_queues'][s].put(data)
                         pass
 
                     elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
                         # login.config에 등록된 유저 확인.
                         # 등록된 유저라면 
-                        # user_cnt ++ 
-                        # 유저 아이디와 아이피 매칭해주는 딕셔너리에 추가
-                        # 
-                        pass
+                        DEBUG("login")
+                        Clients['AllOnlineClients'].append(s)
+                        Clients['msg_queues'][s] = queue.Queue()
+                        Clients[s] = parsed.packet['userID']
+                        Clients['USERCNT'] += 1
 
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
@@ -188,8 +205,35 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +"after reading no data")
                     
                     # Stop listening for input on the connection
-                    listSock.remove(s)
+                    if s in Clients:
+                        Clients['AllOnlineClients'].remove(s)
+                        del Clients['msg_queues'][s]
+                        del Clients[s]
+                        Clients['USERCNT'] -= 1
+                    readSockList.remove(s)
+                    if s in writable:
+                        writable.remove(s)
                     s.close()
+        
+        # Handle outputs
+        DEBUG("\nHandle outputs------")
+        for s in writable:
+            try:
+                next_msg = Clients['msg_queues'][s].get_nowait()
+            # msg = "message from server"
+            except queue.Empty:
+                # No messages waiting so stop checking for writability.
+                DEBUG("output queue for "+Clients[s]+" is empty")
+            else:
+                DEBUG("writing message to "+ Clients[s])
+                DEBUG("message :" + str(next_msg))
+                s.send(next_msg.encode())
+        
+        DEBUG("\nDEBUG------")
+        DEBUG("Users_num: "+str(Clients['USERCNT']))
+        print("Users: ", end='', file=sys.stderr)
+        for s in Clients['AllOnlineClients']:
+            print(Clients[s], end=', ', file=sys.stderr)
 
 # if __name__ == "__main__":
 #     address = ("127.0.0.1", 57270)
@@ -246,7 +290,7 @@ if __name__ == "__main__":
         nav_buttons['list'].append(Button(nav_buttons['frame']))
         nav_buttons['list'][i]['activebackground'] = "gray15"
         nav_buttons['list'][i]['activeforeground'] = "white"
-        nav_buttons['list'][i]['background'] = "#1E1E1E"
+        nav_buttons['list'][i]['background'] = "black"
         nav_buttons['list'][i]['foreground'] = "white"
         nav_buttons['list'][i]['width'] = nav_buttons['width']
         nav_buttons['list'][i]['height'] = nav_buttons['height']

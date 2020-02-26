@@ -62,7 +62,6 @@ class SetID:
     # 회원가입 버튼
 
     def signUpBtn(self):
-        
         signUpRoot = Toplevel(self.myParent)
         signUpRoot.grab_set()
         mySignUp = signUp.SignUp(signUpRoot, self.client_socket)
