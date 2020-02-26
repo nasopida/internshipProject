@@ -19,9 +19,11 @@ DEBUG = True
 
 # Client Dict
 Clients = {}
+Clients['AllOnlineClients'] = []
+Clients['msg_queues'] = {}
+Clients['USERCNT'] = 0
 
-# Users Count
-USRCNT = 0
+
 SELECTED = ""
 SERVER = None
 
@@ -87,8 +89,9 @@ def DEBUG(message):
         print(message, file=sys.stderr)
 
 def host(address, timeout=60):
-    global USRCNT
+    global Clients
     
+    LoginList = []
     readSockList = []
     writeSockList = []
     DEBUG("pid: {}".format(os.getpid()))
@@ -136,6 +139,11 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
                     
                     # Stop listening for input on the connection
+                    if s in Clients:
+                        Clients['AllOnlineClients'].remove(s)
+                        del Clients['msg_queues'][s]
+                        del Clients[s]
+                        Clients['USERCNT'] -= 1
                     readSockList.remove(s)
                     s.close()
                     
@@ -156,18 +164,24 @@ def host(address, timeout=60):
 
                     if parsed.packet['packetType'] == "message":
                         # 현재 소켓을 제외한 소켓으로 메세지 보내야함
-                        pass
+                        for client in Clients['AllOnlineClients']:
+                            if client != s:
+                                parsed.add({'userID':Clients[s]})
+                                Clients['msg_queues'][client].put(parsed)
 
                     elif parsed.packet['packetType'] == "command":
                         # 현재 소켓에 command를 실행한 결과를 보냄
+                        # Clients['msg_queues'][s].put(data)
                         pass
 
                     elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
                         # login.config에 등록된 유저 확인.
                         # 등록된 유저라면 
-                        Clients[parsed.packet['userID']] = s.getpeername()
-                        USRCNT += 1 
+                        Clients['AllOnlineClients'].append(s)
+                        Clients['msg_queues'][s] = queue.Queue()
+                        Clients[s] = parsed.packet['userID']
+                        Clients['USERCNT'] += 1
 
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
@@ -187,22 +201,27 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +"after reading no data")
                     
                     # Stop listening for input on the connection
+                    if s in Clients:
+                        Clients['AllOnlineClients'].remove(s)
+                        del Clients['msg_queues'][s]
+                        del Clients[s]
+                        Clients['USERCNT'] -= 1
                     readSockList.remove(s)
                     s.close()
         
         # Handle outputs
         for s in writable:
-            # try:
-                # next_msg = message_queues[s].get_nowait()
-            msg = "message from server"
-            # except queue.Empty:
+            try:
+                next_msg = Clients['msg_queues'][s].get_nowait()
+            # msg = "message from server"
+            except queue.Empty:
                 # No messages waiting so stop checking for writability.
-                # DEBUG("output queue for "+str(s.getpeername())+"is empty")
-                # outputs.remove(s)
-            # else:
-            DEBUG("'{}' -> {}".format(msg, str(s.getpeername())))
-            s.send(msg.encode('utf-8'))
-            outputs.remove(s)
+                DEBUG("output queue for "+str(s.getpeername())+"is empty")
+                writable.remove(s)
+            else:
+                DEBUG("'{}' -> {}".format(next_msg, str(s.getpeername())))
+                s.send(next_msg.encode())
+                writable.remove(s)
 
 # if __name__ == "__main__":
 #     address = ("127.0.0.1", 57270)
