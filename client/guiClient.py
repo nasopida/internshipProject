@@ -5,16 +5,16 @@ import random
 import os
 from tkinter import *
 from tkinter import ttk
-import ctypes
 import tkinter
 import userList
 import sys
 import translate
 
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 로그인 관련
-import setID
+import login
 
 import client
 from datetime import datetime
@@ -141,6 +141,8 @@ class Chatting:
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
         receive_thread.join()
+
+        self.inputText.focus_set()
         
 
     def search(self):
@@ -244,9 +246,11 @@ class Chatting:
     def centerWindow(self, window):
         width = 400
         height = 600
-        userScreen = ctypes.windll.user32
-        screen_width = userScreen.GetSystemMetrics(0)
-        screen_height = userScreen.GetSystemMetrics(1)
+        #userScreen = window.winfo_
+        #screen_width = userScreen.GetSystemMetrics(0)
+        #screen_height = userScreen.GetSystemMetrics(1)
+        screen_width = self.myParent.winfo_screenwidth()
+        screen_height = self.myParent.winfo_screenheight()
         x = screen_width/2 - width/2
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
@@ -266,17 +270,17 @@ if __name__ == '__main__':
     client_socket.connect((host, port))
 
     idRoot = Tk()
-    myId = setID.SetID(idRoot, client_socket)
+    myId = login.Login(idRoot, client_socket)
     idRoot.resizable(0,0)
     idRoot.mainloop()
     #print(successCheck)
     #if successCheck == True:
-    if setID.SetID.successCheck(myId) == True:
+    if login.Login.successCheck(myId) == True:
         if os.path.isfile("login.config"):
             loginFile = open('login.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()
             #lines[2].splitlines()
-            myUser = setID.SetID.returnNickname(myId)
+            myUser = login.Login.returnNickname(myId)
             #user.rstrip('\n')
             #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
     else:

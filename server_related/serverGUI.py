@@ -251,7 +251,7 @@ if __name__ == "__main__":
     nav_buttons['width'] = 10
     nav_buttons['font'] = font.Font(size=20)
     nav_buttons['foreground']="white"
-    nav_buttons['background']="black"
+    nav_buttons['background']="#1E1E1E"
     nav_buttons['activeforeground']="white"
     nav_buttons['activebackground']="gray15"
 
@@ -259,7 +259,7 @@ if __name__ == "__main__":
         nav_buttons['list'].append(Button(nav_buttons['frame']))
         nav_buttons['list'][i]['activebackground'] = "gray15"
         nav_buttons['list'][i]['activeforeground'] = "white"
-        nav_buttons['list'][i]['background'] = "black"
+        nav_buttons['list'][i]['background'] = "#1E1E1E"
         nav_buttons['list'][i]['foreground'] = "white"
         nav_buttons['list'][i]['width'] = nav_buttons['width']
         nav_buttons['list'][i]['height'] = nav_buttons['height']

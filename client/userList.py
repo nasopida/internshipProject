@@ -4,7 +4,6 @@ from tkinter import *
 import client
 import guiClient
 
-import ctypes
 import tkinter as tk
 import tkinter.ttk
 from userListManage import cutOffUser
@@ -116,8 +115,8 @@ class UserList:
 
     #다크모드 함수
     def darkMode(self):
-        self.darkRoot=Toplevel(self.myParent)
-        self.darkRoot.grab_set()
+        #self.darkRoot=Toplevel(self.myParent)
+        #self.darkRoot.grab_set()
         self.myParent.configure(background='black')
         self.mainFrame.configure(background='black')
         self.printUserLabel['bg']='#000000'
@@ -136,9 +135,8 @@ class UserList:
     def centerWindow(self, window):
         width = 300
         height = 600
-        userScreen = ctypes.windll.user32
-        screen_width = userScreen.GetSystemMetrics(0)
-        screen_height = userScreen.GetSystemMetrics(1)
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
         #x = screen_width/2 - width/2 + 400
         x = screen_width / 2 + 200 + 3
         y = screen_height/2 - height/2
