@@ -8,6 +8,7 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter.font as font
 from multiprocessing import Process
+import queue
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
@@ -17,7 +18,7 @@ import packet
 DEBUG = True
 
 # Client Dict
-# Clients = {}
+Clients = {}
 
 # Users Count
 USRCNT = 0
@@ -80,12 +81,6 @@ def on_close(root):
     stop_server()
     root.destroy()
 
-def NewConnection():
-    pass
-
-def CloseConnection():
-    pass
-
 def DEBUG(message):
     global DEBUG
     if DEBUG:
@@ -94,7 +89,8 @@ def DEBUG(message):
 def host(address, timeout=60):
     global USRCNT
     
-    listSock = []
+    readSockList = []
+    writeSockList = []
     DEBUG("pid: {}".format(os.getpid()))
     DEBUG("address[0]: {}, address[1]: {}, timeout: {}".format(address[0], address[1], timeout))
     
@@ -107,12 +103,20 @@ def host(address, timeout=60):
     socket_listen.bind(address)
     socket_listen.listen(10)
     
-    listSock.append(socket_listen)
+    readSockList.append(socket_listen)
 
-    while listSock:
+    while readSockList:
         # Wait for at least one of the sockets to be ready for processing
         DEBUG("\nwaiting for the next event")
-        readable, writable, exceptional = select.select(listSock, [], [], timeout)
+        readable, writable, exceptional = select.select(readSockList, writeSockList, readSockList, timeout)
+
+        # Handle "exceptional conditions"
+        for s in exceptional:
+            DEBUG("handling exceptional condition for" + s.getpeername())
+            # Stop listening for input on the connection
+            readSockList.remove(s)
+            writeSockList.remove(s)
+            s.close()
 
         # Handle inputs
         for s in readable:
@@ -122,10 +126,7 @@ def host(address, timeout=60):
                 connection, client_address = s.accept()
                 connection.setblocking(0)
                 DEBUG("new connection from " + str(client_address))
-
-                USRCNT += 1
-
-                listSock.append(connection)
+                readSockList.append(connection)
 
             else:
                 try:
@@ -135,7 +136,7 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
                     
                     # Stop listening for input on the connection
-                    listSock.remove(s)
+                    readSockList.remove(s)
                     s.close()
                     
                     break
@@ -165,10 +166,8 @@ def host(address, timeout=60):
                         # 함수로 만들어야함
                         # login.config에 등록된 유저 확인.
                         # 등록된 유저라면 
-                        # user_cnt ++ 
-                        # 유저 아이디와 아이피 매칭해주는 딕셔너리에 추가
-                        # 
-                        pass
+                        Clients[parsed.packet['userID']] = s.getpeername()
+                        USRCNT += 1 
 
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
@@ -188,8 +187,22 @@ def host(address, timeout=60):
                     DEBUG("closing "+ str(client_address) +"after reading no data")
                     
                     # Stop listening for input on the connection
-                    listSock.remove(s)
+                    readSockList.remove(s)
                     s.close()
+        
+        # Handle outputs
+        for s in writable:
+            # try:
+                # next_msg = message_queues[s].get_nowait()
+            msg = "message from server"
+            # except queue.Empty:
+                # No messages waiting so stop checking for writability.
+                # DEBUG("output queue for "+str(s.getpeername())+"is empty")
+                # outputs.remove(s)
+            # else:
+            DEBUG("'{}' -> {}".format(msg, str(s.getpeername())))
+            s.send(msg.encode('utf-8'))
+            outputs.remove(s)
 
 # if __name__ == "__main__":
 #     address = ("127.0.0.1", 57270)
