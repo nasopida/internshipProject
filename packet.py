@@ -37,17 +37,17 @@ class loginPacket(Packet):
 
 class alterPacket(Packet):
     def __init__(self, userID, userPass, userName):
-        super().__init__("alter")
+        super().__init__("alter",time.time())
         self.packet.update({'userID':userID,'userPass':userPass,'nickName':userName})
 
 class msgPacket(Packet):
     def __init__(self, text):
-        super().__init__("message")
+        super().__init__("message", time.time())
         self.packet.update({'text':text})
 
 class cmdPacket(Packet):
     def __init__(self, text):
-        super().__init__("command")
+        super().__init__("command", time.time())
         self.packet.update({'text':text})
 
 
