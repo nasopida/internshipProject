@@ -93,7 +93,6 @@ def host(address, timeout=60):
     
     LoginList = []
     readSockList = []
-    writeSockList = []
     DEBUG("pid: {}".format(os.getpid()))
     DEBUG("address[0]: {}, address[1]: {}, timeout: {}".format(address[0], address[1], timeout))
     
@@ -111,14 +110,13 @@ def host(address, timeout=60):
     while readSockList:
         # Wait for at least one of the sockets to be ready for processing
         DEBUG("\nwaiting for the next event")
-        readable, writable, exceptional = select.select(readSockList, writeSockList, readSockList, timeout)
+        readable, writable, exceptional = select.select(readSockList, [], readSockList, timeout)
 
         # Handle "exceptional conditions"
         for s in exceptional:
             DEBUG("handling exceptional condition for" + s.getpeername())
             # Stop listening for input on the connection
             readSockList.remove(s)
-            writeSockList.remove(s)
             s.close()
 
         # Handle inputs
@@ -146,8 +144,6 @@ def host(address, timeout=60):
                         del Clients[s]
                         Clients['USERCNT'] -= 1
                     readSockList.remove(s)
-                    if s in writeSockList:
-                        writeSockList.remove(s)
                     if s in writable:
                         writable.remove(s)
                     s.close()
@@ -191,9 +187,6 @@ def host(address, timeout=60):
                         Clients[s] = parsed.packet['userID']
                         Clients['USERCNT'] += 1
 
-                        # if s not in writeSockList:
-                            # writeSockList.append(s)
-
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
                         pass
@@ -201,7 +194,6 @@ def host(address, timeout=60):
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         # login.config에 유저 추가
-                        # writeSockList.append(s)
                         pass
                     
                     else:
@@ -219,8 +211,6 @@ def host(address, timeout=60):
                         del Clients[s]
                         Clients['USERCNT'] -= 1
                     readSockList.remove(s)
-                    if s in writeSockList:
-                        writeSockList.remove(s)
                     if s in writable:
                         writable.remove(s)
                     s.close()
@@ -234,12 +224,10 @@ def host(address, timeout=60):
             except queue.Empty:
                 # No messages waiting so stop checking for writability.
                 DEBUG("output queue for "+Clients[s]+" is empty")
-                # writable.remove(s)
             else:
                 DEBUG("writing message to "+ Clients[s])
                 DEBUG("message :" + str(next_msg))
                 s.send(next_msg.encode())
-                # writable.remove(s)
         
         DEBUG("\nDEBUG------")
         DEBUG("Users_num: "+str(Clients['USERCNT']))
