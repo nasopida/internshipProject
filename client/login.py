@@ -7,11 +7,14 @@ import signUp
 import json
 import tkinter.font
 import tkinter
+import tkinter.ttk as ttk
 from packet import *
 #from guiClient import successCheck
 
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
+#class Language:
 
 #아이디 설정 클래스
 class Login:
@@ -45,7 +48,7 @@ class Login:
         self.topFrame = Frame(self.mainFrame, background="#1C1C21")
 
         #topFrame에 들어갈 NavigationFrame
-        navigationFrame = Frame(self.mainFrame, background="#1E1E1E")
+        navigationFrame = Frame(self.topFrame, background="#1E1E1E")
 
         #centerFrame은 로그인, 회원가입 등의 라벨 등을 출력
         self.centerFrame = Frame(self.mainFrame)
@@ -53,44 +56,57 @@ class Login:
         #bottomFrame은 버튼을 놓는 프레임
         self.bottomFrame = Frame(self.mainFrame, background="#EFEFEF")
 
-        self.topFrame.pack(fill=BOTH, expand=True)
+        self.topFrame.pack(fill=BOTH, expand=True, side=TOP)
         navigationFrame.pack(fill=X,side=TOP)
-        self.centerFrame.pack(fill=BOTH, expand=True)
-        self.bottomFrame.pack(fill=BOTH, expand=True)
+        self.centerFrame.pack(fill=X, expand=True)
+        self.bottomFrame.pack(fill=BOTH, expand=True, side=BOTTOM)
 
         # setting navigation buttons
-        nav_buttons = {}
-        nav_buttons['cnt'] = 2
-        nav_buttons['frame'] = navigationFrame
-        nav_buttons['list'] = []
-        nav_buttons['height'] = 3
-        nav_buttons['width'] = 20
-        nav_buttons['font'] = font.Font(size=20)
-        nav_buttons['foreground'] = "#FFFFFF"
-        nav_buttons['background'] = "#1E1E1E"
-        nav_buttons['activeforeground'] = "#FFFFFF"
-        nav_buttons['activeforeground'] = "gray15"
+        self.nav_buttons = {}
+        self.nav_buttons['cnt'] = 2
+        self.nav_buttons['frame'] = navigationFrame
+        self.nav_buttons['list'] = []
+        self.nav_buttons['height'] = 3
+        self.nav_buttons['width'] = 20
+        self.nav_buttons['font'] = font.Font(size=20)
+        self.nav_buttons['foreground'] = "#FFFFFF"
+        self.nav_buttons['background'] = "#1E1E1E"
+        self.nav_buttons['activeforeground'] = "#FFFFFF"
+        self.nav_buttons['activeforeground'] = "gray15"
 
-        for i in range(nav_buttons['cnt']):
-            nav_buttons['list'].append(Button(nav_buttons['frame']))
-            nav_buttons['list'][i]['foreground'] = "#FFFFFF"
-            nav_buttons['list'][i]['background'] = "#1E1E1E"
-            nav_buttons['list'][i]['activeforeground'] = "#FFFFFF"
-            nav_buttons['list'][i]['activeforeground'] = "gray15"
-            nav_buttons['list'][i]['width'] = nav_buttons['width']
-            nav_buttons['list'][i]['height'] = nav_buttons['height']
+        for i in range(self.nav_buttons['cnt']):
+            self.nav_buttons['list'].append(Button(self.nav_buttons['frame']))
+            self.nav_buttons['list'][i]['foreground'] = "#FFFFFF"
+            self.nav_buttons['list'][i]['background'] = "#1E1E1E"
+            self.nav_buttons['list'][i]['activeforeground'] = "#FFFFFF"
+            self.nav_buttons['list'][i]['activeforeground'] = "gray15"
+            self.nav_buttons['list'][i]['width'] = self.nav_buttons['width']
+            self.nav_buttons['list'][i]['height'] = self.nav_buttons['height']
 
         # add navigation Buttons
-        nav_buttons['list'][0]['text'] = "Login"
-        nav_buttons['list'][1]['text'] = "Sign Up"
+        self.nav_buttons['list'][0]['text'] = "Login"
+        self.nav_buttons['list'][1]['text'] = "Sign Up"
 
-        for i in range(nav_buttons['cnt']):
+        for i in range(self.nav_buttons['cnt']):
             print(i)
-            nav_buttons['list'][i].pack(side=LEFT)
+            self.nav_buttons['list'][i].pack(side=LEFT)
         
-        nav_buttons['list'][0]['command'] = lambda:self.sign_up(self.centerFrame)
-        nav_buttons['list'][1]['command'] = lambda:self.sign_in(self.centerFrame)
+        self.nav_buttons['list'][0]['command'] = lambda:self.sign_up(self.centerFrame)
+        self.nav_buttons['list'][1]['command'] = lambda:self.sign_in(self.centerFrame)
 
+        # default = sign_up
+        self.sign_up(self.centerFrame)
+
+        # select Languate
+        self.langCombobox = ttk.Combobox(self.bottomFrame,width=15, state="readonly")
+        self.langCombobox['values'] = ("English","한국어","日本語")
+        self.langCombobox.grid(column = 1, row=1)
+        self.langCombobox.current(0)
+        # 함수 연결
+        #self.langCombobox.bind("<<ComboboxSelected>>",self.btnName(None,self.langCombobox.get()))
+        self.langCombobox.bind("<<ComboboxSelected>>",self.langChange)
+
+        self.langCombobox.pack(side=BOTTOM)
     """
         # ID 프레임
         self.idFrame = Frame(self.mainFrame)
@@ -119,6 +135,20 @@ class Login:
         self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
         self.signUpButton.pack(pady=10)
     """
+    # 이름 변경 함수라 다른 파일에서 사용 불가능하게 구현 예정
+    def langChange(self, event):
+        lang = self.langCombobox.get()
+        if lang == "English":
+            self.nav_buttons['list'][0]['text'] = "Login"
+            self.nav_buttons['list'][1]['text'] = "Sign Up"
+        elif lang == "한국어":
+            self.nav_buttons['list'][0]['text'] = "로그인"
+            self.nav_buttons['list'][1]['text'] = "회원가입"
+        else:
+            self.nav_buttons['list'][0]['text'] = "サインイン"
+            self.nav_buttons['list'][1]['text'] = "サインアップ"
+
+
     # 프레임을 전부 삭제
     def cleanFrame(self, frame):
         self.selected = ""
