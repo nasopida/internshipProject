@@ -118,12 +118,15 @@ class Login:
         if lang == "English":
             self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
+            self.loginButton.configure(text="Sign in")
         elif lang == "한국어":
             self.nav_buttons['list'][0]['text'] = "로그인"
             self.nav_buttons['list'][1]['text'] = "회원가입"
+            self.loginButton.configure(text="로그인")
         else:
             self.nav_buttons['list'][0]['text'] = "サインイン"
             self.nav_buttons['list'][1]['text'] = "サインアップ"
+            self.loginButton.configure(text="サインイン")
 
 
     # 프레임을 전부 삭제
@@ -158,7 +161,7 @@ class Login:
             self.passwdLabel.pack(side=LEFT)
             self.passwdText.pack(side=RIGHT, padx=10)
 
-            self.loginButton = Button(frame,text="로그인", command=self.signInBtn, relief=RIDGE)
+            self.loginButton = Button(frame,text="Sign in", command=self.signInBtn, relief=RIDGE)
             #엔터키랑 연동
             #window.bind('<Return>',self.enterBtn)
             self.loginButton.pack(pady=10)
