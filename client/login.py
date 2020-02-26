@@ -50,15 +50,15 @@ class Login:
         navigationFrame = Frame(self.topFrame, background="#1E1E1E")
 
         #centerFrame은 로그인, 회원가입 등의 라벨 등을 출력
-        self.centerFrame = Frame(self.mainFrame)
+        self.centerFrame = Frame(self.mainFrame, width=20, height=200)
 
         #bottomFrame은 버튼을 놓는 프레임
         self.bottomFrame = Frame(self.mainFrame, background="#EFEFEF")
 
-        self.topFrame.pack(fill=BOTH, expand=True, side=TOP)
+        self.topFrame.pack(fill=X, side=TOP)
         navigationFrame.pack(fill=X,side=TOP)
-        self.centerFrame.pack(fill=X, expand=True)
-        self.bottomFrame.pack(fill=BOTH, expand=True, side=BOTTOM)
+        self.centerFrame.pack(fill=BOTH, expand=True)
+        self.bottomFrame.pack(fill=X, side=BOTTOM)
 
         # setting navigation buttons
         self.nav_buttons = {}
