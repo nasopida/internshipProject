@@ -1,6 +1,5 @@
 from tkinter import *
 import os
-import ctypes
 import client
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
@@ -53,9 +52,8 @@ class CutOffUser:
     def centerWindow(self, window):
         width = 300
         height = 400
-        userScreen = ctypes.windll.user32
-        screen_width = userScreen.GetSystemMetrics(0)
-        screen_height = userScreen.GetSystemMetrics(1)
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
         #x = screen_width/2 - width/2 + 400
         x = screen_width / 2 - height/2 + 50
         y = screen_height/2 - height/2
