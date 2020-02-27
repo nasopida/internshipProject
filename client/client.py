@@ -30,11 +30,12 @@ def handle_receive(client_socket, user, Chat = None):
             print("연결 끊김")
             clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
-        data = data.decode('utf-8')
-        if not user in data: # 자신이 아닐때 출력
+        parsed = packet.toPacket(data.decode('utf-8'))
+        """if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
-            print(data)
-        server_chat[data] = client_socket
+            print(data)"""
+        chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
+        server_chat[chatting] = client_socket
 
 def handle_send(client_socket, user, data = None):
     global clnt_logger
