@@ -99,11 +99,12 @@ class Login:
         # default = sign_in
         self.sign_in(self.centerFrame)
 
-        # select Languate
+        # select Language
         self.langCombobox = ttk.Combobox(self.bottomFrame,width=15, state="readonly")
         self.langCombobox['values'] = ("English","한국어","日本語")
         self.langCombobox.grid(column = 1, row=1)
         self.langCombobox.current(0)
+
         # 함수 연결
         #self.langCombobox.bind("<<ComboboxSelected>>",self.btnName(None,self.langCombobox.get()))
         self.langCombobox.bind("<<ComboboxSelected>>",self.langChange)
@@ -116,20 +117,29 @@ class Login:
         self.signUpButton.pack(pady=10)
     """
     # 이름 변경 함수라 다른 파일에서 사용 불가능하게 구현 예정
-    def langChange(self, event):
+    def langChange(self, event=None):
         lang = self.langCombobox.get()
         if lang == "English":
             self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
-            self.loginButton.configure(text="Sign in")
+            if self.selected == "sign_in":
+                self.loginButton.configure(text="Sign in")
+            else:
+                self.requestButton.configure(text="Sign Up")
         elif lang == "한국어":
             self.nav_buttons['list'][0]['text'] = "로그인"
             self.nav_buttons['list'][1]['text'] = "회원가입"
-            self.loginButton.configure(text="로그인")
+            if self.selected == "sign_in":
+                self.loginButton.configure(text="로그인")
+            else:
+                self.requestButton.configure(text="회원 가입")
         else:
             self.nav_buttons['list'][0]['text'] = "サインイン"
             self.nav_buttons['list'][1]['text'] = "サインアップ"
-            self.loginButton.configure(text="サインイン")
+            if self.selected == "sign_in":
+                self.loginButton.configure(text="サインイン")
+            else:
+                self.requestButton.configure(text="サインアップ")
 
 
     # 프레임을 전부 삭제
@@ -203,7 +213,7 @@ class Login:
             self.nicknameText.pack(side=RIGHT, padx=10)
 
             # 가입 요청을 하는 버튼
-            self.requestButton = Button(self.centerFrame, text="가입 요청",command=self.signUpBtn)
+            self.requestButton = Button(self.centerFrame, text="Sign Up",command=self.signUpBtn)
             self.requestButton.pack(pady = 10)
 
     # 회원가입 요청을 하였을 때 실행
@@ -211,7 +221,6 @@ class Login:
         resultScreen = Toplevel(self.myParent)
         #resultScreen.protocol("WM_DELETE_WINDOW", lambda:on_close(resultScreen))
         resultScreen.grab_set()
-        
         
         # 조건 체크부분, 나중에 서버에서 비교하여 체크 필요
         if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
