@@ -147,7 +147,7 @@ class Chatting:
         
 
     def search(self):
-        search = Tk()
+        search = Toplevel(self.myParent)
         frame = Frame(search)
         search.title("검색")
         search.geometry("200x50")
@@ -185,7 +185,10 @@ class Chatting:
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
 
-            #간단한 명령어기능
+            if data not in client.command_list:
+                self.logText.insert(END, '%s:'%user)
+            self.logText.insert(END,'%s\n'%data)
+            """#간단한 명령어기능
             if data == "/quit":
                 clnt_logger.addLog(msgLog("program", data))
                 self.myParent.destroy()
@@ -228,16 +231,7 @@ class Chatting:
                 #self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ", end='')
                 #find=input()
                 self.search()
-                
-                """line=1
-                for i in split:
-                    if i == find:
-                        self.logText.insert(END,'%d.%s'%(line,i))
-                    else:
-                        pass
-                    line=line+1
-                """    
-
+            """            
       
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
             self.logText.see("end")
@@ -281,7 +275,7 @@ if __name__ == '__main__':
             loginFile = open('login.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()
             #lines[2].splitlines()
-            myUser = login.Login.returnNickname(myId)
+            myUser = login.Login.returnID(myId)
             #user.rstrip('\n')
             #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
     else:

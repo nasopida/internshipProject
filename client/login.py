@@ -44,6 +44,7 @@ class Login:
         #window.bind("<Return>",self.signInBtn)
 
         # 내 아이디&비밀번호
+        self.myID = ""
         self.myNickname = ""
 
         #topFrame은 버튼 2개로, 로그인과 회원가입으로 변경할 수 있는 버튼이 있다.
@@ -261,6 +262,9 @@ class Login:
     def returnNickname(self):
         return self.myNickname
 
+    def returnID(self):
+        return self.myID
+
     # 로그인 실행
     def signInCheck(self):
         if os.path.isfile("login.config"):
@@ -276,6 +280,7 @@ class Login:
             for i in range(0,max-1,3):
                 if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
                     self.successCheck = True
+                    self.myID = lines[i]
                     self.myNickname = lines[i+2]
                     self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
                     
