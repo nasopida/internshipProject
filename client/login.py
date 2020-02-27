@@ -9,11 +9,14 @@ import tkinter
 import tkinter.ttk as ttk
 from packet import *
 #from guiClient import successCheck
+import signUpResult
 
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-#class Language:
+#close
+def on_close(window):
+    window.destroy()
 
 #아이디 설정 클래스
 class Login:
@@ -33,12 +36,12 @@ class Login:
         self.client_socket = client_socket
 
         window.title("로그인")
-        self.centerWindow(window)
+        centerWindow(window, 300, 250)
         #window.geometry("250x140")
         self.mainFrame.pack(fill=X)
         self.successCheck = False
 
-        window.bind("<Return>",self.signInBtn)
+        #window.bind("<Return>",self.signInBtn)
 
         # 내 아이디&비밀번호
         self.myNickname = ""
@@ -163,7 +166,7 @@ class Login:
 
             self.loginButton = Button(frame,text="Sign in", command=self.signInBtn, relief=RIDGE)
             #엔터키랑 연동
-            #window.bind('<Return>',self.enterBtn)
+            self.myParent.bind('<Return>',self.signInBtn)
             self.loginButton.pack(pady=10)
 
     # 회원가입 프레임
@@ -171,16 +174,76 @@ class Login:
         if self.selected != "sign_up":
             self.cleanFrame(frame)
             self.selected = "sign_up"
-            testLabel = Label(frame, text="cc")
-            testLabel.pack()
+            self.myParent.bind("<Return>",self.signUpBtn)
 
-    # 회원가입 버튼
-    def signUpBtn(self):
-        signUpRoot = Toplevel(self.myParent)
-        signUpRoot.grab_set()
-        mySignUp = signUp.SignUp(signUpRoot, self.client_socket)
-        signUpRoot.resizable(0,0)
-        signUpRoot.mainloop()
+            # ID를 입력하는 라벨
+            self.idFrame = Frame(self.centerFrame)
+            self.idFrame.pack(expand=True, pady=5)
+            self.idLabel = Label(self.idFrame,text="ID : ")
+            self.idText = Entry(self.idFrame)
+            self.idText.icursor(0)
+            self.idText.focus_set()
+            self.idLabel.pack(side=LEFT, ipadx = 13)
+            self.idText.pack(side=RIGHT, padx = 30)
+
+            # 비밀번호를 입력하는 라벨
+            self.passwdFrame = Frame(self.centerFrame)
+            self.passwdFrame.pack(pady = 5)
+            self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
+            self.passwdText = Entry(self.passwdFrame,show="*")
+            self.passwdLabel.pack(side=LEFT)
+            self.passwdText.pack(side=RIGHT, padx=10)
+
+            # 닉네임을 입력하는 라벨
+            self.nicknameFrame = Frame(self.centerFrame)
+            self.nicknameFrame.pack(pady = 5)
+            self.nicknameLabel = Label(self.nicknameFrame, text="Nickname : ")
+            self.nicknameText = Entry(self.nicknameFrame)
+            self.nicknameLabel.pack(side=LEFT)
+            self.nicknameText.pack(side=RIGHT, padx=10)
+
+            # 가입 요청을 하는 버튼
+            self.requestButton = Button(self.centerFrame, text="가입 요청",command=self.signUpBtn)
+            self.requestButton.pack(pady = 10)
+
+    # 회원가입 요청을 하였을 때 실행
+    def signUpBtn(self, event=None):
+        resultScreen = Toplevel(self.myParent)
+        #resultScreen.protocol("WM_DELETE_WINDOW", lambda:on_close(resultScreen))
+        resultScreen.grab_set()
+        
+        
+        # 조건 체크부분, 나중에 서버에서 비교하여 체크 필요
+        if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
+            # 아이디를 Json파일로 생성
+            self.createID()
+            result = signUpResult.SignUpResult(resultScreen, "회원가입 성공")
+            resultScreen.resizable(0,0)
+            result.title = "회원가입 성공"
+            resultScreen.mainloop()         
+
+            self.sign_in(self.centerFrame)
+        else:        
+            resultScreen.title("회원가입 실패!")   
+            result = signUpResult.SignUpResult(resultScreen, "회원가입 실패")
+            resultScreen.resizable(0,0)
+            resultScreen.mainloop()
+
+    def exitBtn(self, window, event=None):
+        window.destroy()
+
+    # id를 생성
+    def createID(self):
+        # 파일 데이터 생성
+        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
+
+        # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
+        f = open('login.config','a',encoding='utf-8')
+        f.write(self.idText.get()+'\n')
+        f.write(self.passwdText.get()+'\n')
+        f.write(self.nicknameText.get()+'\n')
+        f.close()
+
     
     def on_close(self, window):
         window.destroy()
@@ -223,8 +286,7 @@ class Login:
     # 로그인 버튼 -> 로그인 체크만 수행한다.
     def signInBtn(self, event=None):
         self.signInCheck()
-        
-            
+                    
     def loginSuccess(self):
         if(self.successCheck == True):
             return True
@@ -232,11 +294,9 @@ class Login:
             return False
 
     # 창을 정 중앙에 위치
-    def centerWindow(self, window):
-        width = 300
-        height = 250
-        screen_width = self.myParent.winfo_screenwidth()
-        screen_height = self.myParent.winfo_screenheight()
+def centerWindow(window ,width, height):
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
         x = screen_width/2 - width/2
         y = screen_height/2 - height/2
         window.geometry('%dx%d+%d+%d' %(width,height,x,y))
