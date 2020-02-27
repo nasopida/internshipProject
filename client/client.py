@@ -15,7 +15,7 @@ port = 57270
 host = "127.0.0.1"
 user_list = {}
 server_chat = {}
-command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search"}
+command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search", "/user"}
 
 def dice():
     return str(random.randint(1,6))
@@ -50,7 +50,7 @@ def handle_send(client_socket, user, data = None):
         if data not in command_list:
             client_socket.send(packet.msgPacket(data).encode())
         else:
-            client_socket.send(packet.cmdPacket(data).encode())
+            client_socket.send(packet.cmdPacket(data[1:]).encode())
        # clnt_logger.addLog(msgLog("program", data))
        # clnt_logger.record()
 

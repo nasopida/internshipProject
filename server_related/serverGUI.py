@@ -1,3 +1,4 @@
+#-*-coding: utf-8
 
 import select
 import socket
@@ -9,6 +10,8 @@ from tkinter import messagebox
 import tkinter.font as font
 from multiprocessing import Process
 import queue
+from datetime import datetime
+import random
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
@@ -165,7 +168,6 @@ def host(address, timeout=60):
 
                     if parsed.packet['packetType'] == "message":
                         # 현재 소켓을 제외한 소켓으로 메세지 보내야함
-                        DEBUG("message")
                         for client in Clients['AllOnlineClients']:
                             if client != s:
                                 parsed.add({'userID':Clients[s]})
@@ -174,8 +176,41 @@ def host(address, timeout=60):
 
                     elif parsed.packet['packetType'] == "command":
                         # 현재 소켓에 command를 실행한 결과를 보냄
-                        # Clients['msg_queues'][s].put(data)
-                        pass
+                        return_msg = packet.msgPacket("")
+                        return_msg.add({'userID': None})
+                        
+                        if parsed.packet['text'] == "whoami":
+                            return_msg.add({'text': Clients[s] + "입니다."})
+
+                        elif parsed.packet['text'] == "whattime":
+                            now=datetime.now()
+                            return_msg.add({'text': "{}시 {}분 {}초입니다.".format(now.hour,now.minute,now.second)})
+
+                        elif parsed.packet['text'] == "whatdate":
+                            now=datetime.now()
+                            return_msg.add({'text': "{}년 {}월 {}일입니다.".format(now.year,now.month,now.day)})
+
+                        elif parsed.packet['text'] == "dice":
+                            return_msg.add({'text':str(random.randint(1,6))})
+                            
+                        elif parsed.packet['text'] == "user":
+                            names = []
+                            msg = ""
+                            for s in Clients['AllOnlineClients']:
+                                names.append(Clients[s])
+                            
+                            msg += str(names)
+                            return_msg.add({'text': msg})
+
+                        #검색기능
+                        elif parsed.packet['text']=="search":   
+                            return_msg.add({'text': "search"})
+
+                        else :
+                            return_msg.add({'text': "No Command Found."})
+                        
+                        Clients['msg_queues'][s].put(return_msg)
+                        writable.append(s)
 
                     elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
@@ -226,7 +261,10 @@ def host(address, timeout=60):
                 DEBUG("output queue for "+Clients[s]+" is empty")
             else:
                 DEBUG("writing message to "+ Clients[s])
-                DEBUG("message :" + str(next_msg))
+                # if next_msg.packet['userID'] is None:
+                    # DEBUG("message : {" +"\"packetType\": \"message\", \"timestamp\":"+str(next_msg.packet['timestamp'])+", \"text\": \""+ str(next_msg.packet['text'].decode('utf-8')) + "\"}\n")
+                # else :
+                DEBUG("message :" + str(next_msg) + "\n")
                 s.send(next_msg.encode())
         
         DEBUG("\nDEBUG------")
