@@ -17,13 +17,13 @@ class Packet:
         self.packet.update(json.loads(jsonString))
 
     def encode(self):
-        return json.dumps(self.packet).encode('utf-8')
+        return json.dumps(self.packet, ensure_ascii=False).encode('utf-8')
 
     def add(self, dict):
         self.packet.update(dict)
 
     def __repr__(self):
-        return json.dumps(self.packet)
+        return json.dumps(self.packet, ensure_ascii=False)
 
 class registerPacket(Packet):
     def __init__(self, userID, userPass, userName):
