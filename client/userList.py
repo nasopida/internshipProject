@@ -14,18 +14,19 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 class UserList:
-    def __init__(self, window):
+    def __init__(self, window, chatWindow):
         # 자신의 창을 가리킴
         self.myParent = window
-        #색바꾼곳
-        self.myParent.configure(background='black')
-        #메인 프레임
+        
+        # 채팅창 윈도우를 가리킴
+        self.chatWindow = chatWindow
+
+        # 메인 프레임
         self.mainFrame = Frame(window)
-        #색바꾼곳
-        self.mainFrame.configure(background='black')
         self.mainFrame.pack() 
         window.title('유저 리스트')
         self.centerWindow(window)
+        self.darkModeOn = False
 
         # 프레임 리스트
         self.frameList = []
@@ -36,48 +37,34 @@ class UserList:
         # 유저 리스트
         self.user_list = {}
 
-        #유저수 출력 라벨
+        # 유저수 출력 라벨
         self.printUserFrame = Frame(self.mainFrame)
         self.printUserFrame.pack(side=TOP, expand = True, pady = 5)
         self.printUserLabel = Label(self.printUserFrame, text="ㅎㅇ")
-        #색바꾼곳
-        self.printUserLabel['bg']='#000000'
-        self.printUserLabel['fg']='#ffffff'
         self.printUserLabel.pack(side=TOP, expand=True)
 
-        #유저를 담는 라벨
+        # 유저를 담는 라벨
         
         self.userFrame = tk.Frame(self.mainFrame, width=300, height=540, relief='raised',borderwidth=1)
         self.userFrame.pack(fill=BOTH, expand=True)
-        #색바꾼곳
-        self.userFrame.configure(background='black')
 
         self.userScrollbar = Scrollbar(self.userFrame)
         self.userScrollbar.pack(side=RIGHT, fill=Y)
 
 
-        #버튼들의 프레임
+        # 버튼들의 프레임
         self.btnFrame = tk.Frame(self.mainFrame)
         self.btnFrame.pack(fill=X, side=BOTTOM)
         # 강퇴 요청 버튼
         self.banBtn =  Button(self.btnFrame,width=13, command=self.banUser, text="강퇴 요청")
         self.banBtn.pack(side=LEFT)
-        #색바꾼곳
-        self.banBtn['bg']='#000000'
-        self.banBtn['fg']='#ffffff'
         
         # 차단 버튼
         self.blackListUserBtn = Button(self.btnFrame, width=13, command=self.cutOffUser, text="차단")
         self.blackListUserBtn.pack(side=RIGHT)
-        #색바꾼곳
-        self.blackListUserBtn['bg']='#000000'
-        self.blackListUserBtn['fg']='#ffffff'
         #다크모드 버튼
         self.darkModeBtn=Button(self.btnFrame,width=14,command=self.darkMode,text="다크모드")
         self.darkModeBtn.pack(side=BOTTOM)
-        #색바꾼곳
-        self.darkModeBtn['bg']='#000000'
-        self.darkModeBtn['fg']='#ffffff'
     
     # 아래 2개 함수는 유저가 들어올때 / 나갈때 자동 호출되도록 구현
     # 유저를 추가시키는 함수
@@ -115,21 +102,43 @@ class UserList:
 
     #다크모드 함수
     def darkMode(self):
-        #self.darkRoot=Toplevel(self.myParent)
-        #self.darkRoot.grab_set()
-        self.myParent.configure(background='black')
-        self.mainFrame.configure(background='black')
-        self.printUserLabel['bg']='#000000'
-        self.printUserLabel['fg']='#ffffff'
-        self.userFrame.configure(background='black')
-        self.banBtn['bg']='#000000'
-        self.banBtn['fg']='#ffffff'
-        self.blackListUserBtn['bg']='#000000'
-        self.blackListUserBtn['fg']='#ffffff'
-        self.darkModeBtn['bg']='#000000'
-        self.darkModeBtn['fg']='#ffffff'
-        self.darkRoot.resizable(0,0)
-        self.darkRoot.mainloop()
+        # 채팅창 윈도우를 수정
+        #print(self)
+        #print(self.chatWindow)
+        self.chatWindow.darkMode(self.darkModeOn)
+        
+        if self.darkModeOn == False:
+            # 유저리스트 윈도우를 수정
+            #self.darkRoot=Toplevel(self.myParent)
+            #self.darkRoot.grab_set()
+            self.myParent.configure(background='#242424')
+            self.mainFrame.configure(background='#242424')
+            self.printUserLabel['bg']='#242424'
+            self.printUserLabel['fg']='#ffffff'
+            self.userFrame.configure(background='#242424')
+            self.banBtn['bg']='#242424'
+            self.banBtn['fg']='#ffffff'
+            self.blackListUserBtn['bg']='#242424'
+            self.blackListUserBtn['fg']='#ffffff'
+            self.darkModeBtn['bg']='#242424'
+            self.darkModeBtn['fg']='#ffffff'
+            #self.darkRoot.resizable(0,0)
+            #self.darkRoot.mainloop()
+            self.darkModeOn = True
+        else:
+            self.myParent.configure(background='#f0f0f0')
+            self.mainFrame.configure(background='#f0f0f0')
+            self.printUserLabel['bg']='#f0f0f0'
+            self.printUserLabel['fg']='#000000'
+            self.userFrame.configure(background='#f0f0f0')
+            self.banBtn['bg']='#f0f0f0'
+            self.banBtn['fg']='#000000'
+            self.blackListUserBtn['bg']='#f0f0f0'
+            self.blackListUserBtn['fg']='#000000'
+            self.darkModeBtn['bg']='#f0f0f0'
+            self.darkModeBtn['fg']='#000000'
+            self.darkModeOn = False
+
 
     #가운데로 오게 하는 함수
     def centerWindow(self, window):

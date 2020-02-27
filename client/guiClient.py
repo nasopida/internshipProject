@@ -71,9 +71,9 @@ class Chatting:
 
         # 체크박스
         self.translate_check = BooleanVar()
-        lang_change = Checkbutton(self.translateFrame, text="번역하기  ", variable=self.translate_check)
-        lang_change.deselect()
-        lang_change.pack(side=LEFT)
+        self.lang_change = Checkbutton(self.translateFrame, text="번역하기  ", variable=self.translate_check)
+        self.lang_change.deselect()
+        self.lang_change.pack(side=LEFT)
 
         # 원래 언어
         self.lang_original = ttk.Combobox(self.translateFrame,width=12)
@@ -118,7 +118,7 @@ class Chatting:
         #유저 리스트를 새로 띄워주는 창
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
         userListRoot = Toplevel(self.myParent)
-        self.users = userList.UserList(userListRoot)
+        self.users = userList.UserList(userListRoot, self)
         def all_user():
             for name in client.user_list:
                 #print(name)
@@ -145,6 +145,61 @@ class Chatting:
 
         self.inputText.focus_set()
         
+    def darkMode(self, darkModeOn):
+        if darkModeOn == False:
+            self.myParent.configure(background='#242424')
+            self.mainFrame.configure(background='#242424')
+            
+            # 이름 출력 라벨
+            self.nameLabel['bg'] = '#242424'
+            self.nameLabel['fg'] = '#ffffff'
+            
+            # 채팅 기록
+            self.logText['bg'] = '#242424'
+            self.logText['fg'] = '#ffffff'
+            self.scroll.configure(background='#242424')
+            
+            # 번역기
+            self.translateFrame.configure(background='#242424')
+            self.translateLabel['bg'] = '#242424'
+            self.translateLabel['fg'] = '#ffffff'
+            self.lang_change['bg'] = '#242424'
+            self.lang_change['fg'] = '#ffffff'
+
+            # 채팅 입력창
+            self.alertLabel['bg'] = '#242424'
+            self.alertLabel['fg'] = '#ffffff'
+            self.inputText['bg'] = '#242424'
+            self.inputText['fg'] = '#ffffff'
+            self.inputBtn['bg'] = '#242424'
+            self.inputBtn['fg'] = '#ffffff'
+        else:
+            self.myParent.configure(background='#f0f0f0')
+            self.mainFrame.configure(background='#f0f0f0')
+            
+            # 이름 출력 라벨
+            self.nameLabel['bg'] = '#f0f0f0'
+            self.nameLabel['fg'] = '#000000'
+            
+            # 채팅 기록
+            self.logText['bg'] = '#f0f0f0'
+            self.logText['fg'] = '#000000'
+            self.scroll.configure(background='#f0f0f0')
+            
+            # 번역기
+            self.translateFrame.configure(background='#f0f0f0')
+            self.translateLabel['bg'] = '#f0f0f0'
+            self.translateLabel['fg'] = '#000000'
+            self.lang_change['bg'] = '#f0f0f0'
+            self.lang_change['fg'] = '#000000'
+
+            # 채팅 입력창
+            self.alertLabel['bg'] = '#f0f0f0'
+            self.alertLabel['fg'] = '#000000'
+            self.inputText['bg'] = '#f0f0f0'
+            self.inputText['fg'] = '#000000'
+            self.inputBtn['bg'] = '#f0f0f0'
+            self.inputBtn['fg'] = '#000000'
 
     def search(self):
         search = Toplevel(self.myParent)
