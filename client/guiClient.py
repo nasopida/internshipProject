@@ -140,6 +140,7 @@ class Chatting:
             userListRoot.after(500, server_receive)
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
+        userListRoot.resizable(0,0)
         receive_thread.join()
 
         self.inputText.focus_set()
