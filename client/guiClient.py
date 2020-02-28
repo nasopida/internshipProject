@@ -50,7 +50,10 @@ class Chatting:
         self.nameLabelFrame = Frame(self.mainFrame)
         self.nameLabelFrame.pack(fill = X)
         self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user)
-        self.nameLabel.pack(fill=X)
+        self.nameLabel.pack(side=LEFT)
+
+        self.searchButton = Button(self.nameLabelFrame,text="search", command=self.search)
+        self.searchButton.pack(side=RIGHT)
 
         #채팅 내용을 담는 Frame은 chatLogFrame
         self.chatLogFrame = Frame(self.mainFrame)
@@ -151,8 +154,11 @@ class Chatting:
             self.mainFrame.configure(background='#242424')
             
             # 이름 출력 라벨
+            self.nameLabelFrame.configure(background='#242424')
             self.nameLabel['bg'] = '#242424'
             self.nameLabel['fg'] = '#ffffff'
+            self.searchButton['bg'] = '#242424'
+            self.searchButton['fg'] = '#ffffff'
             
             # 채팅 기록
             self.logText['bg'] = '#242424'
@@ -173,13 +179,18 @@ class Chatting:
             self.inputText['fg'] = '#ffffff'
             self.inputBtn['bg'] = '#242424'
             self.inputBtn['fg'] = '#ffffff'
+
+            # 검색 버튼 내부
         else:
             self.myParent.configure(background='#f0f0f0')
             self.mainFrame.configure(background='#f0f0f0')
             
             # 이름 출력 라벨
+            self.nameLabelFrame.configure(background='#f0f0f0')
             self.nameLabel['bg'] = '#f0f0f0'
             self.nameLabel['fg'] = '#000000'
+            self.searchButton['bg'] = '#f0f0f0'
+            self.searchButton['fg'] = '#000000'
             
             # 채팅 기록
             self.logText['bg'] = '#f0f0f0'
