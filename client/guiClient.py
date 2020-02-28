@@ -179,7 +179,6 @@ class Chatting:
             self.inputText['fg'] = '#ffffff'
             self.inputBtn['bg'] = '#242424'
             self.inputBtn['fg'] = '#ffffff'
-
             # 검색 버튼 내부
         else:
             self.myParent.configure(background='#f0f0f0')
