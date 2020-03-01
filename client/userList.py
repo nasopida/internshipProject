@@ -116,11 +116,11 @@ class UserList:
             self.printUserLabel['bg']='#242424'
             self.printUserLabel['fg']='#ffffff'
             self.userFrame.configure(background='#242424')
-            self.banBtn['bg']='#242424'
+            self.banBtn['bg']='#424242'
             self.banBtn['fg']='#ffffff'
-            self.blackListUserBtn['bg']='#242424'
+            self.blackListUserBtn['bg']='#424242'
             self.blackListUserBtn['fg']='#ffffff'
-            self.darkModeBtn['bg']='#242424'
+            self.darkModeBtn['bg']='#424242'
             self.darkModeBtn['fg']='#ffffff'
             #self.darkRoot.resizable(0,0)
             #self.darkRoot.mainloop()
