@@ -105,7 +105,7 @@ class UserList:
         # 채팅창 윈도우를 수정
         #print(self)
         #print(self.chatWindow)
-        self.chatWindow.darkMode(self.darkModeOn)
+        self.chatWindow.darkMode()
         
         if self.darkModeOn == False:
             # 유저리스트 윈도우를 수정

@@ -28,10 +28,12 @@ clnt_logger.read()
 # 채팅을 관리하는 클래스
 class Chatting:
     def __init__(self, window, client_socket):
+
         # 나중에 창을 파괴하기 위해
         self.myParent = window
         self.client_socket = client_socket
-        self.centerWindow(window)
+        self.centerWindow(window, 400, 600)
+        self.darkModeOn = False
 
         #창 x버튼으로 끌때를 위해
         def close():
@@ -147,18 +149,23 @@ class Chatting:
         #userListRoot.resizable(0,0)
         receive_thread.join()
 
-        
-
     def search(self):
         if self.searchWindow == 0:
             search_window = tkinter.Toplevel(self.myParent)
+            #검색창으로 화면 고정
+            search_window.grab_set()
             frame = Frame(search_window)
             search_window.title("검색")
-            search_window.geometry("200x50")
+            self.centerWindow(search_window,200,50)
+            #search_window.geometry("200x50")
             word = Text(search_window)
             word.config(width = 20, height = 1)
             word.pack()
             self.searchWindow = 1
+
+            #word로 창 이동
+            word.focus_set()
+
             def close():
                 self.searchWindow = 0
                 search_window.destroy()
@@ -200,10 +207,21 @@ class Chatting:
             button = Button(search_window, text = "검색")
             button.bind('<Button-1>', search_button)
             button.pack()
+
+            #다크모드 관련
+            if self.darkModeOn == True:
+                search_window.configure(background='#242424')
+                button['bg'] = '#424242'
+                button['fg'] = '#ffffff'
+            else:
+                frame.configure(background='#242424')
+                button['bg'] = '#f0f0f0'
+                button['fg'] = '#000000'
             search_window.resizable(0,0)
             
-    def darkMode(self, darkModeOn):
-        if darkModeOn == False:
+    def darkMode(self):
+        if self.darkModeOn == False:
+            self.darkModeOn = True
             self.myParent.configure(background='#242424')
             self.mainFrame.configure(background='#242424')
             
@@ -211,7 +229,7 @@ class Chatting:
             self.nameLabelFrame.configure(background='#242424')
             self.nameLabel['bg'] = '#242424'
             self.nameLabel['fg'] = '#ffffff'
-            self.searchButton['bg'] = '#242424'
+            self.searchButton['bg'] = '#424242'
             self.searchButton['fg'] = '#ffffff'
             
             # 채팅 기록
@@ -231,10 +249,11 @@ class Chatting:
             self.alertLabel['fg'] = '#ffffff'
             self.inputText['bg'] = '#242424'
             self.inputText['fg'] = '#ffffff'
-            self.inputBtn['bg'] = '#242424'
+            self.inputBtn['bg'] = '#424242'
             self.inputBtn['fg'] = '#ffffff'
             # 검색 버튼 내부
         else:
+            self.darkModeOn = False
             self.myParent.configure(background='#f0f0f0')
             self.mainFrame.configure(background='#f0f0f0')
             
@@ -246,7 +265,7 @@ class Chatting:
             self.searchButton['fg'] = '#000000'
             
             # 채팅 기록
-            self.logText['bg'] = '#f0f0f0'
+            self.logText['bg'] = '#ffffff'
             self.logText['fg'] = '#000000'
             self.scroll.configure(background='#f0f0f0')
             
@@ -260,7 +279,7 @@ class Chatting:
             # 채팅 입력창
             self.alertLabel['bg'] = '#f0f0f0'
             self.alertLabel['fg'] = '#000000'
-            self.inputText['bg'] = '#f0f0f0'
+            self.inputText['bg'] = '#ffffff'
             self.inputText['fg'] = '#000000'
             self.inputBtn['bg'] = '#f0f0f0'
             self.inputBtn['fg'] = '#000000'
@@ -331,17 +350,12 @@ class Chatting:
             self.inputText.delete('1.0', END)
             client.handle_send(self.client_socket, user, data)
     
-    def centerWindow(self, window):
-        width = 400
-        height = 600
-        #userScreen = window.winfo_
-        #screen_width = userScreen.GetSystemMetrics(0)
-        #screen_height = userScreen.GetSystemMetrics(1)
-        screen_width = self.myParent.winfo_screenwidth()
-        screen_height = self.myParent.winfo_screenheight()
-        x = screen_width/2 - width/2
-        y = screen_height/2 - height/2
-        window.geometry('%dx%d+%d+%d' %(width,height,x,y))
+    def centerWindow(self, window ,width, height):
+            screen_width = window.winfo_screenwidth()
+            screen_height = window.winfo_screenheight()
+            x = screen_width/2 - width/2
+            y = screen_height/2 - height/2
+            window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
 
 if __name__ == '__main__':
