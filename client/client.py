@@ -34,8 +34,9 @@ def handle_receive(client_socket, user, Chat = None):
         """if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)"""
-        chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
-        server_chat[chatting] = client_socket
+        if parsed.packet['packetType'] == "message":
+            chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
+            server_chat[chatting] = client_socket
 
 def handle_send(client_socket, user, data = None):
     global clnt_logger

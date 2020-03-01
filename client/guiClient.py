@@ -15,7 +15,6 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 로그인 관련
 import login
-
 import client
 from datetime import datetime
 from logger import msgLog, msgLogger
@@ -54,6 +53,7 @@ class Chatting:
 
         self.searchButton = Button(self.nameLabelFrame,text="search", command=self.search)
         self.searchButton.pack(side=RIGHT)
+        self.searchWindow = 0
 
         #채팅 내용을 담는 Frame은 chatLogFrame
         self.chatLogFrame = Frame(self.mainFrame)
@@ -117,7 +117,8 @@ class Chatting:
         receive_thread = threading.Thread(target=client.handle_receive, args=(self.client_socket, user, self))
         receive_thread.daemon = True
         receive_thread.start()
-        
+
+        self.inputText.focus_set()
         #유저 리스트를 새로 띄워주는 창
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
         userListRoot = Toplevel(self.myParent)
@@ -143,11 +144,64 @@ class Chatting:
             userListRoot.after(500, server_receive)
         userListRoot.after(500, server_receive)
         userListRoot.mainloop()
-        userListRoot.resizable(0,0)
+        #userListRoot.resizable(0,0)
         receive_thread.join()
 
-        self.inputText.focus_set()
         
+
+    def search(self):
+        if self.searchWindow == 0:
+            search_window = tkinter.Toplevel(self.myParent)
+            frame = Frame(search_window)
+            search_window.title("검색")
+            search_window.geometry("200x50")
+            word = Text(search_window)
+            word.config(width = 20, height = 1)
+            word.pack()
+            self.searchWindow = 1
+            def close():
+                self.searchWindow = 0
+                search_window.destroy()
+                self.logText.tag_remove('search', 'matchStart', 'matchEnd')
+                return;
+            search_window.protocol('WM_DELETE_WINDOW', close)
+            self.logText.tag_add('search', '1.0','1.0')
+            def search_button(event):
+                self.logText.tag_delete('search')
+                search_word = word.get('1.0', END)
+                search_word = search_word.rstrip('\n')
+                line = 1
+                #data = self.logText.get('%d.0'%line,'%d.end'%line)
+                data = self.logText.get('1.0', END)
+                line_div = []
+                for div in re.finditer('\n', data):
+                    if div not in line_div:
+                        line_div.append(div.end())
+                if len(search_word) > 0:
+                    for match in re.finditer(search_word, data):
+                        #외부 윈도우에서의 조작이 먹히지 않아서 방법을 찾아야 함
+                        s = match.start()
+                        e = match.end()
+                        tempS = 0
+                        tempE = e-s
+                        for line_num in line_div:
+                            if s >= line_num:
+                                line = line + 1
+                                tempS = s - line_num
+                                tempE = tempS + tempE
+                        self.logText.see('%d.%d'%(line,tempS))
+                        self.logText.config(state = 'normal')
+                        self.logText.mark_set("matchStart", '%d.%d'%(line,tempS))
+                        self.logText.mark_set("matchEnd", '%d.%d'%(line,tempE))
+                        self.logText.tag_add('search', "matchStart", "matchEnd")
+                        self.logText.tag_config('search', background="yellow")
+                        self.logText.config(state = 'disable')
+                        line = 1
+            button = Button(search_window, text = "검색")
+            button.bind('<Button-1>', search_button)
+            button.pack()
+            search_window.resizable(0,0)
+            
     def darkMode(self, darkModeOn):
         if darkModeOn == False:
             self.myParent.configure(background='#242424')
@@ -211,33 +265,6 @@ class Chatting:
             self.inputBtn['bg'] = '#f0f0f0'
             self.inputBtn['fg'] = '#000000'
 
-    def search(self):
-        search = Toplevel(self.myParent)
-        frame = Frame(search)
-        search.title("검색")
-        search.geometry("200x50")
-        word = Text(search)
-        word.config(width = 20, height = 1)
-        word.pack()
-        def file_search(event):
-            f = open('../log/logFile.bin', mode='rb')
-            findtxt = []
-            #read = f.read()
-            
-            data = word.get('1.0',INSERT)
-            findtxt.append(data.strip())
-            i = (len(findtxt)-1)
-            print("@"*50)
-            print("검색 키워드:"+findtxt[i])
-            print("@"*50)
-            for content in f.readlines():
-                if content.find(findtxt[i].encode('utf-8')) != -1:
-                    print(data)
-        button = Button(search, text="검색")
-        button.bind('<Button-1>', file_search)
-        button.pack()
-        search.resizable(0,0)
-
     def sendMessage(self, event = None):
         if self.translate_check.get() == 1:
             mydata = translate.translate(self.inputText.get('1.0',INSERT),self.lang_original.get(),self.lang_translate.get())
@@ -296,8 +323,9 @@ class Chatting:
                 #self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ", end='')
                 #find=input()
                 self.search()
-            """            
-      
+            """
+            if data == '/search':
+                search.search(self)
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
             self.logText.see("end")
             self.inputText.delete('1.0', END)
