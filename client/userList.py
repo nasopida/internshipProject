@@ -88,7 +88,7 @@ class UserList:
     def banUser(self):
         self.banRoot = Toplevel(self.myParent)
         self.banRoot.grab_set()
-        banWindow = banUser.BanUser(self.banRoot, self.user_list)
+        banWindow = banUser.BanUser(self.banRoot, self.user_list, self.darkModeOn)
         self.banRoot.resizable(0,0)
         self.banRoot.mainloop()
 
@@ -96,7 +96,7 @@ class UserList:
     def cutOffUser(self):
         self.cutOffRoot = Toplevel(self.myParent)
         self.cutOffRoot.grab_set()
-        cutOfftWindow = cutOffUser.CutOffUser(self.cutOffRoot, self.user_list)
+        cutOfftWindow = cutOffUser.CutOffUser(self.cutOffRoot, self.user_list, self.darkModeOn)
         self.cutOffRoot.resizable(0,0)
         self.cutOffRoot.mainloop()
 
@@ -109,8 +109,6 @@ class UserList:
         
         if self.darkModeOn == False:
             # 유저리스트 윈도우를 수정
-            #self.darkRoot=Toplevel(self.myParent)
-            #self.darkRoot.grab_set()
             self.myParent.configure(background='#242424')
             self.mainFrame.configure(background='#242424')
             self.printUserLabel['bg']='#242424'
@@ -122,8 +120,6 @@ class UserList:
             self.blackListUserBtn['fg']='#ffffff'
             self.darkModeBtn['bg']='#424242'
             self.darkModeBtn['fg']='#ffffff'
-            #self.darkRoot.resizable(0,0)
-            #self.darkRoot.mainloop()
             self.darkModeOn = True
         else:
             self.myParent.configure(background='#f0f0f0')
@@ -138,7 +134,6 @@ class UserList:
             self.darkModeBtn['bg']='#f0f0f0'
             self.darkModeBtn['fg']='#000000'
             self.darkModeOn = False
-
 
     #가운데로 오게 하는 함수
     def centerWindow(self, window):

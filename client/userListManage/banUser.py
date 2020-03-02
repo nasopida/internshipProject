@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
 
 class BanUser:
-    def __init__(self, window, user_list):
+    def __init__(self, window, user_list, darkModeOn):
         # 자신의 창을 가리킴
         self.myParent = window
         # 가져온 유저 리스트
@@ -21,13 +21,13 @@ class BanUser:
         self.CheckBoxVarList = []
         #상단 프레임
         self.topFrame = Frame(window)
-        titleLabel = Label(self.topFrame, text="유저 차단")
-        titleLabel.pack(fill=X, side=TOP)
+        self.titleLabel = Label(self.topFrame, text="유저 차단")
+        self.titleLabel.pack(fill=X, side=TOP)
         self.topFrame.pack(fill=X, side=TOP)
 
         #메인 프레임
         self.mainFrame = Frame(window)
-        self.mainFrame.pack(fill=BOTH, expand=TRUE, side=LEFT) 
+        self.mainFrame.pack(fill=BOTH, expand=TRUE, side=TOP) 
         window.title('유저 차단')
         self.centerWindow(window)
         
@@ -37,9 +37,30 @@ class BanUser:
 
         #하단 버튼 프레임
         self.btnFrame = Frame(self.myParent)
-        enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.BanUser)
-        enterBtn.pack(side=LEFT)
+        self.enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.BanUser)
+        self.enterBtn.pack(side=BOTTOM)
         self.btnFrame.pack(fill=BOTH, side=BOTTOM)
+        self.darkMode(darkModeOn)
+
+    def darkMode(self, darkModeOn):
+        if darkModeOn == True:
+            self.myParent.configure(background='#242424')
+            self.topFrame.configure(background='#242424')
+            self.mainFrame.configure(background='#242424')
+            self.btnFrame.configure(background='#242424')
+            self.titleLabel['bg'] = '#242424'
+            self.titleLabel['fg'] = '#ffffff'
+            self.enterBtn['bg'] = '#424242'
+            self.enterBtn['fg'] = '#ffffff'
+        else:
+            self.myParent.configure(background='#f0f0f0')
+            self.topFrame.configure(background='#f0f0f0')
+            self.mainFrame.configure(background='#f0f0f0')
+            self.btnFrame.configure(background='#f0f0f0')
+            self.titleLabel['bg'] = '#f0f0f0'
+            self.titleLabel['fg'] = '#000000'
+            self.enterBtn['bg'] = '#f0f0f0'
+            self.enterBtn['fg'] = '#000000'
 
     def BanUser(self):
         pass
