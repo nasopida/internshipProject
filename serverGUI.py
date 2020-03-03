@@ -349,4 +349,7 @@ if __name__ == "__main__":
     nav_buttons['list'][3]['command'] = lambda:Settings(centerFrame)
         
     ####
+
+    Settings(centerFrame)
+
     mainScreen.mainloop()
