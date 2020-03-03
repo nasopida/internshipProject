@@ -351,5 +351,4 @@ if __name__ == "__main__":
     ####
 
     Settings(centerFrame)
-
     mainScreen.mainloop()
