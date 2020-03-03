@@ -63,6 +63,10 @@ def Settings(frame):
         SELECTED = "Settings"
         server_start = Button(frame, text="start server", command=start_server)
         server_stop = Button(frame, text="stop server", command=stop_server)
+        server_start['bg'] = '#424242'
+        server_start['fg'] = '#ffffff'
+        server_stop['bg'] = '#424242'
+        server_stop['fg'] = '#ffffff'
         server_start.pack()
         server_stop.pack()
 
@@ -310,7 +314,6 @@ if __name__ == "__main__":
     NaviFrame.pack(fill=X, side=TOP)
     centerFrame.pack(fill=BOTH, expand=True)
 
-
     # Frame Updates
     nav_buttons = {}
     nav_buttons['cnt'] = 4
@@ -348,7 +351,8 @@ if __name__ == "__main__":
     nav_buttons['list'][2]['command'] = lambda:Logs(centerFrame)
     nav_buttons['list'][3]['command'] = lambda:Settings(centerFrame)
         
-    ####
+    # 백그라운드 색상
+    centerFrame.configure(background='#242424')
 
     Settings(centerFrame)
     mainScreen.mainloop()

@@ -165,17 +165,24 @@ class Login:
             self.idText.icursor(0)
             self.idText.focus_set()
             self.idLabel.pack(side=LEFT, ipadx = 13)
-            self.idText.pack(side=RIGHT, padx = 30)
+            self.idText.pack(side=RIGHT, padx = 20)
 
             # pw를 담는 라벨
             self.passwdFrame = Frame(frame)
-            self.passwdFrame.pack()
+            self.passwdFrame.pack(pady=5)
             self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
             self.passwdText = Entry(self.passwdFrame,show="*")
             self.passwdLabel.pack(side=LEFT)
-            self.passwdText.pack(side=RIGHT, padx=10)
+            self.passwdText.pack(side=RIGHT, padx=20)
 
-            self.loginButton = Button(frame,text="Sign in", command=self.signInBtn, relief=RIDGE)
+            # 로그인 데이터 체크 버튼
+            self.loginDataFrame = Frame(frame)
+            self.loginDataFrame.pack(pady=5)
+            self.loginData = tkinter.Checkbutton(self.loginDataFrame, text="Stay signed in")
+            self.loginData.deselect()
+            self.loginData.pack(side=BOTTOM, padx=20)
+
+            self.loginButton = Button(frame,text="Sign in", command=self.signInBtn)
             #엔터키랑 연동
             self.myParent.bind('<Return>',self.signInBtn)
             self.loginButton.pack(pady=10)
@@ -188,33 +195,33 @@ class Login:
             self.myParent.bind("<Return>",self.signUpBtn)
 
             # ID를 입력하는 라벨
-            self.idFrame = Frame(self.centerFrame)
+            self.idFrame = Frame(frame)
             self.idFrame.pack(expand=True, pady=5)
             self.idLabel = Label(self.idFrame,text="ID : ")
             self.idText = Entry(self.idFrame)
             self.idText.icursor(0)
             self.idText.focus_set()
             self.idLabel.pack(side=LEFT, ipadx = 13)
-            self.idText.pack(side=RIGHT, padx = 30)
+            self.idText.pack(side=RIGHT, padx = 20)
 
             # 비밀번호를 입력하는 라벨
-            self.passwdFrame = Frame(self.centerFrame)
+            self.passwdFrame = Frame(frame)
             self.passwdFrame.pack(pady = 5)
             self.passwdLabel = Label(self.passwdFrame,text = "Password : ")
             self.passwdText = Entry(self.passwdFrame,show="*")
             self.passwdLabel.pack(side=LEFT)
-            self.passwdText.pack(side=RIGHT, padx=10)
+            self.passwdText.pack(side=RIGHT, padx=20)
 
             # 닉네임을 입력하는 라벨
-            self.nicknameFrame = Frame(self.centerFrame)
+            self.nicknameFrame = Frame(frame)
             self.nicknameFrame.pack(pady = 5)
             self.nicknameLabel = Label(self.nicknameFrame, text="Nickname : ")
             self.nicknameText = Entry(self.nicknameFrame)
             self.nicknameLabel.pack(side=LEFT)
-            self.nicknameText.pack(side=RIGHT, padx=10)
+            self.nicknameText.pack(side=RIGHT, padx=20)
 
             # 가입 요청을 하는 버튼
-            self.requestButton = Button(self.centerFrame, text="Sign Up",command=self.signUpBtn)
+            self.requestButton = Button(frame, text="Sign Up",command=self.signUpBtn)
             self.requestButton.pack(pady = 10)
 
     # 회원가입 요청을 하였을 때 실행

@@ -27,7 +27,7 @@ clnt_logger.read()
 
 # 채팅을 관리하는 클래스
 class Chatting:
-    def __init__(self, window, client_socket):
+    def __init__(self, window, client_socket, user):
 
         # 나중에 창을 파괴하기 위해
         self.myParent = window
@@ -53,6 +53,11 @@ class Chatting:
         self.nameLabel = Label(self.nameLabelFrame,text="접속자 : " + user)
         self.nameLabel.pack(side=LEFT)
 
+        #로그아웃 버튼
+        self.signOutButton = Button(self.nameLabelFrame, text="Sign Out", command=lambda:signOut(self.myParent))
+        self.signOutButton.pack(side=RIGHT)
+
+        # 검색 버튼
         self.searchButton = Button(self.nameLabelFrame,text="search", command=self.search)
         self.searchButton.pack(side=RIGHT)
         self.searchWindow = 0
@@ -357,20 +362,19 @@ class Chatting:
             y = screen_height/2 - height/2
             window.geometry('%dx%d+%d+%d' %(width,height,x,y))
 
-
-if __name__ == '__main__':
-    # 아이디 입력 창
+def signOut(myWindow):
+    myWindow.destroy()
+    
+    signIn()
     """
-    if os.path.isfile("login.txt"):
-        pass
-    else:
-        """
-    #IPv4 체계, TCP 타입 소켓 객체를 생성
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    loginRoot = Tk()
+    myLogin = login.Login(loginRoot, client_socket)
+    myLogin.resizable(0,0)
+    myLogin.mainLoop()
+    """
 
-    # 지정한 host와 prot를 통해 서버에 접속합니다.
-    client_socket.connect((host, port))
-
+    # 로그인 실행 함수
+def signIn():
     idRoot = Tk()
     myId = login.Login(idRoot, client_socket)
     idRoot.resizable(0,0)
@@ -393,16 +397,15 @@ if __name__ == '__main__':
     
     # 채팅 창
     chatRoot = Tk()
-    myChat = Chatting(chatRoot, client_socket)
+    myChat = Chatting(chatRoot, client_socket, user)
+
+if __name__ == '__main__':
+    #IPv4 체계, TCP 타입 소켓 객체를 생성
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # 지정한 host와 prot를 통해 서버에 접속합니다.
+    client_socket.connect((host, port))
+
+    signIn()
     #chatRoot.resizable(0,0)
     #chatRoot.mainloop()
-    
-    clnt_logger = msgLogger()
-    clnt_logger.setFile(user+"LogFile.txt")
-    clnt_logger.read()
-
-    #send_thread = threading.Thread(target=client.handle_send, args=(client_socket, user))
-    #send_thread.daemon = True
-    #send_thread.start()
-
-    #send_thread.join()
