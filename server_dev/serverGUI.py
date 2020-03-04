@@ -242,12 +242,14 @@ def host(address, timeout=60):
                             Clients['msg_queues'][s] = queue.Queue()
                         if USERMANAGER.isUser(parsed.packet['userID'], parsed.packet['userPass']):
                             DEBUG("login")
-                            Clients['AppendingSockets'].remove(s)
+                            if s in Clients['AppendingSockets']:
+                                Clients['AppendingSockets'].remove(s)
                             Clients['AllOnlineClients'].append(s)
                             Clients[s] = parsed.packet['userID']
                             Clients['USERCNT'] += 1
                             Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
-                        Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
+                        else:
+                            Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
                         writable.append(s)
 
 
@@ -307,7 +309,7 @@ def host(address, timeout=60):
                     DEBUG("writing message to :"+ Clients[s])
                 else:
                     DEBUG("writing message to :" + str(s.getpeername()))
-                DEBUG("message :" + str(next_msg) + "\n")
+                DEBUG("message :" + str(next_msg))
                 s.send(next_msg.encode())
         
         DEBUG("\nDEBUG------")
