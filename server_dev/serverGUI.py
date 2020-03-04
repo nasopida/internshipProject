@@ -25,6 +25,7 @@ DEBUG = True
 # Client Dict
 Clients = {}
 Clients['AllOnlineClients'] = []
+Clients['AppendingSockets'] = []
 Clients['msg_queues'] = {}
 Clients['USERCNT'] = 0
 
@@ -158,7 +159,10 @@ def host(address, timeout=60):
                     
                     # Stop listening for input on the connection
                     if s in Clients:
-                        Clients['AllOnlineClients'].remove(s)
+                        if s in Clients['AllOnlineClients']:
+                            Clients['AllOnlineClients'].remove(s)
+                        else:
+                            Clients['AppendingSockets'].remove(s)
                         del Clients['msg_queues'][s]
                         del Clients[s]
                         Clients['USERCNT'] -= 1
@@ -232,15 +236,17 @@ def host(address, timeout=60):
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  LOGIN PACKET 
                     elif parsed.packet['packetType'] == "login":
-                        # 함수로 만들어야함
-                        # login.config에 등록된 유저 확인.
-                        # 등록된 유저라면 
+                        if Clients['msg_queues'][s] == None:
+                            Clients['msg_queues'][s] = queue.Queue()
                         if USERMANAGER.isUser(parsed.packet['userID'], parsed.packet['userPass']):
                             DEBUG("login")
+                            Clients['AppendingSockets'].remove(s)
                             Clients['AllOnlineClients'].append(s)
-                            Clients['msg_queues'][s] = queue.Queue()
                             Clients[s] = parsed.packet['userID']
                             Clients['USERCNT'] += 1
+                            Clients['msg_queues'][s].put(packet.loginChkPacket(True)) # login chk successful
+                        Clients['msg_queues'][s].put(packet.loginChkPacket(False)) # login chk successful
+
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
                     elif parsed.packet['packetType'] == "alter":
@@ -251,11 +257,15 @@ def host(address, timeout=60):
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         # login.config에 유저 추가
+                        Clients['AppendingSockets'].append(s)
+                        Clients['msg_queues'][s] = queue.Queue()
                         user = User(parsed.packet['userID'],parsed.packet['userPass'],parsed.packet['nickName'])
                         if user.isFull():
+                            # Clients['msg_queues'][s].put(packet.regChkPacket(True))
                             USERMANAGER.addUser(user)
                             if not USERMANAGER.saveUserFile():
                                 DEBUG('ERR SAVING LOGIN.CONFIG')
+                        # Clients['msg_queues'][s].put(packet.regChkPacket(False))
                     
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
                     else:
@@ -266,7 +276,10 @@ def host(address, timeout=60):
                     # Interpret empty result as closed connection
                     # Stop listening for input on the connection
                     if s in Clients:
-                        Clients['AllOnlineClients'].remove(s)
+                        if s in Clients['AllOnlineClients']:
+                            Clients['AllOnlineClients'].remove(s)
+                        else:
+                            Clients['AppendingSockets'].remove(s)
                         del Clients['msg_queues'][s]
                         del Clients[s]
                         Clients['USERCNT'] -= 1
