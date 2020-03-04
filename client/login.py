@@ -283,7 +283,7 @@ class Login:
         #     for i in range(0,max-1,3):
         #         if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
         #             self.successCheck = True
-        #             self.myID = lines[i]
+        #             
         #             self.myNickname = lines[i+2]
                     
         #             self.myParent.destroy()
@@ -315,6 +315,7 @@ class Login:
                 print(parsed.packet['Chk'])
                 if parsed.packet['Chk'] == True:
                     print("success")
+                    self.myID = self.idText.get()
                     self.successCheck = True
                     self.myParent.destroy()
                 else:
