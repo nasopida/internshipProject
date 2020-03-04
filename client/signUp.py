@@ -68,7 +68,7 @@ class SignUp:
     
     def createID(self):
         # 파일 데이터 생성
-        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
+        self.client_socket.send(registerPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
 
         """
         user_data = OrderedDict()
@@ -87,12 +87,12 @@ class SignUp:
         #os.remove('user.json')
         """
 
-        # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
-        f = open('login.config','a',encoding='utf-8')
-        f.write(self.idText.get()+'\n')
-        f.write(self.passwdText.get()+'\n')
-        f.write(self.nicknameText.get()+'\n')
-        f.close()
+        # # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
+        # f = open('login.config','a',encoding='utf-8')
+        # f.write(self.idText.get()+'\n')
+        # f.write(self.passwdText.get()+'\n')
+        # f.write(self.nicknameText.get()+'\n')
+        # f.close()
 
     
     # 화면을 중앙으로 오게 해주는 함수

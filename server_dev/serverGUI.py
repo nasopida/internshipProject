@@ -12,6 +12,8 @@ from multiprocessing import Process
 import queue
 from datetime import datetime
 import random
+from userManage import userManage
+from user import User
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
@@ -29,6 +31,9 @@ Clients['USERCNT'] = 0
 
 SELECTED = ""
 SERVER = None
+USERMANAGER = userManage()
+if not USERMANAGER.setUserFile('../login.config'):
+    print('userManage: login.config path error')
 
 ##################################
 
@@ -61,6 +66,10 @@ def Logs(frame):
         clean(frame)
         SELECTED = "Logs"
 
+def setpath():
+    global USERMANAGER
+    pass
+
 def Settings(frame):
     global SELECTED
     if SELECTED != "Settings":
@@ -68,8 +77,10 @@ def Settings(frame):
         SELECTED = "Settings"
         server_start = Button(frame, text="start server", command=start_server)
         server_stop = Button(frame, text="stop server", command=stop_server)
+        set_path = Button(frame, text="set path", command=setpath)
         server_start.pack()
         server_stop.pack()
+        set_path.pack()
 
 def start_server():
     global SERVER
@@ -97,7 +108,10 @@ def DEBUG(message):
         print(message, file=sys.stderr)
 
 def host(address, timeout=60):
-    global Clients
+    global Clients, USERMANAGER
+    
+    if not USERMANAGER.fetchUsers():
+        print('serverGUI: fetchUsers() error')
     
     LoginList = []
     readSockList = []
@@ -221,11 +235,12 @@ def host(address, timeout=60):
                         # 함수로 만들어야함
                         # login.config에 등록된 유저 확인.
                         # 등록된 유저라면 
-                        DEBUG("login")
-                        Clients['AllOnlineClients'].append(s)
-                        Clients['msg_queues'][s] = queue.Queue()
-                        Clients[s] = parsed.packet['userID']
-                        Clients['USERCNT'] += 1
+                        if USERMANAGER.isUser(parsed.packet['userID'], parsed.packet['userPass']):
+                            DEBUG("login")
+                            Clients['AllOnlineClients'].append(s)
+                            Clients['msg_queues'][s] = queue.Queue()
+                            Clients[s] = parsed.packet['userID']
+                            Clients['USERCNT'] += 1
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
                     elif parsed.packet['packetType'] == "alter":
@@ -236,7 +251,11 @@ def host(address, timeout=60):
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         # login.config에 유저 추가
-                        pass
+                        user = User(parsed.packet['userID'],parsed.packet['userPass'],parsed.packet['nickName'])
+                        if user.isFull():
+                            USERMANAGER.addUser(user)
+                            if not USERMANAGER.saveUserFile():
+                                DEBUG('ERR SAVING LOGIN.CONFIG')
                     
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
                     else:

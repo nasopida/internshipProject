@@ -252,14 +252,9 @@ class Login:
     # id를 생성
     def createID(self):
         # 파일 데이터 생성
-        self.client_socket.send(alterPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
-
-        # 로그인 정보 저장하기 위한 config파일(저장 버튼 추가예정)
-        f = open('login.config','a',encoding='utf-8')
-        f.write(self.idText.get()+'\n')
-        f.write(self.passwdText.get()+'\n')
-        f.write(self.nicknameText.get()+'\n')
-        f.close()
+        #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # id와 패스워드와 닉네임이 사용가능한 문자열인지 무조건 확인 필요.(에러 예방)
+        self.client_socket.send(registerPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
 
     
     def on_close(self, window):
@@ -274,35 +269,40 @@ class Login:
 
     # 로그인 실행
     def signInCheck(self):
-        if os.path.isfile("login.config"):
-            # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
-            # 나중에는 서버에서 json파일을 불러와서 처리
-            loginFile = open('login.config', mode='rt', encoding='utf-8')
-            lines = loginFile.readlines()
-            max = len(lines)
+        # if os.path.isfile("login.config"):
+        #     # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
+        #     # 나중에는 서버에서 json파일을 불러와서 처리
+        #     loginFile = open('login.config', mode='rt', encoding='utf-8')
+        #     lines = loginFile.readlines()
+        #     max = len(lines)
             
-            # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
-            # 아이디 여러개 저장 가능 -> 삭제 예정
-            # 이부분은 나중에 서버에서 처리
-            for i in range(0,max-1,3):
-                if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
-                    self.successCheck = True
-                    self.myID = lines[i]
-                    self.myNickname = lines[i+2]
-                    self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
+        #     # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
+        #     # 아이디 여러개 저장 가능 -> 삭제 예정
+        #     # 이부분은 나중에 서버에서 처리
+        #     for i in range(0,max-1,3):
+        #         if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
+        #             self.successCheck = True
+        #             self.myID = lines[i]
+        #             self.myNickname = lines[i+2]
                     
-                    self.myParent.destroy()
-                    break
+        #             self.myParent.destroy()
+        #             break
 
-        # 전부 틀릴경우 로그인실패 출력
-        if self.successCheck == False:
-            print("loginFail")
-            # 탑레벨로 묶고 grab_set으로 고정
-            self.failRoot = Toplevel(self.myParent)
-            self.failRoot.grab_set()
-            self.failWindow = loginFail.LoginFail(self.failRoot)
-            self.failRoot.resizable(0,0)
-            self.failRoot.mainloop()
+        # # 전부 틀릴경우 로그인실패 출력
+        # if self.successCheck == False:
+        #     print("loginFail")
+        #     # 탑레벨로 묶고 grab_set으로 고정
+        #     self.failRoot = Toplevel(self.myParent)
+        #     self.failRoot.grab_set()
+        #     self.failWindow = loginFail.LoginFail(self.failRoot)
+        #     self.failRoot.resizable(0,0)
+        #     self.failRoot.mainloop()
+
+        #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # 서버에서 보내는 regChkPacket{'packetType':'regChk', 'regChk': True}의 regChk 여부에 따라 로그인 성공, 실패
+        self.successCheck = True
+        self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
+        self.myParent.destroy()
 
     # 로그인 버튼 -> 로그인 체크만 수행한다.
     def signInBtn(self, event=None):
