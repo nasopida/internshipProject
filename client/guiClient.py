@@ -34,7 +34,8 @@ class Chatting:
         self.client_socket = client_socket
         self.centerWindow(window, 400, 600)
         self.darkModeOn = False
-
+        self.user = user
+        
         #창 x버튼으로 끌때를 위해
         def close():
             self.myParent.destroy()
@@ -174,7 +175,7 @@ class Chatting:
             def close():
                 self.searchWindow = 0
                 search_window.destroy()
-                self.logText.tag_remove('search', 'matchStart', 'matchEnd')
+                self.logText.tag_delete('search')
                 return;
             search_window.protocol('WM_DELETE_WINDOW', close)
             self.logText.tag_add('search', '1.0','1.0')
@@ -194,13 +195,14 @@ class Chatting:
                         #외부 윈도우에서의 조작이 먹히지 않아서 방법을 찾아야 함
                         s = match.start()
                         e = match.end()
-                        tempS = 0
-                        tempE = e-s
+                        tempS = s
+                        tempE = e
                         for line_num in line_div:
+                            print(line_num)
                             if s >= line_num:
                                 line = line + 1
                                 tempS = s - line_num
-                                tempE = tempS + tempE
+                                tempE = tempS + e - s
                         self.logText.see('%d.%d'%(line,tempS))
                         self.logText.config(state = 'normal')
                         self.logText.mark_set("matchStart", '%d.%d'%(line,tempS))
@@ -302,7 +304,7 @@ class Chatting:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
 
             if data not in client.command_list:
-                self.logText.insert(END, '%s:'%user)
+                self.logText.insert(END, '%s:'%self.user)
             self.logText.insert(END,'%s\n'%data)
             """#간단한 명령어기능
             if data == "/quit":
@@ -353,7 +355,7 @@ class Chatting:
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
             self.logText.see("end")
             self.inputText.delete('1.0', END)
-            client.handle_send(self.client_socket, user, data)
+            client.handle_send(self.client_socket, self.user, data)
     
     def centerWindow(self, window ,width, height):
             screen_width = window.winfo_screenwidth()
