@@ -299,7 +299,7 @@ class Login:
         #     self.failRoot.mainloop()
 
         #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # 서버에서 보내는 regChkPacket{'packetType':'regChk', 'regChk': True}의 regChk 여부에 따라 로그인 성공, 실패
+        # 서버에서 보내는 loginChkPacket{'packetType':'loginChk', 'loginChk': True}의 loginChk 여부에 따라 로그인 성공, 실패
         self.successCheck = True
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
         self.myParent.destroy()
