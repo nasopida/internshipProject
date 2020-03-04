@@ -244,8 +244,8 @@ def host(address, timeout=60):
                             Clients['AllOnlineClients'].append(s)
                             Clients[s] = parsed.packet['userID']
                             Clients['USERCNT'] += 1
-                            Clients['msg_queues'][s].put(packet.loginChkPacket(True)) # login chk successful
-                        Clients['msg_queues'][s].put(packet.loginChkPacket(False)) # login chk successful
+                            Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
+                        Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
@@ -261,11 +261,11 @@ def host(address, timeout=60):
                         Clients['msg_queues'][s] = queue.Queue()
                         user = User(parsed.packet['userID'],parsed.packet['userPass'],parsed.packet['nickName'])
                         if user.isFull():
-                            # Clients['msg_queues'][s].put(packet.regChkPacket(True))
+                            Clients['msg_queues'][s].put(packet.ChkPacket(True))
                             USERMANAGER.addUser(user)
                             if not USERMANAGER.saveUserFile():
                                 DEBUG('ERR SAVING LOGIN.CONFIG')
-                        # Clients['msg_queues'][s].put(packet.regChkPacket(False))
+                        Clients['msg_queues'][s].put(packet.ChkPacket(False))
                     
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
                     else:
