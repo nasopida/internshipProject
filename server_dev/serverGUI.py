@@ -32,6 +32,11 @@ SERVER = None
 
 ##################################
 
+def new_connection(s):
+    connection, client_address = s.accept()
+    connection.setblocking(0)
+    return connection
+
 def clean(frame):
     global SELECTED
     SELECTED = ""
@@ -128,17 +133,14 @@ def host(address, timeout=60):
             # 이곳에 유저가 들어온 것을 처리
             if s is socket_listen:
                 # A "readable" server socket is ready to accept a connection
-                connection, client_address = s.accept()
-                connection.setblocking(0)
-                DEBUG("new connection from " + str(client_address))
-                readSockList.append(connection)
+                readSockList.append(new_connection(s))
 
             else:
                 try:
                     data = s.recv(1024)
                 # 이곳에 유저가 나간 것을 처리
                 except ConnectionResetError:
-                    DEBUG("closing "+ str(client_address) +" ConnectionResetError...")
+                    DEBUG("closing "+ str(s) +" ConnectionResetError...")
                     
                     # Stop listening for input on the connection
                     if s in Clients:
@@ -166,6 +168,7 @@ def host(address, timeout=60):
 
                     # DEBUG(parsed)
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  MESSAGE PACKET 
                     if parsed.packet['packetType'] == "message":
                         # 현재 소켓을 제외한 소켓으로 메세지 보내야함
                         for client in Clients['AllOnlineClients']:
@@ -174,6 +177,7 @@ def host(address, timeout=60):
                                 Clients['msg_queues'][client].put(parsed)
                                 writable.append(client)
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  COMMAND PACKET 
                     elif parsed.packet['packetType'] == "command":
                         # 현재 소켓에 command를 실행한 결과를 보냄
                         return_msg = packet.msgPacket("")
@@ -212,6 +216,7 @@ def host(address, timeout=60):
                         Clients['msg_queues'][s].put(return_msg)
                         writable.append(s)
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  LOGIN PACKET 
                     elif parsed.packet['packetType'] == "login":
                         # 함수로 만들어야함
                         # login.config에 등록된 유저 확인.
@@ -222,23 +227,24 @@ def host(address, timeout=60):
                         Clients[s] = parsed.packet['userID']
                         Clients['USERCNT'] += 1
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
                         pass
                 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  REGISTER PACKET 
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         # login.config에 유저 추가
                         pass
                     
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
                     else:
                         print("NOT REGISTERED PACKET!!! -- client err")
                         pass
 
                 else:
                     # Interpret empty result as closed connection
-                    DEBUG("closing "+ str(client_address) +"after reading no data")
-                    
                     # Stop listening for input on the connection
                     if s in Clients:
                         Clients['AllOnlineClients'].remove(s)
