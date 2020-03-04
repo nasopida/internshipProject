@@ -76,6 +76,12 @@ def Settings(frame):
         server_start = Button(frame, text="start server", command=start_server)
         server_stop = Button(frame, text="stop server", command=stop_server)
         set_path = Button(frame, text="set path", command=setpath)
+        server_start['bg'] = '#424242'
+        server_start['fg'] = '#ffffff'
+        server_stop['bg'] = '#424242'
+        server_stop['fg'] = '#ffffff'
+        set_path['bg'] = '#424242'
+        set_path['fg'] = '#ffffff'
         server_start.pack()
         server_stop.pack()
         set_path.pack()
@@ -392,6 +398,7 @@ if __name__ == "__main__":
     nav_buttons['list'][1]['command'] = lambda:Users(centerFrame)
     nav_buttons['list'][2]['command'] = lambda:Logs(centerFrame)
     nav_buttons['list'][3]['command'] = lambda:Settings(centerFrame)
+    centerFrame.configure(background='#242424')
         
     ####
 
