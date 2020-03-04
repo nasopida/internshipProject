@@ -29,12 +29,12 @@ class User:
         return self.nickname
     
     ## OTHERS
-    def sets(self, id="", pw="", nickname=""):
+    def setUseArgs(self, id="", pw="", nickname=""):
         self.ID = id
         self.Passwd = pw
         self.nickname = nickname
 
-    def sets(self, temp):
+    def setUseDict(self, temp):
         self.ID = temp.id
         self.Passwd = temp.pw
         self.nickname = temp.nickname
