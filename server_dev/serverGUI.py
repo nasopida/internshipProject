@@ -247,12 +247,8 @@ def host(address, timeout=60):
                             Clients[s] = parsed.packet['userID']
                             Clients['USERCNT'] += 1
                             Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
-<<<<<<< HEAD
-                        Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
-=======
                         Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
                         writable.append(s)
->>>>>>> d8e34333364a94b40e2e85073a7ef49246c28ae3
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 

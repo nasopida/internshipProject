@@ -10,7 +10,6 @@ import userList
 import sys
 import translate
 
-
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 # 로그인 관련

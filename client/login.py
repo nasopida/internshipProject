@@ -2,7 +2,6 @@ from tkinter import *
 import os
 import guiClient
 import loginFail
-import signUp
 import json
 import tkinter.font
 import tkinter
@@ -10,8 +9,9 @@ import tkinter.ttk as ttk
 from packet import *
 #from guiClient import successCheck
 import signUpResult
-
+import packet
 import sys
+import json
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 #close
@@ -300,28 +300,40 @@ class Login:
         #     self.failRoot.mainloop()
 
         #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-<<<<<<< HEAD
         # 서버에서 보내는 loginChkPacket{'packetType':'loginChk', 'loginChk': True}의 loginChk 여부에 따라 로그인 성공, 실패
         
-=======
-        # 서버에서 보내는 ChkPacket{'packetType':'Chk', 'Chk': True}의 loginChk 여부에 따라 로그인 성공, 실패
-        self.successCheck = True
->>>>>>> d8e34333364a94b40e2e85073a7ef49246c28ae3
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
         #print("data : " + self.client_socket.recv(1024).decode('utf-8'))
-        result = self.client_socket.recv(1024).decode('utf-8')
-        print(result)
-        if result == True:
-            self.successCheck = True
-            self.myParent.destroy()
-        else:
-            print("loginFail")
-            # 탑레벨로 묶고 grab_set으로 고정
-            self.failRoot = Toplevel(self.myParent)
-            self.failRoot.grab_set()
-            self.failWindow = loginFail.LoginFail(self.failRoot)
-            self.failRoot.resizable(0,0)
-            self.failRoot.mainloop()
+        try :
+            result = self.client_socket.recv(1024)
+            #print(result)
+
+            parsed = Packet()
+            parsed.packetify(result)
+            
+            try:               
+                print(parsed.packet['Chk'])
+                if parsed.packet['Chk'] == True:
+                    print("success")
+                    self.successCheck = True
+                    self.myParent.destroy()
+                else:
+                    self.loginFailed()
+            except Exception as er:
+                self.loginFailed()
+        except Exception as err:
+            print("Error : {}" .format(err))
+            self.loginFailed()
+
+    # 로그인 실패
+    def loginFailed(self):
+        print("loginFail")
+        # 탑레벨로 묶고 grab_set으로 고정
+        self.failRoot = Toplevel(self.myParent)
+        self.failRoot.grab_set()
+        self.failWindow = loginFail.LoginFail(self.failRoot)
+        self.failRoot.resizable(0,0)
+        self.failRoot.mainloop()
 
 
     # 로그인 버튼 -> 로그인 체크만 수행한다.
