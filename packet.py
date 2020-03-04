@@ -50,7 +50,10 @@ class cmdPacket(Packet):
         super().__init__("command", time.time())
         self.packet.update({'text':text})
 
-
+class loginChkPacket(Packet):
+    def __init__(self, bool):
+        super().__init__("loginChk", time.time())
+        self.packet.update({'loginChk':bool})
 
 if __name__ == "__main__":
     reg1 = registerPacket("user", "pass", "nickname")
