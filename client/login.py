@@ -302,9 +302,21 @@ class Login:
         # 서버에서 보내는 loginChkPacket{'packetType':'loginChk', 'loginChk': True}의 loginChk 여부에 따라 로그인 성공, 실패
         
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
-        
-        self.successCheck = True
-        self.myParent.destroy()
+        #print("data : " + self.client_socket.recv(1024).decode('utf-8'))
+        result = self.client_socket.recv(1024).decode('utf-8')
+        print(result)
+        if result == True:
+            self.successCheck = True
+            self.myParent.destroy()
+        else:
+            print("loginFail")
+            # 탑레벨로 묶고 grab_set으로 고정
+            self.failRoot = Toplevel(self.myParent)
+            self.failRoot.grab_set()
+            self.failWindow = loginFail.LoginFail(self.failRoot)
+            self.failRoot.resizable(0,0)
+            self.failRoot.mainloop()
+
 
     # 로그인 버튼 -> 로그인 체크만 수행한다.
     def signInBtn(self, event=None):

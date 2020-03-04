@@ -245,7 +245,7 @@ def host(address, timeout=60):
                             Clients[s] = parsed.packet['userID']
                             Clients['USERCNT'] += 1
                             Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
-                        Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
+                        Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
