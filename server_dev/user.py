@@ -1,3 +1,11 @@
+# user.py 
+#     setter 추가했습니다.
+#     setUseDict함수로 dictionary형을 user로 변환 가능합니다.
+#     setUseArgs함수로 init처럼 사용할수 있습니다.
+#     repr함수로 dict를 받아올수 있습니다.
+#     str함수를 추가했습니다. 이제 출력시에 dict 형태로 출력이 됩니다.
+#     isFull메소드는 ID, PASSWD, NICKNAME이 있을시에 True를 반환합니다.
+
 import json
 
 ### USER
