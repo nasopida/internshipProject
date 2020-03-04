@@ -254,6 +254,7 @@ class Login:
         # 파일 데이터 생성
         #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # id와 패스워드와 닉네임이 사용가능한 문자열인지 무조건 확인 필요.(에러 예방)
+        # 서버에서 보내는 ChkPacket{'packetType':'Chk', 'Chk': True}의 loginChk 여부에 따라 회원가입 성공, 실패
         self.client_socket.send(registerPacket(self.idText.get(),self.passwdText.get(),self.nicknameText.get()).encode())
 
     
@@ -299,8 +300,13 @@ class Login:
         #     self.failRoot.mainloop()
 
         #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+<<<<<<< HEAD
         # 서버에서 보내는 loginChkPacket{'packetType':'loginChk', 'loginChk': True}의 loginChk 여부에 따라 로그인 성공, 실패
         
+=======
+        # 서버에서 보내는 ChkPacket{'packetType':'Chk', 'Chk': True}의 loginChk 여부에 따라 로그인 성공, 실패
+        self.successCheck = True
+>>>>>>> d8e34333364a94b40e2e85073a7ef49246c28ae3
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
         #print("data : " + self.client_socket.recv(1024).decode('utf-8'))
         result = self.client_socket.recv(1024).decode('utf-8')
