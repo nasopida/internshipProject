@@ -299,9 +299,6 @@ def host(address, timeout=60):
                 DEBUG("output queue for "+Clients[s]+" is empty")
             else:
                 DEBUG("writing message to "+ Clients[s])
-                # if next_msg.packet['userID'] is None:
-                    # DEBUG("message : {" +"\"packetType\": \"message\", \"timestamp\":"+str(next_msg.packet['timestamp'])+", \"text\": \""+ str(next_msg.packet['text'].decode('utf-8')) + "\"}\n")
-                # else :
                 DEBUG("message :" + str(next_msg) + "\n")
                 s.send(next_msg.encode())
         
