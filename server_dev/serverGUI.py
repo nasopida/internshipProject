@@ -33,9 +33,6 @@ Clients['USERCNT'] = 0
 SELECTED = ""
 SERVER = None
 USERMANAGER = userManage()
-if not USERMANAGER.setUserFile('../login.config'):
-    print('userManage: login.config path error')
-
 ##################################
 
 def new_connection(s):
@@ -84,7 +81,7 @@ def Settings(frame):
         set_path.pack()
 
 def start_server():
-    global SERVER
+    global SERVER, USERMANAGER
     if SERVER is None:
         SERVER = Process(target=host, args=(("127.0.0.1", 57270),))
         # SERVER = subprocess.Popen(host, stdout=subprocess.PIPE, shell=True)
@@ -93,8 +90,10 @@ def start_server():
         print("Server Started")
 
 def stop_server():
-    global SERVER
+    global SERVER, USERMANAGER
     if SERVER is not None:
+        if not USERMANAGER.saveUserFile():
+            DEBUG('ERR SAVING LOGIN.CONFIG')
         print("Stopping Server...")
         SERVER = SERVER.kill()
         print("Server Stopped")
@@ -111,6 +110,9 @@ def DEBUG(message):
 def host(address, timeout=60):
     global Clients, USERMANAGER
     
+    if not USERMANAGER.setUserFile('../login.config'):
+        print('userManage: login.config path error')
+
     if not USERMANAGER.fetchUsers():
         print('serverGUI: fetchUsers() error')
     
@@ -236,7 +238,7 @@ def host(address, timeout=60):
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  LOGIN PACKET 
                     elif parsed.packet['packetType'] == "login":
-                        if Clients['msg_queues'][s] == None:
+                        if s not in Clients['msg_queues']:
                             Clients['msg_queues'][s] = queue.Queue()
                         if USERMANAGER.isUser(parsed.packet['userID'], parsed.packet['userPass']):
                             DEBUG("login")
@@ -246,6 +248,7 @@ def host(address, timeout=60):
                             Clients['USERCNT'] += 1
                             Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
                         Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
+                        writable.append(s)
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
@@ -265,7 +268,9 @@ def host(address, timeout=60):
                             USERMANAGER.addUser(user)
                             if not USERMANAGER.saveUserFile():
                                 DEBUG('ERR SAVING LOGIN.CONFIG')
-                        Clients['msg_queues'][s].put(packet.ChkPacket(False))
+                        else:
+                            Clients['msg_queues'][s].put(packet.ChkPacket(False))
+                        writable.append(s)
                     
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
                     else:
@@ -293,12 +298,15 @@ def host(address, timeout=60):
         for s in writable:
             try:
                 next_msg = Clients['msg_queues'][s].get_nowait()
-            # msg = "message from server"
             except queue.Empty:
                 # No messages waiting so stop checking for writability.
-                DEBUG("output queue for "+Clients[s]+" is empty")
+                # DEBUG("output queue for "+Clients[s]+" is empty")
+                continue
             else:
-                DEBUG("writing message to "+ Clients[s])
+                if s in Clients:
+                    DEBUG("writing message to :"+ Clients[s])
+                else:
+                    DEBUG("writing message to :" + str(s.getpeername()))
                 DEBUG("message :" + str(next_msg) + "\n")
                 s.send(next_msg.encode())
         
