@@ -201,7 +201,8 @@ class Login:
             lines[2].splitlines()
             data = lines[0].rstrip('\n')
             if data == 'True':
-                print("ee"+lines[1])
+                #print("ee"+lines[1])
+                self.login_check.set(True)
                 self.idText.insert(0,lines[1].rstrip('\n'))
                 self.passwdText.insert(0,lines[2].rstrip('\n'))
 
