@@ -54,7 +54,7 @@ class Chatting:
         self.nameLabel.pack(side=LEFT)
 
         #로그아웃 버튼
-        self.signOutButton = Button(self.nameLabelFrame, text="Sign Out", command=lambda:signOut(self.myParent))
+        self.signOutButton = Button(self.nameLabelFrame, text="Sign Out", command=lambda:self.signOut())
         self.signOutButton.pack(side=RIGHT)
 
         # 검색 버튼
@@ -362,10 +362,22 @@ class Chatting:
             x = screen_width/2 - width/2
             y = screen_height/2 - height/2
             window.geometry('%dx%d+%d+%d' %(width,height,x,y))
+    def signOut(self):
+        self.client_socket.close()
+        self.myParent.destroy()
+        signOut()
 
-def signOut(myWindow):
-    myWindow.destroy()
-    
+def signOut():
+    #myWindow.client_socket.close()
+    #myWindow.destroy()
+
+    #IPv4 체계, TCP 타입 소켓 객체를 생성
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # 지정한 host와 prot를 통해 서버에 접속합니다.
+    client_socket.connect((host, port))
+
+    print(client_socket)
     signIn()
 
     # 로그인 실행 함수
@@ -401,6 +413,8 @@ if __name__ == '__main__':
 
     # 지정한 host와 prot를 통해 서버에 접속합니다.
     client_socket.connect((host, port))
+
+    print(client_socket)
 
     signIn()
     #chatRoot.resizable(0,0)
