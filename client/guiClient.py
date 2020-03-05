@@ -367,12 +367,6 @@ def signOut(myWindow):
     myWindow.destroy()
     
     signIn()
-    """
-    loginRoot = Tk()
-    myLogin = login.Login(loginRoot, client_socket)
-    myLogin.resizable(0,0)
-    myLogin.mainLoop()
-    """
 
     # 로그인 실행 함수
 def signIn():
@@ -382,15 +376,18 @@ def signIn():
     idRoot.mainloop()
     #print(successCheck)
     #if successCheck == True:
+    myUser = ""
     if login.Login.loginSuccess(myId) == True:
-        if os.path.isfile("login.config"):
-            loginFile = open('login.config',mode='rt',encoding='utf-8')
-            lines = loginFile.readlines()
-            #lines[2].splitlines()
-            myUser = login.Login.returnID(myId)
+        #if os.path.isfile("login.config"):
+        #   loginFile = open('login.config',mode='rt',encoding='utf-8')
+        #    lines = loginFile.readlines()
+            #lines[3].splitlines()
+        myUser = login.Login.returnID(myId)
             #user.rstrip('\n')
             #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
+           
     else:
+        print('2')
         sys.exit()
     user = myUser.rstrip('\n')
     
