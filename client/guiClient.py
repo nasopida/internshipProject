@@ -364,6 +364,7 @@ class Chatting:
             window.geometry('%dx%d+%d+%d' %(width,height,x,y))
     def signOut(self):
         self.client_socket.close()
+        
         self.myParent.destroy()
         signOut()
 
