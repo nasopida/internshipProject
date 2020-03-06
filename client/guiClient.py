@@ -237,6 +237,8 @@ class Chatting:
             self.nameLabel['fg'] = '#ffffff'
             self.searchButton['bg'] = '#424242'
             self.searchButton['fg'] = '#ffffff'
+            self.signOutButton['bg'] = "#424242"
+            self.signOutButton['fg'] = "#ffffff"
             
             # 채팅 기록
             self.logText['bg'] = '#242424'
@@ -269,6 +271,8 @@ class Chatting:
             self.nameLabel['fg'] = '#000000'
             self.searchButton['bg'] = '#f0f0f0'
             self.searchButton['fg'] = '#000000'
+            self.signOutButton['bg'] = "#f0f0f0"
+            self.signOutButton['fg'] = "#000000"
             
             # 채팅 기록
             self.logText['bg'] = '#ffffff'

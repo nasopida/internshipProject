@@ -12,6 +12,7 @@ import signUpResult
 import packet
 import sys
 import json
+from ctypes import windll
 from tkinter import messagebox
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -28,6 +29,10 @@ class Login:
         # 창을 파괴하기 위한 myParent
         self.myParent = window
 
+        # 제목 표시줄 함수 -> TitleBarSet
+        window.title("Sign In")
+        self.TitleBarSet()
+
         # x창 눌렀을 때 창 삭제
         self.myParent.protocol("WM_DELETE_WINDOW", lambda:self.on_close(self.myParent))
 
@@ -35,8 +40,7 @@ class Login:
         self.mainFrame = Frame(window)
         #클라이언트 소켓
         self.client_socket = client_socket
-
-        window.title("로그인")
+        
         centerWindow(window, 300, 250)
         #window.geometry("250x140")
         self.mainFrame.pack(fill=X)
@@ -118,10 +122,93 @@ class Login:
         self.signUpButton = Button(window,text="회원가입", command=self.signUpBtn)
         self.signUpButton.pack(pady=10)
     """
+
+##############################################################
+    # 제목 표시줄 설정
+    def TitleBarSet(self):
+        self.myParent.overrideredirect(True)
+        self.myParent.iconbitmap("./Icon/chat.ico")
+        self.myParent.after(0,self.set_window)
+        
+        # 요소 설정하기
+        s = ttk.Style()
+        s.configure("titlebar.TFrame", background="#242424")
+        s.theme_use('default')
+        titlebar = ttk.Frame(self.myParent, style="titlebar.TFrame")
+        widget = ttk.Frame(self.myParent)
+
+        title = ttk.Label(titlebar,text=self.myParent.title(),style="titlebar.TLabel", background="#242424", foreground="#ffffff", font=("arial",15))
+
+        s.configure("TButton", font=("arial", 8))
+        s.configure("TButton", background='#424242')
+        s.configure("TButton", foreground="white")
+        
+        s.map(
+            "TButton",
+            foreground=[('pressed','red'),('active','white')],
+            background=[('pressed','#242424'),('active','#242424')]
+        )
+        close = ttk.Button(titlebar, text='X', takefocus=False, command=self.on_exit, width=4)
+        #label = ttk.Label(widget, text="위젯 영역")
+
+        # 요소 배치하기
+        titlebar.pack(side='top', fill='x', expand='no')
+        widget.pack(side = 'bottom', fill='both', expand='yes')
+        title.pack(side='left', fill='x', expand='yes')
+        close.pack(side='right')
+        #label.pack()
+
+        # 요소에 함수 바인딩
+        #<BUTTONPRESS-1> : 마우스 왼쪽 버튼
+        #<BUTTONRElease-1> : 마우스 왼쪽 버튼
+        #<Double_Button-1> : 마우스 왼쪽 더블클릭
+        #<B1-Motion>: 마우스 클릭 상태로 움직임
+        title.bind("<ButtonPress-1>", self.start_move)
+        title.bind("<ButtonRelease-1>", self.stop_move)
+        title.bind("<B1-Motion>",self.on_move)
+
+    #창의 제목을 클릭하여 위치를 옮기는 함수
+    def start_move(self, event):
+        self.myParent.x = event.x
+        self.myParent.y = event.y
+
+    # 마우스를 떼서 변수를 초기화시킴
+    def stop_move(self, event):
+        self.x = None
+        self.y = None
+
+    #마우스 드래그
+    def on_move(self, event):
+        deltax = event.x - self.myParent.x
+        deltay = event.y - self.myParent.y
+        x = self.myParent.winfo_x() + deltax
+        y = self.myParent.winfo_y() + deltay
+        self.myParent.geometry("+%s+%s" % (x,y))
+
+    # 종료 버튼 함수
+    def on_exit(self):
+        self.myParent.destroy()
+    
+    # 윈도우 세팅
+    def set_window(self):
+        GWL_EXSTYLE = -20
+        WS_EX_APPWINDOW = 0x00040000
+        WS_EX_TOOLWINDOW = 0x00000000
+        hwnd = windll.user32.GetParent(self.myParent.winfo_id())
+        style = windll.user32.GetWindowLongW(hwnd,GWL_EXSTYLE)
+        style = style & ~WS_EX_TOOLWINDOW
+        style = style | WS_EX_APPWINDOW
+        res = windll.user32.SetWindowLongW(hwnd,GWL_EXSTYLE,style)
+        self.myParent.wm_withdraw()
+        self.myParent.after(0, lambda:self.myParent.wm_deiconify())
+
+##################################################################
+
     # 이름 변경 함수라 다른 파일에서 사용 불가능하게 구현 예정
     def langChange(self, event=None):
         lang = self.langCombobox.get()
         if lang == "English":
+            self.myParent.title = "Sign in"
             self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
             if self.selected == "sign_in":
@@ -129,6 +216,7 @@ class Login:
             else:
                 self.requestButton.configure(text="Sign Up")
         elif lang == "한국어":
+            self.myParent.title = "로그인"
             self.nav_buttons['list'][0]['text'] = "로그인"
             self.nav_buttons['list'][1]['text'] = "회원가입"
             if self.selected == "sign_in":
@@ -136,6 +224,7 @@ class Login:
             else:
                 self.requestButton.configure(text="회원 가입")
         else:
+            self.myParent.title = "サインイン"
             self.nav_buttons['list'][0]['text'] = "サインイン"
             self.nav_buttons['list'][1]['text'] = "サインアップ"
             if self.selected == "sign_in":
