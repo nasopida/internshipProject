@@ -9,6 +9,7 @@ import tkinter
 import userList
 import sys
 import translate
+import titleBar
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -41,9 +42,13 @@ class Chatting:
             self.client_socket.close()
         self.myParent.protocol('WM_DELETE_WINDOW', close)
 
+        # 타이틀바
+        window.title("채팅방")
+        self.titlebar = titleBar.TitleBar(self.myParent)
+
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
-        window.title("채팅방")
+        
         #window.geometry("400x600")
         self.mainFrame.pack(fill=X)
 

@@ -15,6 +15,7 @@ import json
 from ctypes import windll
 from tkinter import messagebox
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+import titleBar
 
 #close
 def on_close(window):
@@ -31,7 +32,8 @@ class Login:
 
         # 제목 표시줄 함수 -> TitleBarSet
         window.title("Sign In")
-        self.TitleBarSet()
+        #self.TitleBarSet()
+        self.titlebar = titleBar.TitleBar(self.myParent)
 
         # x창 눌렀을 때 창 삭제
         self.myParent.protocol("WM_DELETE_WINDOW", lambda:self.on_close(self.myParent))
