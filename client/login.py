@@ -454,6 +454,7 @@ class Login:
                     self.successCheck = True
                     # 체크박스 체크여부와 실행 시 데이터 확인
                     self.loginDataSave()
+                    self.client_socket.send(Packet('OnlineClients').encode())
                     self.myParent.destroy()
                     return
                 else:

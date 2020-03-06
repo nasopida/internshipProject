@@ -34,10 +34,20 @@ def handle_receive(client_socket, user, Chat = None):
         """if not user in data: # 자신이 아닐때 출력
             clnt_logger.addLog(msgLog("program", data))
             print(data)"""
+        if parsed.packet['packetType'] == "OnlineClients":
+            online_list = parsed.packet['userList']
+            userCNT = 1
+            for name in online_list:
+                if name not in user_list:
+                    user_list[name] = userCNT
+                #print(name)
+            for name in user_list:
+                if name not in online_list:
+                    del user_list[name]
         if parsed.packet['packetType'] == "message":
             chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
             server_chat[chatting] = client_socket
-
+            
 def handle_send(client_socket, user, data = None):
     global clnt_logger
     #f = open('./log/chatLog.txt', mode='at', encoding='utf-8')

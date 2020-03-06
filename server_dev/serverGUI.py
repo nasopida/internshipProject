@@ -25,6 +25,7 @@ DEBUG = True
 # Client Dict
 Clients = {}
 Clients['AllOnlineClients'] = []
+Clients['AllOnlineUserID'] = {}
 Clients['AppendingSockets'] = []
 Clients['msg_queues'] = {}
 Clients['USERCNT'] = 0
@@ -169,6 +170,7 @@ def host(address, timeout=60):
                     if s in Clients:
                         if s in Clients['AllOnlineClients']:
                             Clients['AllOnlineClients'].remove(s)
+                            del Clients['AllOnlineUserID'][s]
                         else:
                             Clients['AppendingSockets'].remove(s)
                         del Clients['msg_queues'][s]
@@ -252,11 +254,21 @@ def host(address, timeout=60):
                                 Clients['AppendingSockets'].remove(s)
                             Clients['AllOnlineClients'].append(s)
                             Clients[s] = parsed.packet['userID']
+                            Clients['AllOnlineUserID'][Clients[s]] = s
                             Clients['USERCNT'] += 1
                             Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
                         else:
                             Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
                         writable.append(s)
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
+                    elif parsed.packet['packetType'] == "OnlineClients":
+                        userList = []
+                        for userID in Clients['AllOnlineUserID']:
+                            userList.append(userID)
+                        for client in Clients['AllOnlineClients']:
+                            parsed.add({'userList': userList})
+                            Clients['msg_queues'][client].put(parsed)
+                            writable.append(client)
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
