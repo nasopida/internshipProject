@@ -115,7 +115,7 @@ class Login:
         #self.langCombobox.bind("<<ComboboxSelected>>",self.btnName(None,self.langCombobox.get()))
         self.langCombobox.bind("<<ComboboxSelected>>",self.langChange)
 
-        self.langCombobox.pack(side=BOTTOM)
+        self.langCombobox.pack(side=BOTTOM, ipady=5)
     """
         # 비밀번호 프레임
         #회원가입
