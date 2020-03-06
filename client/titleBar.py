@@ -92,3 +92,13 @@ class TitleBar:
         self.window.after(0, lambda:self.window.wm_deiconify())
 
     ##################################################################
+
+# 채팅만을 위한 TitleBar로, TitleBar 상속
+class TitleBarChat(TitleBar):
+    def __init__(self, window, client_socket):
+        TitleBar.__init__(self,window)
+        self.client_socket = client_socket
+
+    def on_exit(self):
+        self.window.destroy()
+        self.client_socket.close()

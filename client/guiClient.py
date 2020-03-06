@@ -5,6 +5,7 @@ import random
 import os
 from tkinter import *
 from tkinter import ttk
+
 import tkinter
 import userList
 import sys
@@ -28,7 +29,6 @@ clnt_logger.read()
 # 채팅을 관리하는 클래스
 class Chatting:
     def __init__(self, window, client_socket, user):
-
         # 나중에 창을 파괴하기 위해
         self.myParent = window
         self.client_socket = client_socket
@@ -44,7 +44,7 @@ class Chatting:
 
         # 타이틀바
         window.title("채팅방")
-        self.titlebar = titleBar.TitleBar(self.myParent)
+        self.titlebar = titleBar.TitleBarChat(self.myParent, self.client_socket)
 
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
