@@ -152,6 +152,7 @@ class Login:
         #label = ttk.Label(widget, text="위젯 영역")
 
         # 요소 배치하기
+        
         titlebar.pack(side='top', fill='x', expand='no')
         widget.pack(side = 'bottom', fill='both', expand='yes')
         title.pack(side='left', fill='x', expand='yes')
