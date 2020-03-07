@@ -170,7 +170,7 @@ def host(address, timeout=60):
                     if s in Clients:
                         if s in Clients['AllOnlineClients']:
                             Clients['AllOnlineClients'].remove(s)
-                            del Clients['AllOnlineUserID'][s]
+                            del Clients['AllOnlineUserID'][Clients[s]]
                         else:
                             Clients['AppendingSockets'].remove(s)
                         del Clients['msg_queues'][s]
