@@ -36,6 +36,13 @@ class userManage:
             self.userCnt += 1
             self.userList.append(user)
 
+    def getUser(self, temp_ID, temp_pass):
+        for user in self.userList:
+            if user.getID() == temp_ID:
+                if user.getPasswd() == temp_pass:
+                    return user
+        return None
+
     # sets path
     # returns True when Success
     def setUserFile(self, path):

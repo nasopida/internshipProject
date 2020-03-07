@@ -362,8 +362,9 @@ class Chatting:
             x = screen_width/2 - width/2
             y = screen_height/2 - height/2
             window.geometry('%dx%d+%d+%d' %(width,height,x,y))
+            
     def signOut(self):
-        self.client_socket.close()
+        # self.client_socket.close() /////// 소켓 닫으면 안됩니다.
         self.myParent.destroy()
         signOut()
 
@@ -381,6 +382,7 @@ def signOut():
     signIn()
 
     # 로그인 실행 함수
+    ## 접속 유저 이름 정하는곳.
 def signIn():
     idRoot = Tk()
     myId = login.Login(idRoot, client_socket)

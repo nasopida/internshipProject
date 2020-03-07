@@ -242,29 +242,30 @@ def host(address, timeout=60):
                         Clients['msg_queues'][s].put(return_msg)
                         writable.append(s)
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  LOGIN PACKET 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  LOGIN PACKET
                     elif parsed.packet['packetType'] == "login":
                         if s not in Clients['msg_queues']:
                             Clients['msg_queues'][s] = queue.Queue()
-                        if USERMANAGER.isUser(parsed.packet['userID'], parsed.packet['userPass']):
+                        temp_user = USERMANAGER.getUser(parsed.packet['userID'], parsed.packet['userPass'])
+                        if temp_user != None:
                             DEBUG("login")
                             if s in Clients['AppendingSockets']:
                                 Clients['AppendingSockets'].remove(s)
                             Clients['AllOnlineClients'].append(s)
-                            Clients[s] = parsed.packet['userID']
+                            Clients[s] = temp_user.getNickname()
                             Clients['USERCNT'] += 1
-                            Clients['msg_queues'][s].put(packet.ChkPacket(True)) # login chk successful
+                            Clients['msg_queues'][s].put(packet.ChkPacket(True, temp_user)) # login chk successful
                         else:
                             Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
                         writable.append(s)
 
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET
                     elif parsed.packet['packetType'] == "alter":
                         # 함수로 만들어야함
                         pass
                 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  REGISTER PACKET 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  REGISTER PACKET
                     elif parsed.packet['packetType'] == "register":
                         # 함수로 만들어야함
                         # login.config에 유저 추가
@@ -280,7 +281,7 @@ def host(address, timeout=60):
                             Clients['msg_queues'][s].put(packet.ChkPacket(False))
                         writable.append(s)
                     
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ELSE PACKET
                     else:
                         print("NOT REGISTERED PACKET!!! -- client err")
                         pass
@@ -312,7 +313,7 @@ def host(address, timeout=60):
                 continue
             else:
                 if s in Clients:
-                    DEBUG("writing message to :"+ Clients[s])
+                    DEBUG("writing message to :"+ Clients[s].getNickname())
                 else:
                     DEBUG("writing message to :" + str(s.getpeername()))
                 DEBUG("message :" + str(next_msg))
@@ -384,7 +385,6 @@ if __name__ == "__main__":
         nav_buttons['list'][i]['width'] = nav_buttons['width']
         nav_buttons['list'][i]['height'] = nav_buttons['height']
 
-        
     nav_buttons['list'][0]['text'] = "Stats"
     nav_buttons['list'][1]['text'] = "Users"
     nav_buttons['list'][2]['text'] = "Logs"

@@ -35,7 +35,10 @@ def handle_receive(client_socket, user, Chat = None):
             clnt_logger.addLog(msgLog("program", data))
             print(data)"""
         if parsed.packet['packetType'] == "message":
-            chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
+            if parsed.packet['userID'] == None:
+                chatting = parsed.packet['text']
+            else:
+                chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
             server_chat[chatting] = client_socket
 
 def handle_send(client_socket, user, data = None):
