@@ -8,7 +8,7 @@ import tkinter as tk
 import tkinter.ttk
 from userListManage import cutOffUser
 from userListManage import banUser
-
+import titleBar
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -17,14 +17,17 @@ class UserList:
     def __init__(self, window, chatWindow):
         # 자신의 창을 가리킴
         self.myParent = window
-        
+
+        # 타이틀바 설정
+        window.title('유저 리스트')
+        self.titlebar = titleBar.TitleBar(self.myParent)
+
         # 채팅창 윈도우를 가리킴
         self.chatWindow = chatWindow
 
         # 메인 프레임
         self.mainFrame = Frame(window)
         self.mainFrame.pack() 
-        window.title('유저 리스트')
         self.centerWindow(window)
         self.darkModeOn = False
 
@@ -49,8 +52,7 @@ class UserList:
         self.userFrame.pack(fill=BOTH, expand=True)
 
         self.userScrollbar = Scrollbar(self.userFrame)
-        self.userScrollbar.pack(side=RIGHT, fill=Y)
-
+        self.userScrollbar.pack(side=RIGHT, fill=BOTH)
 
         # 버튼들의 프레임
         self.btnFrame = tk.Frame(self.mainFrame)

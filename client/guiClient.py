@@ -5,10 +5,13 @@ import random
 import os
 from tkinter import *
 from tkinter import ttk
+
 import tkinter
 import userList
 import sys
 import translate
+import titleBar
+import search
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -27,7 +30,6 @@ clnt_logger.read()
 # 채팅을 관리하는 클래스
 class Chatting:
     def __init__(self, window, client_socket, user):
-
         # 나중에 창을 파괴하기 위해
         self.myParent = window
         self.client_socket = client_socket
@@ -41,9 +43,13 @@ class Chatting:
             self.client_socket.close()
         self.myParent.protocol('WM_DELETE_WINDOW', close)
 
+        # 타이틀바
+        window.title("채팅방")
+        self.titlebar = titleBar.TitleBarChat(self.myParent, self.client_socket)
+
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)
-        window.title("채팅방")
+        
         #window.geometry("400x600")
         self.mainFrame.pack(fill=X)
 
@@ -153,77 +159,30 @@ class Chatting:
         userListRoot.mainloop()
         #userListRoot.resizable(0,0)
         receive_thread.join()
+    def searchWindowON(self):
+        searchWindow = 1
 
+    def searchWindowOFF(self):
+        searchWindow = 0
+
+    def delete_highlighting(self):
+        self.logText.tag_delete('search')
+
+    def highlighting(self, line, start, end):
+        self.logText.see('%d.%d'%(line, start))
+        self.logText.config(state = 'normal')
+        self.logText.mark_set("matchStart", '%d.%d'%(line,start))
+        self.logText.mark_set("matchEnd", '%d.%d'%(line,end))
+        self.logText.tag_add('search', "matchStart", "matchEnd")
+        self.logText.tag_config('search', background="yellow")
+        self.logText.config(state = 'disable')
+
+    def get_searchData(self):
+        return self.logText.get('1.0', END)
+    
     def search(self):
         if self.searchWindow == 0:
-            search_window = tkinter.Toplevel(self.myParent)
-            #검색창으로 화면 고정
-            search_window.grab_set()
-            frame = Frame(search_window)
-            search_window.title("검색")
-            self.centerWindow(search_window,200,50)
-            #search_window.geometry("200x50")
-            word = Text(search_window)
-            word.config(width = 20, height = 1)
-            word.pack()
-            self.searchWindow = 1
-
-            #word로 창 이동
-            word.focus_set()
-
-            def close():
-                self.searchWindow = 0
-                search_window.destroy()
-                self.logText.tag_delete('search')
-                return;
-            search_window.protocol('WM_DELETE_WINDOW', close)
-            self.logText.tag_add('search', '1.0','1.0')
-            def search_button(event):
-                self.logText.tag_delete('search')
-                search_word = word.get('1.0', END)
-                search_word = search_word.rstrip('\n')
-                line = 1
-                #data = self.logText.get('%d.0'%line,'%d.end'%line)
-                data = self.logText.get('1.0', END)
-                line_div = []
-                for div in re.finditer('\n', data):
-                    if div not in line_div:
-                        line_div.append(div.end())
-                if len(search_word) > 0:
-                    for match in re.finditer(search_word, data):
-                        #외부 윈도우에서의 조작이 먹히지 않아서 방법을 찾아야 함
-                        s = match.start()
-                        e = match.end()
-                        tempS = s
-                        tempE = e
-                        for line_num in line_div:
-                            print(line_num)
-                            if s >= line_num:
-                                line = line + 1
-                                tempS = s - line_num
-                                tempE = tempS + e - s
-                        self.logText.see('%d.%d'%(line,tempS))
-                        self.logText.config(state = 'normal')
-                        self.logText.mark_set("matchStart", '%d.%d'%(line,tempS))
-                        self.logText.mark_set("matchEnd", '%d.%d'%(line,tempE))
-                        self.logText.tag_add('search', "matchStart", "matchEnd")
-                        self.logText.tag_config('search', background="yellow")
-                        self.logText.config(state = 'disable')
-                        line = 1
-            button = Button(search_window, text = "검색")
-            button.bind('<Button-1>', search_button)
-            button.pack()
-
-            #다크모드 관련
-            if self.darkModeOn == True:
-                search_window.configure(background='#242424')
-                button['bg'] = '#424242'
-                button['fg'] = '#ffffff'
-            else:
-                frame.configure(background='#242424')
-                button['bg'] = '#f0f0f0'
-                button['fg'] = '#000000'
-            search_window.resizable(0,0)
+            search.search(self)
             
     def darkMode(self):
         if self.darkModeOn == False:
@@ -237,6 +196,8 @@ class Chatting:
             self.nameLabel['fg'] = '#ffffff'
             self.searchButton['bg'] = '#424242'
             self.searchButton['fg'] = '#ffffff'
+            self.signOutButton['bg'] = "#424242"
+            self.signOutButton['fg'] = "#ffffff"
             
             # 채팅 기록
             self.logText['bg'] = '#242424'
@@ -269,6 +230,8 @@ class Chatting:
             self.nameLabel['fg'] = '#000000'
             self.searchButton['bg'] = '#f0f0f0'
             self.searchButton['fg'] = '#000000'
+            self.signOutButton['bg'] = "#f0f0f0"
+            self.signOutButton['fg'] = "#000000"
             
             # 채팅 기록
             self.logText['bg'] = '#ffffff'
@@ -364,7 +327,10 @@ class Chatting:
             window.geometry('%dx%d+%d+%d' %(width,height,x,y))
             
     def signOut(self):
-        # self.client_socket.close() /////// 소켓 닫으면 안됩니다.
+        # self.client_socket.close() 소켓 닫으면 안되요
+        # 소켓 닫는거 대신
+        # /logout 보내기
+        
         self.myParent.destroy()
         signOut()
 
