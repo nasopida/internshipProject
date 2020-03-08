@@ -35,6 +35,8 @@ class UserList:
         self.frameList = []
         # 체크박스 리스트
         self.checkBoxList = []
+        # 체크박스를 가리키는 유저리스트
+        self.checkUserList = []
         # 유저 수 
         self.userCnt = 0
         # 유저 리스트
@@ -76,6 +78,7 @@ class UserList:
         self.frameList.append(tempFrame)
         temp = Checkbutton(tempFrame, variable=tempVar, text = userName)
         self.checkBoxList.append(tempVar)
+        self.checkUserList.append(temp)
         tempFrame.pack(side=TOP, fill=X)
         temp.pack(side=LEFT)
         self.user_list[userName] = self.userCnt
@@ -122,6 +125,12 @@ class UserList:
             self.blackListUserBtn['fg']='#ffffff'
             self.darkModeBtn['bg']='#424242'
             self.darkModeBtn['fg']='#ffffff'
+            for users in self.frameList:
+                users.configure(background='#242424')
+            for checkuser in self.checkUserList:
+                checkuser['bg'] = '#242424'
+                checkuser['fg'] = '#ffffff'
+                checkuser['selectcolor'] = '#424242'
             self.darkModeOn = True
         else:
             self.myParent.configure(background='#f0f0f0')
@@ -135,6 +144,12 @@ class UserList:
             self.blackListUserBtn['fg']='#000000'
             self.darkModeBtn['bg']='#f0f0f0'
             self.darkModeBtn['fg']='#000000'
+            for users in self.frameList:
+                users.configure(background='#f0f0f0')
+            for checkuser in self.checkUserList:
+                checkuser['bg'] = '#f0f0f0'
+                checkuser['fg'] = '#000000'
+                checkuser['selectcolor'] = '#ffffff'
             self.darkModeOn = False
 
     #가운데로 오게 하는 함수

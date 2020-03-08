@@ -210,6 +210,7 @@ class Chatting:
             self.translateLabel['fg'] = '#ffffff'
             self.lang_change['bg'] = '#242424'
             self.lang_change['fg'] = '#ffffff'
+            self.lang_change['selectcolor'] = '#424242'
 
             # 채팅 입력창
             self.alertLabel['bg'] = '#242424'
@@ -244,6 +245,7 @@ class Chatting:
             self.translateLabel['fg'] = '#000000'
             self.lang_change['bg'] = '#f0f0f0'
             self.lang_change['fg'] = '#000000'
+            self.lang_change['selectcolor'] = '#ffffff'
 
             # 채팅 입력창
             self.alertLabel['bg'] = '#f0f0f0'

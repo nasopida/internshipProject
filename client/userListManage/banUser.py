@@ -1,6 +1,7 @@
 from tkinter import *
 import os
 import client
+import titleBar
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
 
@@ -10,10 +11,15 @@ class BanUser:
         self.myParent = window
         # 가져온 유저 리스트
         self.user_list = user_list
+       
+        # 타이틀바 설정
+        window.title('유저 강퇴투표 하기')
+        self.titlebar = titleBar.TitleBar(self.myParent)
+
         #메인 프레임
         self.mainFrame = Frame(window)
         self.mainFrame.pack() 
-        window.title('유저 강퇴투표 하기')
+
         self.centerWindow(window)
         # 가져온 유저 리스트
         self.user_list = user_list
@@ -32,7 +38,7 @@ class BanUser:
         self.centerWindow(window)
         
         self.centerFrame = Frame(window)
-        self.inputUser()
+        self.inputUser(darkModeOn)
         self.centerFrame.pack()
 
         #하단 버튼 프레임
@@ -65,13 +71,20 @@ class BanUser:
     def BanUser(self):
         pass
 
-    def inputUser(self):
+    def inputUser(self, darkModeOn):
         for userName in self.user_list:
             #print("hi")
             tempVar = BooleanVar(value=False)
             tempFrame = Frame(self.mainFrame)
             temp = Checkbutton(tempFrame, variable=tempVar, text=userName)
             self.CheckBoxVarList.append(tempVar)
+            if darkModeOn == True:
+                tempFrame.configure(background="#242424")
+                temp['bg'] = '#242424'
+                temp['fg'] = '#ffffff'
+                temp['selectcolor'] = '#424242'
+            else:
+                pass
             tempFrame.pack(side=TOP, fill=X)
             temp.pack(side=LEFT)
 

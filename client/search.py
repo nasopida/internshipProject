@@ -2,6 +2,7 @@ import guiClient
 from tkinter import *
 import tkinter
 searchWord = None
+import titleBar
 
 def search(self):
     search_window = tkinter.Toplevel(self.myParent)
@@ -9,7 +10,8 @@ def search(self):
     search_window.grab_set()
     frame = Frame(search_window)
     search_window.title("검색")
-    self.centerWindow(search_window,200,50)
+    self.titlebar = titleBar.TitleBar(search_window)
+    self.centerWindow(search_window,200,70)
     #search_window.geometry("200x50")
     word = Text(search_window)
     word.config(width = 20, height = 1)
