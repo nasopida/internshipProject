@@ -9,7 +9,7 @@ class TitleBar:
         self.TitleBarSet()
 
     def TitleBarSet(self):
-        self.window.iconbitmap("./Icon/chat.ico")
+        #self.window.iconbitmap("./Icon/chat.ico")
         self.window.overrideredirect(True)
         self.window.after(10,self.set_window(self.window))
         
@@ -94,6 +94,11 @@ class TitleBar:
         root.wm_deiconify()
         root.after(10, lambda: root.wm_deiconify())
     ##################################################################
+# 오리지널 타이틀바로, TitleBar 상속
+class TitleBarOriginal(TitleBar):
+    def __init__(self, window):
+        TitleBar.__init__(self, window)
+
 
 # 채팅만을 위한 TitleBar로, TitleBar 상속
 class TitleBarChat(TitleBar):

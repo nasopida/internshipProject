@@ -33,8 +33,9 @@ class Login:
         # 제목 표시줄 함수 -> TitleBarSet
         window.title("Sign In")
         #self.TitleBarSet()
-        self.titlebar = titleBar.TitleBar(self.myParent)
-
+        self.titlebar = titleBar.TitleBarOriginal(self.myParent)
+        self.myParent.iconbitmap("./Icon/Login.ico")
+        
         # x창 눌렀을 때 창 삭제
         self.myParent.protocol("WM_DELETE_WINDOW", lambda:self.on_close(self.myParent))
 

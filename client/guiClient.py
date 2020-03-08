@@ -45,7 +45,9 @@ class Chatting:
 
         # 타이틀바
         window.title("채팅방")
+        
         self.titlebar = titleBar.TitleBarChat(self.myParent, self.client_socket)
+        self.myParent.iconbitmap("./Icon/chat.ico")
 
         #mainFrame은 창 전체를 뜻함
         self.mainFrame = Frame(window)

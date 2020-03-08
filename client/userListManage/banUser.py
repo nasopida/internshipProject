@@ -14,6 +14,7 @@ class BanUser:
        
         # 타이틀바 설정
         window.title('유저 강퇴투표 하기')
+        self.myParent.iconbitmap("./Icon/BanUser.ico")
         self.titlebar = titleBar.TitleBar(self.myParent)
 
         #메인 프레임
