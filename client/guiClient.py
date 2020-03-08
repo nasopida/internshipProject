@@ -362,7 +362,7 @@ def signIn():
         #   loginFile = open('login.config',mode='rt',encoding='utf-8')
         #    lines = loginFile.readlines()
             #lines[3].splitlines()
-        myUser = login.Login.returnID(myId)
+        myUser = login.Login.returnNickname(myId)
             #user.rstrip('\n')
             #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
            

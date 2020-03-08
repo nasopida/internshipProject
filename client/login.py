@@ -454,14 +454,14 @@ class Login:
                     self.successCheck = True
                     # 체크박스 체크여부와 실행 시 데이터 확인
                     self.loginDataSave()
+                    self.myNickname = (parsed.packet['nickName'])
                     self.client_socket.send(Packet('OnlineClients').encode())
                     self.myParent.destroy()
                     return
                 else:
                     self.loginFailed()
             except Exception as er:
-                #messagebox.showerror('Fail!','Fail to Sign Up')
-                print('{}'.format(er))
+                #messagebox.showerror('Fail!','Fail to Sign Up')                print('{}'.format(er))
                 self.loginFailed()
         except Exception as err:
             #messagebox.showerror('Fail!','Fail to Sign Up')
