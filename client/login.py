@@ -130,7 +130,7 @@ class Login:
     def TitleBarSet(self):
         self.myParent.overrideredirect(True)
         self.myParent.iconbitmap("./Icon/chat.ico")
-        self.myParent.after(0,self.set_window)
+        self.myParent.after(10,self.set_window)
         
         # 요소 설정하기
         s = ttk.Style()
@@ -193,17 +193,19 @@ class Login:
         self.myParent.destroy()
     
     # 윈도우 세팅
-    def set_window(self):
-        GWL_EXSTYLE = -20
-        WS_EX_APPWINDOW = 0x00040000
-        WS_EX_TOOLWINDOW = 0x00000000
-        hwnd = windll.user32.GetParent(self.myParent.winfo_id())
-        style = windll.user32.GetWindowLongW(hwnd,GWL_EXSTYLE)
+    def set_window(self, root):
+        GWL_EXSTYLE=-20
+        WS_EX_APPWINDOW=0x00040000
+        WS_EX_TOOLWINDOW=0x00000080
+        hwnd = windll.user32.GetParent(root.winfo_id())
+        style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
         style = style & ~WS_EX_TOOLWINDOW
         style = style | WS_EX_APPWINDOW
-        res = windll.user32.SetWindowLongW(hwnd,GWL_EXSTYLE,style)
-        self.myParent.wm_withdraw()
-        self.myParent.after(0, lambda:self.myParent.wm_deiconify())
+        res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+        # re-assert the new window style
+        root.wm_withdraw()
+        root.wm_deiconify()
+        root.after(10, lambda: root.wm_deiconify())
 
 ##################################################################
 

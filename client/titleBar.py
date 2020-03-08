@@ -1,5 +1,5 @@
 import tkinter.ttk as ttk
-import tkinter 
+import tkinter as Tk
 from ctypes import windll
     
     # 제목 표시줄 설정
@@ -9,10 +9,10 @@ class TitleBar:
         self.TitleBarSet()
 
     def TitleBarSet(self):
+        self.window.iconbitmap("./Icon/chat.ico")
         self.window.overrideredirect(True)
-        #window.iconbitmap("./Icon/chat.ico")
-        self.window.after(0,self.set_window())
-            
+        self.window.after(10,self.set_window(self.window))
+        
         # 요소 설정하기
         s = ttk.Style()
         s.configure("titlebar.TFrame", background="#242424")
@@ -79,18 +79,20 @@ class TitleBar:
         self.window.destroy()
         
     # 윈도우 세팅
-    def set_window(self):
-        GWL_EXSTYLE = -20
-        WS_EX_APPWINDOW = 0x00040000
-        WS_EX_TOOLWINDOW = 0x00000000
-        hwnd = windll.user32.GetParent(self.window.winfo_id())
-        style = windll.user32.GetWindowLongW(hwnd,GWL_EXSTYLE)
+    
+    def set_window(self, root):
+        GWL_EXSTYLE=-20
+        WS_EX_APPWINDOW=0x00040000
+        WS_EX_TOOLWINDOW=0x00000080
+        hwnd = windll.user32.GetParent(root.winfo_id())
+        style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
         style = style & ~WS_EX_TOOLWINDOW
         style = style | WS_EX_APPWINDOW
-        res = windll.user32.SetWindowLongW(hwnd,GWL_EXSTYLE,style)
-        self.window.wm_withdraw()
-        self.window.after(0, lambda:self.window.wm_deiconify())
-
+        res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+        # re-assert the new window style
+        root.wm_withdraw()
+        root.wm_deiconify()
+        root.after(10, lambda: root.wm_deiconify())
     ##################################################################
 
 # 채팅만을 위한 TitleBar로, TitleBar 상속
