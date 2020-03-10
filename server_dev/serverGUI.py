@@ -238,6 +238,22 @@ def host(address, timeout=60):
                         elif parsed.packet['text']=="search":   
                             return_msg.add({'text': "search"})
 
+                        # 로그아웃
+                        elif parsed.packet['text'] == "quit":
+                            if s in Clients:
+                                if s in Clients['AllOnlineClients']:
+                                    Clients['AllOnlineClients'].remove(s)
+                                    del Clients['AllOnlineUserID'][Clients[s]]
+                                else:
+                                    Clients['AppendingSockets'].append(s)
+                                del Clients[s]
+                                Clients['USERCNT'] -= 1
+
+                        # 강퇴요청
+                        elif parsed.packet['text'] == "ban":
+                            if parsed.packet['banID'] != None:
+                                pass
+
                         else :
                             return_msg.add({'text': "No Command Found."})
                         
