@@ -248,6 +248,7 @@ def host(address, timeout=60):
                                     Clients['AppendingSockets'].append(s)
                                 del Clients[s]
                                 Clients['USERCNT'] -= 1
+                                continue
 
                         # 강퇴요청
                         elif parsed.packet['text'] == "ban":
