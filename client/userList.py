@@ -21,7 +21,7 @@ class UserList:
         # 타이틀바 설정
         window.title('유저 리스트')
         self.myParent.iconbitmap("./Icon/UserList.ico")
-        self.titlebar = titleBar.TitleBarOriginal(self.myParent)
+        #self.titlebar = titleBar.TitleBarOriginal(self.myParent)
 
 
         # 채팅창 윈도우를 가리킴

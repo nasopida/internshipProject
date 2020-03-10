@@ -17,7 +17,7 @@ class CutOffUser:
         # 타이틀바 설정
         window.title('유저 강퇴 투표')
         self.myParent.iconbitmap("./Icon/CutOffUser.ico")
-        self.titlebar = titleBar.TitleBar(self.myParent)
+        #self.titlebar = titleBar.TitleBar(self.myParent)
         
         #상단 프레임
         self.topFrame = Frame(window)
