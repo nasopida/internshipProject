@@ -269,7 +269,8 @@ class Chatting:
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
 
-            if data not in client.command_list:
+            is_command = re.match("/", data)
+            if is_command == None:
                 self.logText.insert(END, '%s:'%self.user)
             self.logText.insert(END,'%s\n'%data)
             """#간단한 명령어기능

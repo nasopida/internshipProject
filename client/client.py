@@ -15,7 +15,7 @@ port = 57270
 host = "127.0.0.1"
 user_list = {}
 server_chat = {}
-command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search", "/user"}
+#command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search", "/user"}
 
 def dice():
     return str(random.randint(1,6))
@@ -62,7 +62,8 @@ def handle_send(client_socket, user, data = None):
             client_socket.send(data.encode('utf-8'))
 
         #간단한 명령어기능
-        if data not in command_list:
+        is_command = re.match("/", data)
+        if is_command == None:
             client_socket.send(packet.msgPacket(data).encode())
         else:
             client_socket.send(packet.cmdPacket(data[1:]).encode())
