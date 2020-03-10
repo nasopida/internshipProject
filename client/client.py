@@ -39,13 +39,10 @@ def handle_receive(client_socket, user, Chat = None):
         if parsed.packet['packetType'] == "OnlineClients":
             online_list = parsed.packet['userList']
             userCNT = 1
+            user_list = {}
             for name in online_list:
-                if name not in user_list:
-                    user_list[name] = userCNT
+                user_list[name] = userCNT
                 #print(name)
-            for name in user_list:
-                if name not in online_list:
-                    del user_list[name]
         if parsed.packet['packetType'] == "message":
             if parsed.packet['userID'] == None:
                 chatting = parsed.packet['text']
