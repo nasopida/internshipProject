@@ -5,6 +5,7 @@ import random
 import os
 from tkinter import *
 from tkinter import ttk
+import packet
 
 import tkinter
 import userList
@@ -336,18 +337,14 @@ class Chatting:
         # 소켓 닫는거 대신
         # /logout 보내기
         
+        self.client_socket.send(packet.cmdPacket('quit'))
         self.myParent.destroy()
-        signOut()
+        signIn()
+        #signOut()
 
 def signOut():
     #myWindow.client_socket.close()
     #myWindow.destroy()
-
-    #IPv4 체계, TCP 타입 소켓 객체를 생성
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # 지정한 host와 prot를 통해 서버에 접속합니다.
-    client_socket.connect((host, port))
 
     print(client_socket)
     signIn()
