@@ -5,7 +5,6 @@ import random
 import os
 from tkinter import *
 from tkinter import ttk
-import packet
 
 import tkinter
 import userList
@@ -21,6 +20,8 @@ import login
 import client
 from datetime import datetime
 from logger import msgLog, msgLogger
+
+import packet
 
 port = 57270
 host = "127.0.0.1"
@@ -337,7 +338,7 @@ class Chatting:
         # 소켓 닫는거 대신
         # /logout 보내기
         
-        self.client_socket.send(packet.cmdPacket('quit'))
+        self.client_socket.send(packet.cmdPacket('quit').encode())
         self.myParent.destroy()
         signIn()
         #signOut()
