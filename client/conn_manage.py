@@ -22,6 +22,7 @@ class conn_manage:
         self.address = address
         self.input = queue.Queue()
         self.output = queue.Queue()
+        self.connection = None
 
     def create(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,16 +54,22 @@ class conn_manage:
         try:
             parsed_packet = self.input.get_nowait()
         except queue.Empty:
-            pass
+            return None
         return parsed_packet
 
-    def host(self):
+    def start(self):
         self.create()
         self.connect()
-        self.__host()
+        if self.connection == None:
+            self.connection = Process(target=self.__start, args=(self.address,))
         self.DEBUG("connection to server successfully established...")
 
-    def __host(self, timeout=60):
+    def stop(self):
+        if self.connection != None:
+            self.connection.kill()
+        self.DEBUG("connection to server successfully stopped...")
+
+    def __start(self, timeout=60):
         readSockList = []
         writeSockList = []
         
