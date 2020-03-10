@@ -340,7 +340,9 @@ class Chatting:
         
         self.client_socket.send(packet.cmdPacket('quit').encode())
         self.myParent.destroy()
-        signIn()
+        client.is_receive = 0
+        print(client.is_receive)
+        signIn(self.client_socket)
         #signOut()
 
 def signOut():
@@ -352,7 +354,7 @@ def signOut():
 
     # 로그인 실행 함수
     ## 접속 유저 이름 정하는곳.
-def signIn():
+def signIn(client_socket):
     idRoot = Tk()
     myId = login.Login(idRoot, client_socket)
     idRoot.resizable(0,0)
@@ -366,6 +368,8 @@ def signIn():
         #    lines = loginFile.readlines()
             #lines[3].splitlines()
         myUser = login.Login.returnNickname(myId)
+        print(client.is_receive)
+        client.is_receive = 1
             #user.rstrip('\n')
             #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
            
@@ -387,6 +391,6 @@ if __name__ == '__main__':
 
     print(client_socket)
 
-    signIn()
+    signIn(client_socket)
     #chatRoot.resizable(0,0)
     #chatRoot.mainloop()
