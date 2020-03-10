@@ -50,12 +50,15 @@ class conn_manage:
 
     # returns recieved packet
     def recv(self):
-        # return message
         try:
             parsed_packet = self.input.get_nowait()
         except queue.Empty:
             return None
         return parsed_packet
+
+    # returns number of packets left in queue
+    def get_recv_queue_num(self):
+        return self.input.len()
 
     def start(self):
         self.create()
