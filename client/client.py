@@ -15,6 +15,7 @@ port = 57270
 host = "127.0.0.1"
 user_list = {}
 server_chat = {}
+is_receive = 1
 #command_list = {"/quit", "/whoami", "/whattime", "/whatdate", "/dice", "/search", "/user"}
 
 def dice():
@@ -23,7 +24,8 @@ def dice():
 def handle_receive(client_socket, user, Chat = None):
     global clnt_logger
     global user_list
-    while 1:
+    global is_receive
+    while is_receive:
         try:
             data = client_socket.recv(1024)
         except:
@@ -50,6 +52,9 @@ def handle_receive(client_socket, user, Chat = None):
             else:
                 chatting = parsed.packet['userID'] + ':' + parsed.packet['text']
             server_chat[chatting] = client_socket
+        if parsed.packet['packetType'] == "command":
+            if parsed.packet['text'] == "quit":
+                is_receive = 0
             
 def handle_send(client_socket, user, data = None):
     global clnt_logger

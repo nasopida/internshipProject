@@ -240,6 +240,10 @@ def host(address, timeout=60):
 
                         # 로그아웃
                         elif parsed.packet['text'] == "quit":
+                            if s not in Clients['msg_queues']:
+                                Clients['msg_queues'][s] = queue.Queue()   
+                            Clients['msg_queues'][s].put(parsed)
+                            writable.append(s)
                             if s in Clients:
                                 if s in Clients['AllOnlineClients']:
                                     Clients['AllOnlineClients'].remove(s)
