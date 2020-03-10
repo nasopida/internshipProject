@@ -54,17 +54,22 @@ class conn_manage:
         try:
             parsed_packet = self.input.get_nowait()
         except queue.Empty:
-            pass
+            return None
         return parsed_packet
 
-    def host(self):
+    def start(self):
         self.create()
         self.connect()
         if self.connection == None:
-            self.connection = Process(target=self.__host, args=(self.address,))
+            self.connection = Process(target=self.__start, args=(self.address,))
         self.DEBUG("connection to server successfully established...")
 
-    def __host(self, timeout=60):
+    def stop(self):
+        if self.connection != None:
+            self.connection.kill()
+        self.DEBUG("connection to server successfully stopped...")
+
+    def __start(self, timeout=60):
         readSockList = []
         writeSockList = []
         
