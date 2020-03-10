@@ -6,7 +6,7 @@ import guiClient
 
 import tkinter as tk
 import tkinter.ttk
-from userListManage import cutOffUser
+from userListManage import blackList
 from userListManage import banUser
 import titleBar
 import os
@@ -66,7 +66,7 @@ class UserList:
         self.banBtn.pack(side=LEFT)
         
         # 차단 버튼
-        self.blackListUserBtn = Button(self.btnFrame, width=13, command=self.cutOffUser, text="차단")
+        self.blackListUserBtn = Button(self.btnFrame, width=13, command=self.blackList, text="차단")
         self.blackListUserBtn.pack(side=RIGHT)
         #다크모드 버튼
         self.darkModeBtn=Button(self.btnFrame,width=14,command=self.darkMode,text="다크모드")
@@ -100,12 +100,12 @@ class UserList:
         self.banRoot.mainloop()
 
     # 유저를 차단하는 함수, 구현순위 맨 뒤
-    def cutOffUser(self):
-        self.cutOffRoot = Toplevel(self.myParent)
-        self.cutOffRoot.grab_set()
-        cutOfftWindow = cutOffUser.CutOffUser(self.cutOffRoot, self.user_list, self.darkModeOn)
-        self.cutOffRoot.resizable(0,0)
-        self.cutOffRoot.mainloop()
+    def blackList(self):
+        self.blackListRoot = Toplevel(self.myParent)
+        self.blackListRoot.grab_set()
+        blackListWindow = blackList.BlackList(self.blackListRoot, self.user_list, self.darkModeOn)
+        self.blackListRoot.resizable(0,0)
+        self.blackListRoot.mainloop()
 
     #다크모드 함수
     def darkMode(self):

@@ -11,31 +11,25 @@ class BanUser:
         self.myParent = window
         # 가져온 유저 리스트
         self.user_list = user_list
-       
+        #유저 체크박스리스트
+        self.CheckBoxVarList = []
+
         # 타이틀바 설정
-        window.title('유저 강퇴투표 하기')
+        window.title('유저 강퇴 투표')
         self.myParent.iconbitmap("./Icon/BanUser.ico")
         #self.titlebar = titleBar.TitleBar(self.myParent)
-
-        #메인 프레임
-        self.mainFrame = Frame(window)
-        self.mainFrame.pack() 
-
-        self.centerWindow(window)
-        # 가져온 유저 리스트
-        self.user_list = user_list
-        #유저 체크박스리스ㅡㅌ
-        self.CheckBoxVarList = []
+        
         #상단 프레임
         self.topFrame = Frame(window)
-        self.titleLabel = Label(self.topFrame, text="유저 차단")
+        self.titleLabel = Label(self.topFrame, text="유저 강퇴 투표")
+        
         self.titleLabel.pack(fill=X, side=TOP)
         self.topFrame.pack(fill=X, side=TOP)
 
         #메인 프레임
         self.mainFrame = Frame(window)
         self.mainFrame.pack(fill=BOTH, expand=TRUE, side=TOP) 
-        window.title('유저 차단')
+
         self.centerWindow(window)
         
         self.centerFrame = Frame(window)
@@ -44,7 +38,7 @@ class BanUser:
 
         #하단 버튼 프레임
         self.btnFrame = Frame(self.myParent)
-        self.enterBtn = Button(self.btnFrame, width=20, text="차단하기", command=self.BanUser)
+        self.enterBtn = Button(self.btnFrame, width=20, text="강퇴 요청하기", command=self.cutOff)
         self.enterBtn.pack(side=BOTTOM)
         self.btnFrame.pack(fill=BOTH, side=BOTTOM)
         self.darkMode(darkModeOn)
@@ -69,7 +63,7 @@ class BanUser:
             self.enterBtn['bg'] = '#f0f0f0'
             self.enterBtn['fg'] = '#000000'
 
-    def BanUser(self):
+    def cutOff(self):
         pass
 
     def inputUser(self, darkModeOn):
@@ -88,6 +82,7 @@ class BanUser:
                 pass
             tempFrame.pack(side=TOP, fill=X)
             temp.pack(side=LEFT)
+
 
      #가운데로 오게 하는 함수
     def centerWindow(self, window):
