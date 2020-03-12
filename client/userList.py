@@ -50,16 +50,21 @@ class UserList:
         self.printUserLabel = Label(self.printUserFrame, text="ㅎㅇ")
         self.printUserLabel.pack(side=TOP, expand=True)
 
+        # 2020.03.13 일단 스크롤바 제외함
+        #self.centerFrame = Frame(self.myParent, width=300, height=540, relief='raised', borderwidth=1)
+        #self.centerFrame.pack(fill=BOTH)
         # 유저를 담는 라벨
-        
-        self.userFrame = tk.Frame(self.mainFrame, width=300, height=540, relief='raised',borderwidth=1)
+        #self.userScrollbar = Scrollbar(self.centerFrame)
+        #self.userScrollbar.pack(side=RIGHT, fill=X)
+        self.userFrame = tk.Frame(self.myParent, width=300, height=800, relief='raised',borderwidth=1)
+        #self.userFrame = Frame(self.centerFrame)
         self.userFrame.pack(fill=BOTH, expand=True)
 
-        self.userScrollbar = Scrollbar(self.userFrame)
-        self.userScrollbar.pack(side=RIGHT, fill=BOTH)
+        #self.bottomFrame = Frame(self.myParent)
+        #self.bottomFrame.pack(side=BOTTOM, fill=X, expand=True)
 
         # 버튼들의 프레임
-        self.btnFrame = tk.Frame(self.mainFrame)
+        self.btnFrame = Frame(self.myParent)
         self.btnFrame.pack(fill=X, side=BOTTOM)
         # 강퇴 요청 버튼
         self.banBtn =  Button(self.btnFrame,width=13, command=self.banUser, text="강퇴 요청")
