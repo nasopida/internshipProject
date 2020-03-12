@@ -65,12 +65,13 @@ class conn_manage:
         self.connect()
         if self.connection == None:
             self.connection = Process(target=self.__start, args=(self.address,))
-        self.DEBUG("connection to server successfully established...")
+            self.connection.start()
+            self.DEBUG("connection to server successfully established...")
 
     def stop(self):
         if self.connection != None:
             self.connection.kill()
-        self.DEBUG("connection to server successfully stopped...")
+            self.DEBUG("connection to server successfully stopped...")
 
     def __start(self, timeout=60):
         readSockList = []
