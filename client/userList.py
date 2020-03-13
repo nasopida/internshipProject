@@ -84,6 +84,13 @@ class UserList:
         tempFrame = Frame(self.userFrame)
         self.frameList.append(tempFrame)
         temp = Checkbutton(tempFrame, variable=tempVar, text = userName)
+        
+        if self.darkModeOn == True:
+            tempFrame.configure(background='#242424')
+            temp['bg'] = '#242424'
+            temp['fg'] = '#ffffff'
+            temp['selectcolor'] = '#424242'
+
         self.checkBoxList.append(tempVar)
         self.checkUserList.append(temp)
         tempFrame.pack(side=TOP, fill=X)

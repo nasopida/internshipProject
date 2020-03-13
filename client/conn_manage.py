@@ -28,7 +28,7 @@ class conn_manage:
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
-        DEBUG("connecting on {} port {}".format(address[0], address[1]))
+        self.DEBUG("connecting on {} port {}".format(self.address[0], self.address[1]))
         try:
             self.client_socket.connect(self.address)
         except Exception:
@@ -80,18 +80,18 @@ class conn_manage:
 
         while writeSockList:
             # Wait for at least one of the sockets to be ready for processing
-            DEBUG("\nwaiting for the next event")
+            self.DEBUG("\nwaiting for the next event")
             readable, writable, exceptional = select.select(readSockList, writeSockList, readSockList, timeout)
 
             # Handle "exceptional conditions"
             for s in exceptional:
-                DEBUG("handling exceptional condition for" + s.getpeername())
+                self.DEBUG("handling exceptional condition for" + s.getpeername())
                 # Stop listening for input on the connection
                 if not self.reconnect:
                     self.disconnect()
 
             # Handle outputs
-            DEBUG("\nHandle outputs------")
+            self.DEBUG("\nHandle outputs------")
             for s in writable:
                 try:
                     next_msg = self.output.get_nowait()
@@ -100,12 +100,12 @@ class conn_manage:
                     # DEBUG("output queue for "+Clients[s]+" is empty")
                     continue
                 else:
-                    DEBUG("writing message to server")
-                    DEBUG("message :" + str(next_msg))
+                    self.DEBUG("writing message to server")
+                    self.DEBUG("message :" + str(next_msg))
                     s.send(next_msg.encode())
 
             # Handle inputs
-            DEBUG("\nHandle inputs------")
+            self.DEBUG("\nHandle inputs------")
             for s in readable:
                 try:
                     data = s.recv(1024)
