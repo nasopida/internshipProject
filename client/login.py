@@ -499,7 +499,16 @@ class Login:
 
     # 로그인 버튼 -> 로그인 체크만 수행한다.
     def signInBtn(self, event=None):
-        self.signInCheck()
+        try:
+            self.signInCheck()
+        except Exception as err:
+            lang = self.langCombobox.get()
+            if lang == "English":
+                messagebox.showinfo("Warning","The Server is not Open")
+            elif lang == "한국어":
+                messagebox.showinfo("경고","서버가 열려있지 않습니다.")
+            else:
+                messagebox.showinfo("警告","サーバーが開いていません。")
                     
     def loginSuccess(self):
         if(self.successCheck == True):
