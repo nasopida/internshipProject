@@ -19,15 +19,15 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import login
 import client
 from datetime import datetime
-from logger import msgLog, msgLogger
+from logger import packetLogger
 
 import packet
 
 port = 57270
 host = "127.0.0.1"
-clnt_logger = msgLogger()
-clnt_logger.setFile("./log/clientLogFile.txt")
-clnt_logger.read()
+clnt_logger = packetLogger()
+#clnt_logger.setFile("./log/clientLogFile.txt")
+#clnt_logger.read()
 
 # 채팅을 관리하는 클래스
 class Chatting:
@@ -140,11 +140,20 @@ class Chatting:
         # -> 유저가 추가될 때 마다 기존 유저에게도 추가를 해 주어야함
         userListRoot = Toplevel(self.myParent)
         self.users = userList.UserList(userListRoot, self)
-        def all_user():
+        def all_user():  
             for name in client.user_list:
                 #print(name)
                 if name not in self.users.user_list:
                     self.users.addUser(name)
+            delete_list = []
+            for name in self.users.user_list:
+                if name not in client.user_list:
+                    delete_list.append(name)
+            for delete in delete_list:
+                self.users.deleteUser(delete)
+                self.users.deleteAll()
+                for username in self.users.user_list:
+                    self.users.addUser(username)
             userListRoot.after(500,all_user)
 
         userListRoot.resizable(0,0)

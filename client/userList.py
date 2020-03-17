@@ -93,6 +93,10 @@ class UserList:
 
         self.checkBoxList.append(tempVar)
         self.checkUserList.append(temp)
+        for box in self.checkBoxList:
+            print(box)
+        for user in self.checkUserList:
+            print(user)
         tempFrame.pack(side=TOP, fill=X)
         temp.pack(side=LEFT)
         self.user_list[userName] = self.userCnt
@@ -101,8 +105,19 @@ class UserList:
         
     # 유저가 나갔을 때 실행되는 함수
     def deleteUser(self, userName):
+        del self.user_list[userName]
+        self.userCnt -= 1
         pass
 
+    def deleteAll(self):
+        for user in self.checkUserList:
+            user.destroy()
+        self.checkUserList = []
+        self.checkBoxList = []
+        for frame in self.frameList:
+            frame.destroy()
+        self.frameList = []
+        self.userCnt = 0
     # 강퇴투표 함수
     def banUser(self):
         self.banRoot = Toplevel(self.myParent)

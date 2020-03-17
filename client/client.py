@@ -3,12 +3,12 @@ import argparse
 import threading
 import random
 from datetime import datetime
-from logger import packetLogger
 from tkinter import *
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
+from logger import packetLogger
 
 clnt_logger = packetLogger()
 port = 57270
