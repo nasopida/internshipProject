@@ -3,14 +3,14 @@ import argparse
 import threading
 import random
 from datetime import datetime
-from logger import msgLog, msgLogger
+from logger import packetLogger
 from tkinter import *
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import packet
 
-clnt_logger = msgLogger()
+clnt_logger = packetLogger()
 port = 57270
 host = "127.0.0.1"
 user_list = {}
@@ -30,7 +30,7 @@ def handle_receive(client_socket, user, Chat = None):
             data = client_socket.recv(1024)
         except:
             print("연결 끊김")
-            clnt_logger.addLog(msgLog("program", "연결 끊김"))
+            # clnt_logger.addLog(msgLog("program", "연결 끊김"))
             break
         parsed = packet.toPacket(data.decode('utf-8'))
         """if not user in data: # 자신이 아닐때 출력

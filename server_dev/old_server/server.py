@@ -2,7 +2,7 @@ import socket
 import argparse
 import threading
 import time
-from logger import msgLog, msgLogger
+from logger import msgLog, packetLogger
 from tkinter import *
 import time
 
@@ -24,7 +24,7 @@ port = 57270
 user_list = {}
 notice_flag = 0
 max_user = 100
-serv_logger = msgLogger()
+serv_logger = packetLogger()
 
 # 메세지 펑션 -> 메세지를 서버에 출력해주고 클라이언트에게 메세지를 보내준다.
 # 메세지가 가지 않을 경우 소켓이 비정상적 종료가 된 것 

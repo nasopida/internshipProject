@@ -8,11 +8,11 @@ from tkinter import *
 
 import client
 from datetime import datetime
-from logger import msgLog, msgLogger
+from logger import msgLog, packetLogger
 
 port = 57270
 host = "127.0.0.1"
-clnt_logger = msgLogger()
+clnt_logger = packetLogger()
 clnt_logger.setFile("clientLogFile.txt")
 clnt_logger.read()
 
