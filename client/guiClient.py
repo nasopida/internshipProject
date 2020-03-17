@@ -22,14 +22,12 @@ from datetime import datetime
 from logger import msgLog, msgLogger
 
 import packet
-import conn_manage
 
 port = 57270
 host = "127.0.0.1"
 clnt_logger = msgLogger()
 clnt_logger.setFile("./log/clientLogFile.txt")
 clnt_logger.read()
-connection = conn_manage.conn_manage((host,port),True)
 
 # 채팅을 관리하는 클래스
 class Chatting:
@@ -262,7 +260,6 @@ class Chatting:
             self.inputBtn['fg'] = '#000000'
 
     def sendMessage(self, event = None):
-        global connection
         if self.translate_check.get() == 1:
             mydata = translate.translate(self.inputText.get('1.0',INSERT),self.lang_original.get(),self.lang_translate.get())
             #mydata = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
@@ -278,63 +275,14 @@ class Chatting:
             if is_command == None:
                 self.logText.insert(END, '%s:'%self.user)
             self.logText.insert(END,'%s\n'%data)
-            """#간단한 명령어기능
-            if data == "/quit":
-                clnt_logger.addLog(msgLog("program", data))
-                self.myParent.destroy()
-                #self.myParent.quit()
-                self.client_socket.close()
-                return
-            if data == "/whoami":
-                self.logText.insert(END,data)
-                self.logText.insert(END,'\n')
-                self.logText.insert(END,user+"입니다")
-                self.logText.insert(END, '\n')
-            if data == "/whattime":
-                now=datetime.now()
-                self.logText.insert(END,data)
-                self.logText.insert(END,'\n')
-                self.logText.insert(END,"%s시 %s분 %s초입니다."%(now.hour,now.minute,now.second))
-                self.logText.insert(END, '\n')
-            if data == "/whatdate":
-                now=datetime.now()
-                self.logText.insert(END,data)
-                self.logText.insert(END,'\n')
-                self.logText.insert(END,"%s년 %s월 %s일입니다."%(now.year,now.month,now.day))
-                self.logText.insert(END, '\n')
-            if data == "/dice":
-                randString = client.dice()
-                self.logText.insert(END,data)
-                self.logText.insert(END,'\n')
-                self.logText.insert(END,randString)
-                self.logText.insert(END, '\n')
-            # clnt_logger.addLog(msgLog("program", data))
-            # clnt_logger.record()
-            if data == "/user":
-                print('[')
-                for name in client.user_list:
-                    self.logText.insert(END, "%s\n"%name)
             
-            #검색기능
-            if data=="/search":
-                #split = read.split()
-                #self.logText.insert(END,"찾을 채팅내용을 입력하십쇼: ", end='')
-                #find=input()
-                self.search()
-            """
             if data == '/search':
                 search.search(self)
             self.logText.config(width=60,height=35,state="disabled",yscrollcommand=self.scroll.set)
             self.logText.see("end")
             self.inputText.delete('1.0', END)
 
-            is_command = re.match("/", data)
-            if is_command == None:
-                data = packet.msgPacket(data)
-            else:
-                data = packet.cmdPacket(data[1:])
-            print(data)
-            connection.send(data)
+            client.handle_send(self.client_socket, self.user, data)
     
     def centerWindow(self, window ,width, height):
             screen_width = window.winfo_screenwidth()
@@ -347,14 +295,11 @@ class Chatting:
         # self.client_socket.close() 소켓 닫으면 안되요
         # 소켓 닫는거 대신
         # /logout 보내기
-        global connection
         
         self.client_socket.send(packet.cmdPacket('quit').encode())
         self.myParent.destroy()
-        #client.is_receive = 0
-        print(client.is_receive)
-        connection.stop()
-        signIn(connection.client_socket)
+        client.is_receive = 0
+        signIn(self.client_socket)
         #signOut()
 
 def signOut():
@@ -367,7 +312,6 @@ def signOut():
     # 로그인 실행 함수
     ## 접속 유저 이름 정하는곳.
 def signIn(client_socket):
-    global connection
     idRoot = Tk()
     myId = login.Login(idRoot, client_socket)
     idRoot.resizable(0,0)
@@ -397,14 +341,13 @@ def signIn(client_socket):
 
 if __name__ == '__main__':
     #IPv4 체계, TCP 타입 소켓 객체를 생성\
-    #client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    connection.start()
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 
     # 지정한 host와 prot를 통해 서버에 접속합니다.
-    #client_socket.connect((host, port))
-    print(connection.client_socket)
+    client_socket.connect((host, port))
+    print(client_socket)
 
-    signIn(connection.client_socket)
+    signIn(client_socket)
     #chatRoot.resizable(0,0)
     #chatRoot.mainloop()
