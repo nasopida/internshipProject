@@ -7,7 +7,7 @@ class log_Manager:
         self.__folder = folder # 파일 저장될 폴더 위치
         self.__file = time.strftime('%Y_%m_%d', time.localtime(time.time())) # 현재 파일 이름 (현재 날짜)
         self.__absfp = self.__folder + self.__file
-        self.__logger = logger.logger(self.__absfp)
+        self.__logger = logger.packetLogger(self.__absfp)
 
     def addLog(self, temp):
         # 현재 파일에 temp 추가
@@ -21,7 +21,7 @@ class log_Manager:
 
         self.__file = time.strftime('%Y_%m_%d', time.localtime(time.time())) # 현재 파일 이름 (현재 날짜)
         self.__absfp = self.__folder + self.__file
-        self.__logger = logger.logger(self.__absfp)
+        self.__logger = logger.packetLogger(self.__absfp)
 
         if os.path.isfile(self.__absfp):
             self.__logger.read()
