@@ -142,7 +142,7 @@ class Chatting:
         self.users = userList.UserList(userListRoot, self)
         def all_user():
             for name in client.user_list:
-                #print(name)
+                print(name)
                 if name not in self.users.user_list:
                     self.users.addUser(name)
             userListRoot.after(500,all_user)
@@ -346,7 +346,7 @@ if __name__ == '__main__':
 
     # 지정한 host와 prot를 통해 서버에 접속합니다.
     client_socket.connect((host, port))
-    print(connection.client_socket)
+    print(client_socket)
 
     signIn(client_socket)
     #chatRoot.resizable(0,0)

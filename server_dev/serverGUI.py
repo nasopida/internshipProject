@@ -173,6 +173,14 @@ def host(address, timeout=60):
                             del Clients['AllOnlineUserID'][Clients[s]]
                         else:
                             Clients['AppendingSockets'].remove(s)
+                        parsed = packet.Packet('OnlineClients')
+                        userList = []
+                        for userID in Clients['AllOnlineUserID']:
+                            userList.append(userID)
+                        for client in Clients['AllOnlineClients']:
+                            parsed.add({'userList': userList})
+                            Clients['msg_queues'][client].put(parsed)
+                            writable.append(client)
                         del Clients['msg_queues'][s]
                         del Clients[s]
                         Clients['USERCNT'] -= 1

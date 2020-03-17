@@ -60,7 +60,7 @@ def handle_send(client_socket, user, data = None):
     try:
         if data == None:
             data=input(user+": ")
-            print(name)
+            #print(name)
             client_socket.send(data.encode('utf-8'))
 
         #간단한 명령어기능
