@@ -142,7 +142,7 @@ class Chatting:
         self.users = userList.UserList(userListRoot, self)
         def all_user():
             for name in client.user_list:
-                print(name)
+                #print(name)
                 if name not in self.users.user_list:
                     self.users.addUser(name)
             userListRoot.after(500,all_user)
