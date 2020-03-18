@@ -277,20 +277,31 @@ def host(address, timeout=60):
                     elif parsed.packet['packetType'] == "login":
                         if s not in Clients['msg_queues']:
                             Clients['msg_queues'][s] = queue.Queue()
+
                         temp_user = USERMANAGER.getUser(parsed.packet['userID'], parsed.packet['userPass'])
                         if temp_user != None:
                             DEBUG("login")
-                            if s in Clients['AppendingSockets']:
-                                Clients['AppendingSockets'].remove(s)
-                            Clients['AllOnlineClients'].append(s)
-                            Clients[s] = temp_user.getNickname()
-                            Clients['AllOnlineUserID'][Clients[s]] = s
-                            Clients['USERCNT'] += 1
-                            Clients['msg_queues'][s].put(packet.ChkPacket(True, Clients[s])) # login chk successful
+                            check = False
+
+                            for c in Clients['AllOnlineClients']:
+                                if Clients[c] == temp_user.getNickname():
+                                    check = True
+
+                            if check == True:
+                                Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login failed
+                            else:
+                                if s in Clients['AppendingSockets']:
+                                    Clients['AppendingSockets'].remove(s)
+                                Clients['AllOnlineClients'].append(s)
+                                Clients[s] = temp_user.getNickname()
+                                Clients['AllOnlineUserID'][Clients[s]] = s
+                                Clients['USERCNT'] += 1
+                                Clients['msg_queues'][s].put(packet.ChkPacket(True, Clients[s])) # login successful
+                            
                         else:
-                            Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login chk successful
+                            Clients['msg_queues'][s].put(packet.ChkPacket(False)) # login failed
                         writable.append(s)
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ALTER PACKET 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  OnlineClients PACKET 
                     elif parsed.packet['packetType'] == "OnlineClients":
                         userList = []
                         for userID in Clients['AllOnlineUserID']:
@@ -313,7 +324,10 @@ def host(address, timeout=60):
                         Clients['AppendingSockets'].append(s)
                         Clients['msg_queues'][s] = queue.Queue()
                         user = User(parsed.packet['userID'],parsed.packet['userPass'],parsed.packet['nickName'])
-                        if user.isFull():
+                        print("reg_req: "+ str(user))
+                        print("chkID: "+str(USERMANAGER.chkID(user.getID())))
+                        print("chkNN: "+str(USERMANAGER.chkNickName(user.getNickname())))
+                        if user.isFull() and not USERMANAGER.chkID(user.getID()) and not USERMANAGER.chkNickName(user.getNickname()):
                             Clients['msg_queues'][s].put(packet.ChkPacket(True))
                             USERMANAGER.addUser(user)
                             if not USERMANAGER.saveUserFile():

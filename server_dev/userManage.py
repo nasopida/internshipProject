@@ -38,10 +38,33 @@ class userManage:
 
     def getUser(self, temp_ID, temp_pass):
         for user in self.userList:
-            if user.getID() == temp_ID:
-                if user.getPasswd() == temp_pass:
-                    return user
+            if user.getID() == temp_ID and user.getPasswd() == temp_pass:
+                return user
         return None
+
+    def getUserbyNickName(self, temp_nickname):
+        for user in self.userList:
+            if user.getNickname() == temp_nickname:
+                return user
+        return None
+
+    def chkNickName(self, temp_nickname):
+        for user in self.userList:
+            if user.getNickname() == temp_nickname:
+                return True
+        return False
+
+    def chkID(self, temp_ID):
+        for user in self.userList:
+            if user.getID() == temp_ID:
+                return True
+        return False
+
+    def isRegistered(self, temp_ID, temp_pass, temp_nickname):
+        for user in self.userList:
+            if user.getID() == temp_ID and user.getPasswd() == temp_pass and user.getNickname() == temp_nickname:
+                return True
+        return False
 
     # sets path
     # returns True when Success
