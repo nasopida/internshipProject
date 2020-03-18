@@ -46,7 +46,7 @@ class Chatting:
         self.myParent.protocol('WM_DELETE_WINDOW', close)
 
         # 타이틀바
-        window.title("채팅방")
+        window.title("Chat Room")
         
         self.myParent.iconbitmap("./Icon/chat.ico")
         #self.titlebar = titleBar.TitleBarChat(self.myParent, self.client_socket)
@@ -68,9 +68,22 @@ class Chatting:
         self.signOutButton.pack(side=RIGHT)
 
         # 검색 버튼
-        self.searchButton = Button(self.nameLabelFrame,text="search", command=self.search)
+        self.searchButton = Button(self.nameLabelFrame,text="Search", command=self.search)
         self.searchButton.pack(side=RIGHT)
         self.searchWindow = 0
+
+        #언어 콤보박스
+        self.chatLangComboBox = ttk.Combobox(self.nameLabelFrame,width=10)
+        self.chatLangComboBox['values']=['English','한국어','日本語']
+        self.chatLangComboBox.current(0)
+        self.chatLangComboBox.configure(state='readonly')
+        self.chatLangComboBox.pack(side=RIGHT)
+        self.chatLangComboBox.bind("<<ComboboxSelected>>",self.LanguageSetting)
+
+        # 언어 콤보박스 라벨
+        self.langLabel = Label(self.nameLabelFrame, text="Language : ")
+        self.langLabel.pack(side=RIGHT)
+        
 
         #채팅 내용을 담는 Frame은 chatLogFrame
         self.chatLogFrame = Frame(self.mainFrame)
@@ -115,7 +128,7 @@ class Chatting:
         #채팅을 입력하는 Frame인 inputChatFrame
         self.inputChatFrame = Frame(self.mainFrame)
         self.inputChatFrame.pack(fill=X)
-        self.alertLabel = Label(self.inputChatFrame,text="채팅 입력")
+        self.alertLabel = Label(self.inputChatFrame,text="Enter Chat")
         self.alertLabel.pack(fill=X)
         #채팅창 입력
         #self.inputText = Entry(self.inputChatFrame)
@@ -126,7 +139,7 @@ class Chatting:
         self.inputText.pack(side=LEFT)
         #self.inputText.icursor(0)
         
-        self.inputBtn = Button(self.inputChatFrame, text="send", width=15, height=15, command=self.sendMessage)
+        self.inputBtn = Button(self.inputChatFrame, text="Send", width=15, height=15, command=self.sendMessage)
         self.inputBtn.pack(side=LEFT)
 
         window.bind('<Return>',self.sendMessage)
@@ -171,6 +184,37 @@ class Chatting:
         userListRoot.mainloop()
         #userListRoot.resizable(0,0)
         receive_thread.join()
+    
+    def getLanguage(self):
+        return self.chatLangComboBox.get()
+
+    def LanguageSetting(self, event=None):
+        selected = self.chatLangComboBox.get()
+        if selected == 'English':
+            self.nameLabel['text'] = "User : " + self.user
+            self.langLabel['text'] = 'Language : '
+            self.lang_change['text'] = "Translate "
+            self.alertLabel['text'] = "Enter Chat"
+            self.signOutButton['text'] = "Sign Out"
+            self.searchButton['text'] = "Search"
+            self.inputBtn['text'] = "Send"
+        elif selected == '한국어':
+            self.nameLabel['text'] = "유저 : " + self.user
+            self.langLabel['text'] = "언어 : "
+            self.lang_change['text'] = "번역       "
+            self.alertLabel['text'] = "채팅 입력"
+            self.signOutButton['text'] = "로그아웃"
+            self.searchButton['text'] = "검색"
+            self.inputBtn['text'] = "전송"
+        else:
+            self.nameLabel['text'] = "ユーザー : " + self.user
+            self.langLabel['text'] = "言語 : "
+            self.lang_change['text'] = "翻訳       "
+            self.alertLabel['text'] = "チャットを入力"
+            self.signOutButton['text'] = "ログアウト"
+            self.searchButton['text'] = "検索"
+            self.inputBtn['text'] = "転送"
+
     def searchWindowON(self):
         searchWindow = 1
 
@@ -210,6 +254,8 @@ class Chatting:
             self.searchButton['fg'] = '#ffffff'
             self.signOutButton['bg'] = "#424242"
             self.signOutButton['fg'] = "#ffffff"
+            self.langLabel['bg'] = '#242424'
+            self.langLabel['fg'] = '#ffffff'
             
             # 채팅 기록
             self.logText['bg'] = '#242424'
@@ -245,6 +291,8 @@ class Chatting:
             self.searchButton['fg'] = '#000000'
             self.signOutButton['bg'] = "#f0f0f0"
             self.signOutButton['fg'] = "#000000"
+            self.langLabel['bg'] = '#f0f0f0'
+            self.langLabel['fg'] = '#000000'
             
             # 채팅 기록
             self.logText['bg'] = '#ffffff'

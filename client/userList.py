@@ -19,7 +19,7 @@ class UserList:
         self.myParent = window
 
         # 타이틀바 설정
-        window.title('유저 리스트')
+        window.title('User List')
         self.myParent.iconbitmap("./Icon/UserList.ico")
         #self.titlebar = titleBar.TitleBarOriginal(self.myParent)
 
