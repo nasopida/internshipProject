@@ -10,11 +10,12 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 class LoginFail:
     def __init__(self, window):
         #창 파괴를 위한 변수
+        print("문제0")
         self.myParent = window
-        
+        print("문제1")
         # mainFrame
         self.mainFrame = Frame(window)
-        window.title("로그인 실패!")
+        window.title('Login Failed!')
         #window.geometry("200x80")
         self.centerWindow(window)
         self.mainFrame.pack()

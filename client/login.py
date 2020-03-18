@@ -125,89 +125,6 @@ class Login:
         self.signUpButton.pack(pady=10)
     """
 
-##############################################################
-    # 제목 표시줄 설정
-    def TitleBarSet(self):
-        self.myParent.overrideredirect(True)
-        self.myParent.iconbitmap("./Icon/chat.ico")
-        self.myParent.after(10,self.set_window)
-        
-        # 요소 설정하기
-        s = ttk.Style()
-        s.configure("titlebar.TFrame", background="#242424")
-        s.theme_use('default')
-        titlebar = ttk.Frame(self.myParent, style="titlebar.TFrame")
-        widget = ttk.Frame(self.myParent)
-
-        title = ttk.Label(titlebar,text=self.myParent.title(),style="titlebar.TLabel", background="#242424", foreground="#ffffff", font=("arial",15))
-
-        s.configure("TButton", font=("arial", 8))
-        s.configure("TButton", background='#424242')
-        s.configure("TButton", foreground="white")
-        
-        s.map(
-            "TButton",
-            foreground=[('pressed','red'),('active','white')],
-            background=[('pressed','#242424'),('active','#242424')]
-        )
-        close = ttk.Button(titlebar, text='X', takefocus=False, command=self.on_exit, width=4)
-        #label = ttk.Label(widget, text="위젯 영역")
-
-        # 요소 배치하기
-        
-        titlebar.pack(side='top', fill='x', expand='no')
-        widget.pack(side = 'bottom', fill='both', expand='yes')
-        title.pack(side='left', fill='x', expand='yes')
-        close.pack(side='right')
-        #label.pack()
-
-        # 요소에 함수 바인딩
-        #<BUTTONPRESS-1> : 마우스 왼쪽 버튼
-        #<BUTTONRElease-1> : 마우스 왼쪽 버튼
-        #<Double_Button-1> : 마우스 왼쪽 더블클릭
-        #<B1-Motion>: 마우스 클릭 상태로 움직임
-        title.bind("<ButtonPress-1>", self.start_move)
-        title.bind("<ButtonRelease-1>", self.stop_move)
-        title.bind("<B1-Motion>",self.on_move)
-
-    #창의 제목을 클릭하여 위치를 옮기는 함수
-    def start_move(self, event):
-        self.myParent.x = event.x
-        self.myParent.y = event.y
-
-    # 마우스를 떼서 변수를 초기화시킴
-    def stop_move(self, event):
-        self.x = None
-        self.y = None
-
-    #마우스 드래그
-    def on_move(self, event):
-        deltax = event.x - self.myParent.x
-        deltay = event.y - self.myParent.y
-        x = self.myParent.winfo_x() + deltax
-        y = self.myParent.winfo_y() + deltay
-        self.myParent.geometry("+%s+%s" % (x,y))
-
-    # 종료 버튼 함수
-    def on_exit(self):
-        self.myParent.destroy()
-    
-    # 윈도우 세팅
-    def set_window(self, root):
-        GWL_EXSTYLE=-20
-        WS_EX_APPWINDOW=0x00040000
-        WS_EX_TOOLWINDOW=0x00000080
-        hwnd = windll.user32.GetParent(root.winfo_id())
-        style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
-        style = style & ~WS_EX_TOOLWINDOW
-        style = style | WS_EX_APPWINDOW
-        res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
-        # re-assert the new window style
-        root.wm_withdraw()
-        root.wm_deiconify()
-        root.after(10, lambda: root.wm_deiconify())
-
-##################################################################
 
     # 이름 변경 함수라 다른 파일에서 사용 불가능하게 구현 예정
     def langChange(self, event=None):
@@ -392,7 +309,6 @@ class Login:
                 messagebox.showerror('Fail!','{}'.format(err))
         except Exception as err:
             messagebox.showerror('fail','{}'.format(err))
-                    
     
     def on_close(self, window):
         window.destroy()
@@ -412,6 +328,7 @@ class Login:
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
         try :
             result = self.client_socket.recv(1024)
+            print(result)
 
             parsed = Packet()
             parsed.packetify(result)
@@ -449,36 +366,121 @@ class Login:
             if os.path.isfile('loginData.config'):
                 os.remove('loginData.config')
 
-
     # 로그인 실패
     def loginFailed(self):
-        print("loginFail")
+        lang = self.langCombobox.get()
+        if lang == 'English':
+            printstr = 'Login Failed'
+        elif lang == "한국어":
+            printstr = '로그인 실패'
+        else:
+            printstr = "ログイン失敗"
+
+        messagebox.showinfo(printstr,printstr)
         # 탑레벨로 묶고 grab_set으로 고정
-        self.failRoot = Toplevel(self.myParent)
-        self.failRoot.grab_set()
-        self.failWindow = loginFail.LoginFail(self.failRoot)
-        self.failRoot.resizable(0,0)
-        self.failRoot.mainloop()
+        #self.failRoot = Toplevel(self.myParent)
+        #self.failRoot.grab_set()
+        #self.failWindow = loginFail.LoginFail(self.failRoot)
+        #self.failRoot.resizable(0,0)
+        #self.failRoot.mainloop()
 
 
     # 로그인 버튼 -> 로그인 체크만 수행한다.
     def signInBtn(self, event=None):
-        try:
-            self.signInCheck()
-        except Exception as err:
-            lang = self.langCombobox.get()
-            if lang == "English":
-                messagebox.showinfo("Warning","The Server is not Open")
-            elif lang == "한국어":
-                messagebox.showinfo("경고","서버가 열려있지 않습니다.")
-            else:
-                messagebox.showinfo("警告","サーバーが開いていません。")
+        self.signInCheck()
+
                     
     def loginSuccess(self):
         if(self.successCheck == True):
             return True
         else:
             return False
+
+            """
+##############################################################
+    # 제목 표시줄 설정
+    def TitleBarSet(self):
+        self.myParent.overrideredirect(True)
+        self.myParent.iconbitmap("./Icon/chat.ico")
+        self.myParent.after(10,self.set_window)
+        
+        # 요소 설정하기
+        s = ttk.Style()
+        s.configure("titlebar.TFrame", background="#242424")
+        s.theme_use('default')
+        titlebar = ttk.Frame(self.myParent, style="titlebar.TFrame")
+        widget = ttk.Frame(self.myParent)
+
+        title = ttk.Label(titlebar,text=self.myParent.title(),style="titlebar.TLabel", background="#242424", foreground="#ffffff", font=("arial",15))
+
+        s.configure("TButton", font=("arial", 8))
+        s.configure("TButton", background='#424242')
+        s.configure("TButton", foreground="white")
+        
+        s.map(
+            "TButton",
+            foreground=[('pressed','red'),('active','white')],
+            background=[('pressed','#242424'),('active','#242424')]
+        )
+        close = ttk.Button(titlebar, text='X', takefocus=False, command=self.on_exit, width=4)
+        #label = ttk.Label(widget, text="위젯 영역")
+
+        # 요소 배치하기
+        
+        titlebar.pack(side='top', fill='x', expand='no')
+        widget.pack(side = 'bottom', fill='both', expand='yes')
+        title.pack(side='left', fill='x', expand='yes')
+        close.pack(side='right')
+        #label.pack()
+
+        # 요소에 함수 바인딩
+        #<BUTTONPRESS-1> : 마우스 왼쪽 버튼
+        #<BUTTONRElease-1> : 마우스 왼쪽 버튼
+        #<Double_Button-1> : 마우스 왼쪽 더블클릭
+        #<B1-Motion>: 마우스 클릭 상태로 움직임
+        title.bind("<ButtonPress-1>", self.start_move)
+        title.bind("<ButtonRelease-1>", self.stop_move)
+        title.bind("<B1-Motion>",self.on_move)
+
+    #창의 제목을 클릭하여 위치를 옮기는 함수
+    def start_move(self, event):
+        self.myParent.x = event.x
+        self.myParent.y = event.y
+
+    # 마우스를 떼서 변수를 초기화시킴
+    def stop_move(self, event):
+        self.x = None
+        self.y = None
+
+    #마우스 드래그
+    def on_move(self, event):
+        deltax = event.x - self.myParent.x
+        deltay = event.y - self.myParent.y
+        x = self.myParent.winfo_x() + deltax
+        y = self.myParent.winfo_y() + deltay
+        self.myParent.geometry("+%s+%s" % (x,y))
+
+    # 종료 버튼 함수
+    def on_exit(self):
+        self.myParent.destroy()
+    
+    # 윈도우 세팅
+    def set_window(self, root):
+        GWL_EXSTYLE=-20
+        WS_EX_APPWINDOW=0x00040000
+        WS_EX_TOOLWINDOW=0x00000080
+        hwnd = windll.user32.GetParent(root.winfo_id())
+        style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
+        style = style & ~WS_EX_TOOLWINDOW
+        style = style | WS_EX_APPWINDOW
+        res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+        # re-assert the new window style
+        root.wm_withdraw()
+        root.wm_deiconify()
+        root.after(10, lambda: root.wm_deiconify())
+
+##################################################################
+"""
 
     # 창을 정 중앙에 위치
 def centerWindow(window ,width, height):
