@@ -11,14 +11,14 @@ def failButton(window, event=None):
 def translate(text, source_lang, target_lang):
     request_url = "https://openapi.naver.com/v1/papago/n2mt"
 
-    if source_lang == "영어":
+    if source_lang == "English":
         source = "en"
     elif source_lang == "한국어":
         source = "ko"
     else:
         source = "ja"
 
-    if target_lang == "영어":
+    if target_lang == "English":
         target = "en"
     elif target_lang == "한국어":
         target = "ko"

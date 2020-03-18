@@ -72,6 +72,16 @@ class Login:
         self.centerFrame.pack(fill=BOTH, expand=True)
         self.bottomFrame.pack(fill=X, side=BOTTOM)
 
+        # select Language
+        self.langCombobox = ttk.Combobox(self.bottomFrame,width=15, state="readonly")
+        self.langCombobox['values'] = ("English","한국어","日本語")
+        self.langCombobox.grid(column = 1, row=1)
+        self.langCombobox.current(0)
+
+        # 함수 연결
+        #self.langCombobox.bind("<<ComboboxSelected>>",self.btnName(None,self.langCombobox.get()))
+        self.langCombobox.bind("<<ComboboxSelected>>",self.langChange)
+
         # setting navigation buttons
         self.nav_buttons = {}
         self.nav_buttons['cnt'] = 2
@@ -99,7 +109,6 @@ class Login:
         self.nav_buttons['list'][1]['text'] = "Sign Up"
 
         for i in range(self.nav_buttons['cnt']):
-            #print(i)
             self.nav_buttons['list'][i].pack(side=LEFT)
         
         self.nav_buttons['list'][0]['command'] = lambda:self.sign_in(self.centerFrame)
@@ -107,16 +116,6 @@ class Login:
 
         # default = sign_in
         self.sign_in(self.centerFrame)
-
-        # select Language
-        self.langCombobox = ttk.Combobox(self.bottomFrame,width=15, state="readonly")
-        self.langCombobox['values'] = ("English","한국어","日本語")
-        self.langCombobox.grid(column = 1, row=1)
-        self.langCombobox.current(0)
-
-        # 함수 연결
-        #self.langCombobox.bind("<<ComboboxSelected>>",self.btnName(None,self.langCombobox.get()))
-        self.langCombobox.bind("<<ComboboxSelected>>",self.langChange)
 
         self.langCombobox.pack(side=BOTTOM, ipady=5)
     """
@@ -217,26 +216,45 @@ class Login:
             self.myParent.title = "Sign in"
             self.nav_buttons['list'][0]['text'] = "Sign in"
             self.nav_buttons['list'][1]['text'] = "Sign Up"
+            self.idLabel['text'] = "ID :"
+            self.passwdLabel['text'] = "Password : "
+
             if self.selected == "sign_in":
                 self.loginButton.configure(text="Sign in")
+                self.loginData.configure(text="Stay signed in")
+
             else:
                 self.requestButton.configure(text="Sign Up")
+                self.nicknameLabel['text'] = "Nickname : "
+                
         elif lang == "한국어":
             self.myParent.title = "로그인"
             self.nav_buttons['list'][0]['text'] = "로그인"
             self.nav_buttons['list'][1]['text'] = "회원가입"
+            self.idLabel['text'] = "아이디 :"
+            self.passwdLabel['text'] = "비밀번호 : "
+
             if self.selected == "sign_in":
                 self.loginButton.configure(text="로그인")
+                self.loginData.configure(text="로그인 정보 저장")
+
             else:
                 self.requestButton.configure(text="회원 가입")
+                self.nicknameLabel['text'] = "닉네임 : "
         else:
-            self.myParent.title = "サインイン"
-            self.nav_buttons['list'][0]['text'] = "サインイン"
-            self.nav_buttons['list'][1]['text'] = "サインアップ"
+            self.myParent.title = "ログイン"
+            self.nav_buttons['list'][0]['text'] = "ログイン"
+            self.nav_buttons['list'][1]['text'] = "新規登録"
+            self.idLabel['text'] = "登録ID :"
+            self.passwdLabel['text'] = "パスワード"
+
             if self.selected == "sign_in":
-                self.loginButton.configure(text="サインイン")
+                self.loginButton.configure(text="ログイン")
+                self.loginData.configure(text="次回から自動でログインデータを読み込む")
+
             else:
-                self.requestButton.configure(text="サインアップ")
+                self.requestButton.configure(text="ログアウト")
+                self.nicknameLabel['text'] = "ニックネーム"
 
 
     # 프레임을 전부 삭제
@@ -244,7 +262,6 @@ class Login:
         self.selected = ""
         # 이론적으로는 pack된 slaves를 destroy
         for i in frame.pack_slaves():
-            print(i)
             i.destroy()
 
     # 로그인 프레임
@@ -286,17 +303,17 @@ class Login:
             self.loginButton.pack(pady=10)
             self.loginDataLoad()
 
+            self.langChange()
+
     # 로그인 데이터 불러오기 함수
     def loginDataLoad(self):
         # 로그인.config가 있을 경우
         if os.path.isfile("loginData.config"):
-            print("1")
             loginFile = open('loginData.config',mode='rt',encoding='utf-8')
             lines = loginFile.readlines()
             lines[2].splitlines()
             data = lines[0].rstrip('\n')
             if data == 'True':
-                #print("ee"+lines[1])
                 self.login_check.set(True)
                 self.idText.insert(0,lines[1].rstrip('\n'))
                 self.passwdText.insert(0,lines[2].rstrip('\n'))
@@ -342,32 +359,13 @@ class Login:
             self.requestButton = Button(frame, text="Sign Up",command=self.signUpBtn)
             self.requestButton.pack(pady = 10)
 
+            self.langChange()
+
     # 회원가입 요청을 하였을 때 실행
     def signUpBtn(self, event=None):
         # 빈 문자열인지 확인
         if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
             self.createID()
-        """
-        resultScreen = Toplevel(self.myParent)
-        #resultScreen.protocol("WM_DELETE_WINDOW", lambda:on_close(resultScreen))
-        resultScreen.grab_set()
-        
-        # 조건 체크부분, 나중에 서버에서 비교하여 체크 필요
-        if (len(self.idText.get())!= 0) and (len(self.passwdText.get()) != 0) and (len(self.nicknameText.get()) != 0):
-            # 아이디를 Json파일로 생성
-            self.createID()
-            result = signUpResult.SignUpResult(resultScreen, "회원가입 성공")
-            resultScreen.resizable(0,0)
-            result.title = "회원가입 성공"
-            resultScreen.mainloop()         
-
-            self.sign_in(self.centerFrame)
-        else:        
-            resultScreen.title("회원가입 실패!")   
-            result = signUpResult.SignUpResult(resultScreen, "회원가입 실패")
-            resultScreen.resizable(0,0)
-            resultScreen.mainloop()
-        """
 
     def exitBtn(self, window, event=None):
         window.destroy()
@@ -408,51 +406,19 @@ class Login:
 
     # 로그인 실행
     def signInCheck(self):
-        # if os.path.isfile("loginData.config"):
-        #     # 이부분은 아이디 불러오기 체크박스 기능에 추가할 예정
-        #     # 나중에는 서버에서 json파일을 불러와서 처리
-        #     loginFile = open('loginData.config', mode='rt', encoding='utf-8')
-        #     lines = loginFile.readlines()
-        #     max = len(lines)
-            
-        #     # 저장될 때 개행문자가 들어가서 +'\n'추가하여 비교하였음
-        #     # 아이디 여러개 저장 가능 -> 삭제 예정
-        #     # 이부분은 나중에 서버에서 처리
-        #     for i in range(0,max-1,3):
-        #         if (self.idText.get()+'\n' == lines[i]) and (self.passwdText.get()+'\n' == lines[i+1]):
-        #             self.successCheck = True
-        #             
-        #             self.myNickname = lines[i+2]
-                    
-        #             self.myParent.destroy()
-        #             break
-
-        # # 전부 틀릴경우 로그인실패 출력
-        # if self.successCheck == False:
-        #     print("loginFail")
-        #     # 탑레벨로 묶고 grab_set으로 고정
-        #     self.failRoot = Toplevel(self.myParent)
-        #     self.failRoot.grab_set()
-        #     self.failWindow = loginFail.LoginFail(self.failRoot)
-        #     self.failRoot.resizable(0,0)
-        #     self.failRoot.mainloop()
-
         #################### 필독 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # 서버에서 보내는 loginChkPacket{'packetType':'loginChk', 'loginChk': True}의 loginChk 여부에 따라 로그인 성공, 실패
         
         self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()).encode())
-        #print("data : " + self.client_socket.recv(1024).decode('utf-8'))
         try :
             result = self.client_socket.recv(1024)
-            #print(result)
 
             parsed = Packet()
             parsed.packetify(result)
             
             try:               
-                print(parsed.packet['Chk'])
                 if parsed.packet['Chk'] == True:
-                    print("success")
+                    print("Login Success")
                     self.myID = self.idText.get()
                     self.successCheck = True
                     # 체크박스 체크여부와 실행 시 데이터 확인
@@ -468,18 +434,16 @@ class Login:
                 self.loginFailed()
         except Exception as err:
             #messagebox.showerror('Fail!','Fail to Sign Up')
-            print('{}'.format(err))
+            print('error : {}'.format(err))
             self.loginFailed()
 
     # 로그인 데이터 저장 함수
     def loginDataSave(self):
-        print("1")
         if self.login_check.get() == True:
             loginFile = open('loginData.config',mode='w',encoding='utf-8')
             loginFile.write('True\n')
             loginFile.write(self.idText.get()+'\n')
             loginFile.write(self.passwdText.get()+'\n')
-            #loginFile.write(self.nicknameText.get()+'\n')
         # 저장 버튼이 off일경우 파일 삭제
         else:
             if os.path.isfile('loginData.config'):

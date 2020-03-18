@@ -91,13 +91,13 @@ class Chatting:
 
         # 체크박스
         self.translate_check = BooleanVar()
-        self.lang_change = Checkbutton(self.translateFrame, text="번역하기  ", variable=self.translate_check)
+        self.lang_change = Checkbutton(self.translateFrame, text="Translate  ", variable=self.translate_check)
         self.lang_change.deselect()
         self.lang_change.pack(side=LEFT)
 
         # 원래 언어
         self.lang_original = ttk.Combobox(self.translateFrame,width=12)
-        self.lang_original['values'] = ('영어','한국어','일본어')
+        self.lang_original['values'] = ('English','한국어','日本語')
         self.lang_original.current(0)
         self.lang_original.configure(state='readonly')
         self.lang_original.pack(side=LEFT)
@@ -107,7 +107,7 @@ class Chatting:
 
         # 번역할 언어
         self.lang_translate = ttk.Combobox(self.translateFrame,width=12)
-        self.lang_translate['values'] = ('영어','한국어','일본어')
+        self.lang_translate['values'] = ('English','한국어','日本語')
         self.lang_translate.current(1)
         self.lang_translate.configure(state='readonly')
         self.lang_translate.pack(side=LEFT)       
@@ -142,7 +142,6 @@ class Chatting:
         self.users = userList.UserList(userListRoot, self)
         def all_user():  
             for name in client.user_list:
-                #print(name)
                 if name not in self.users.user_list:
                     self.users.addUser(name)
             delete_list = []
@@ -274,9 +273,7 @@ class Chatting:
             #mydata = translate.translate(mydata,self.lang_original.get(),self.lang_translate.get())
         else:
             mydata = self.inputText.get('1.0',INSERT)
-        #print(data)
         data = mydata.replace('\n','')
-        print(data)
         if len(data) > 0:
             self.logText.config(width=60,height=35,state="normal",yscrollcommand=self.scroll.set)
 
@@ -315,7 +312,7 @@ def signOut():
     #myWindow.client_socket.close()
     #myWindow.destroy()
 
-    print(client_socket)
+    #print(client_socket)
     signIn()
 
     # 로그인 실행 함수
@@ -337,10 +334,8 @@ def signIn(client_socket):
         print(client.is_receive)
         client.is_receive = 1
             #user.rstrip('\n')
-            #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))
-           
+            #self.client_socket.send(loginPacket(self.idText.get(),self.passwdText.get()))  
     else:
-        print('2')
         sys.exit()
     user = myUser.rstrip('\n')
     
